@@ -1,174 +1,52 @@
-\chapter{Introduction to Coq}
+\chapter{Introduction}
 \label{cha:intro}
-\fix{Write about Hilbert's idea of mathematical formalism}
+\fix{This place is why formalizing Electronic voting scheme ?}
+Before I start diving deep into explaining bits and pieces of this thesis (Formal verification of Schulze Method), 
+I still need to provide persuasive  argument that why did I choose to verifying Schulze algorithm in Coq theorem 
+prover given the fact that Schulze is not used in any democratic election, and Coq is not serious business in 
+development of mathematical theories or software artefact.   Well, the obvious and  honest answer 
+is that  the author wants to graduate (hopefully), but it's still not convincing argument because I could have chosen 
+some other project and graduate.  On the serious note, this thesis started as a quest to 
+find the answer of question  "Can we afford bug or bugs in software used for vote counting ?".  Given that I am 
+computer scientist by profession, I would not try to justify my decisions by excessive use of philosophical 
+arguments, but at this point it seems very apt to first investigate this question from philosophical point. 
 
-A proof assistant is a computer program which assists users in development of mathematical proofs. The idea of 
-developing mathematical proofs using computer goes back to Automath (automating mathematics)
-[cite Automath] and LCF [cite Logic for computation] project. The 
-Automath project (1967 until the early 80's)  was initiative of De Bruijn, and the aim of the project was to develop
-a language for expressing mathematical theories which can be verified by aid of computer.  Automath was first 
-practical project to exploit the Curry-Howard isomorphism (proofs-as-programs and formulas-as-types)
- [reference here]. DeBruijn  was likely unaware of this correspondence, and he almost re-invented it 
- ([Wiki entry on Curry-Howard]). Many researchers refers Curry-Howard isomorphism as 
- Curry-Howard-DeBruijn isomorphism. Automath project can be seen as the precursor of
- proof assistants NuPrl [cite here] and Coq [cite coq].   Some other notable  proof assistants are 
- LCF (Logic for Computable Functions)  [cite Milner?], Mizar [cite], Nqthm/ACl2 [cite], PVS [cite], 
- HOL (a family of tools derived from LCF theorem prover), Agda [cite], and Lean [cite].
-
-The Coq proof assistant  is interactive theorem prover based on underlying theory of Calculus of 
-Inductive Construction [Cite Pualine Mohring]  which itself is a augmentation of Calculus of Construction 
-[cite Huet and Coquand] with inductive data-type.  Coq provides a highly expressive specification 
- language Gallina for development of mathematical theories and proving the theorems about these
- theories.  Even though Gallina is very expressive, writing proofs  in Gallina is very tedious and cumbersome.  
- In order to ease the proof development, Coq also provides tactics. The user interacting with Coq applies these 
- tactics to build the  Gallina term  which otherwise would  be very laborious.  In this chapter, I will give a 
- brief overview of Calculus of Construction, followed by Calculus of Inductive Construction, with a example 
- of building proof directly using Gallina and show that how same proof can be build easily using the tactics 
- provided by Coq. In final section, I will try to justify my decision of using Coq for verifying Schulze method.
- 
+"People shouldn't be afraid of their government. Governments should be afraid of their people."
+― Alan Moore, V for Vendetta 
 
 
-\section{Theoretical Foundation of Coq}
+"Those who cast the vote decides nothing. Those who count the vote decide everything."
+―  Joseph Stalin
+
+
+"The best weapon of a dictatorship is secrecy, but the best weapon of a democracy should be the 
+weapon of openness. " 
+―   Niels Bohr
+
+The answer of the question is, it depends. If you are a dictator, then off course you 
+would like the vote counting software to be full of bugs which would elect you, and if you believe 
+in democracy, then you would like vote counting software to be transparent and bug free.  The author 
+of this thesis believes in democracy, and  this thesis is  his journey (with his supervisor) about finding 
+a way to make vote counting software more robust and transparent.
+
+
+\section{Why Schulze ?}
 \label{sec:thesisstatement}
-Calculus of Construction is \fix {write here Coc + CIC and typing inference}.
+Even though Schulze method is not used in any democratic election, we settled down 
+with it because it is interesting and at the same time, non-trivial.  Schulze's method [cite Schulze]  elects 
+a single winner based on 
+preferential votes.  However; Arrow's impossibility theorem [cite Arrow]  states that no preferential voting 
+scheme can have all the desired properties established by  social choice theorist,
+the Schulze's method offers a good balance of properties. Many of these properties are already 
+established in his original paper.
 
 
 
-\section{Coq in Action (Example)}
-\label{sec:problemstatement}
-Now I give a small example which defines natural number, addition of two natural numbers, and 
-proof that addition over natural number is commutative.   We can define 
-natural number in Coq using inductive data type (listing 1.1), addition of the natural numbers 
-(listing 1.2), and proof that addition of natural numbers is commutative written in Gallina (listing 1.3).
-
-\begin{lstlisting}[language=haskell, numbers=none, basicstyle=\ttfamily, 
-caption=Inductive Data Type for Natural Numbers,  captionpos=b, xleftmargin=.1\textwidth]
-
-Inductive Natural : Type :=
- | O : Natural
- | Succ : Natural -> Natural
-
-\end{lstlisting}
-
-More precisely, the interpretation is that Natural is a inductive type with two constructors: i) O representing zero,
-and ii) Succ representing successor which takes a Natural number and gives next Natural number.
-
-\fix{Change the Addition into infix symbol + and use + in proofs. It will convey the idea more clearly}
-\begin{lstlisting}[language=haskell, numbers=none, basicstyle=\ttfamily,  caption=Addition function for Natural Numbers,  captionpos=b, xleftmargin=.1\textwidth]
-
- 
-Fixpoint Addition (n m : Natural) : Natural :=
-  match n with
-  | O => m
-  | Succ n' => Succ (Addition n' m)
-  end.
-
-(* Notation for Addition. Now we can use + instead of 
-   writing Addition *)
-Notation "x + y" := (Addition x y)
-            (at level 50, left associativity).
-\end{lstlisting}
-
-We define the addition by pattern matching on first argument \textbf{n}. When \textbf{n} is 
-O (zero), then we sum is \textbf{m}, and if \textbf{n} is \textbf{Succ n'}, then sum is successor of 
-\textbf{n' +  m}.
-
-\begin{lstlisting}[language=haskell, numbers=none, basicstyle=\ttfamily,  caption=Addition function for Natural Numbers,  captionpos=b, xleftmargin=.1\textwidth]
-
-Theorem Addition_by_zero : forall (n : Natural), n + O = n.
-  refine (fix IHa (n : Natural) : n + O = n :=
-            match n as nz return (nz + O = nz) with
-            | O => eq_refl
-            | Succ n' =>
-              let IHn' := IHa n' in
-              eq_ind_r (fun m => Succ m = Succ n') eq_refl IHn'
-            end).
-Qed.
-
-  
-Lemma Successor_addition : forall (n m : Natural),
-    Succ (n + m) = n + (Succ m).
-  refine
-    (fix IHn (n : Natural) : forall m : Natural,
-        Succ (n + m) = n + (Succ m) :=
-       match n as nz return (forall m : Natural,
-                                Succ (nz + m) =
-                                nz + (Succ m)) with
-       | O => fun m : Natural => eq_refl
-       | Succ n' =>
-         fun m : Natural =>
-           eq_ind (Succ (n' + m))
-                  (fun t => Succ (Succ (n' + m)) = Succ t)
-                  eq_refl (n' + (Succ m)) (IHn n' m)
-       end).
-Qed.
-     
-
-    
-Theorem Addition_is_commutative :
-  forall (n m : Natural), n +  m = m + n.
-  refine
-    (fix IHn (n : Natural) : forall m : Natural,
-        n + m = m + n :=
-       match n as nz return (forall m : Natural,
-                                nz + m =
-                                m + nz) with
-       | O => fun m : Natural => eq_ind_r (fun t => m = t)
-                                      eq_refl
-                                      (Addition_by_zero m)
-       | Succ n' =>
-         fun m  =>
-           eq_ind (Succ (m + n'))
-                  (fun t => Succ (n' + m) = t)
-                  (eq_ind_r (fun t => Succ t = Succ (m + n'))
-                            eq_refl (IHn n' m))
-                  (m + (Succ n'))
-                  (Successor_addition m n')
-       end).
-Qed.
+It's one of the most popular voting protocol 
+over internet to elect candidates. 
 
 
-\end{lstlisting}
 
-
-We need two additional Lemma:
- i) $Addition\_by\_zero$, a proof of n + 0 = 0,
- and ii) $Successor\_addition$, a proof of Succ (n + m) = n + (Succ m) 
- to prove that addition on Natural is commutative ($Addition\_is\_commutative$), 
- 
- One thing that can't escape from the reader's eyes is that the proofs written in Gallina is verbose, and they don't 
- appear anywhere compared to a proof that would have been written by a mathematician. Well, we can lift the burden 
- of verbosity by using tactics provided by Coq; however, there is no universally accepted solution in Coq community 
- for second problem. There has been some research in declarative style proof writing 
- \footnote{www-verimag.imag.fr/~corbinea/ftp/publis/bricks-poster.pdf}, but it is not widely practised in Coq 
- community. The proof of addition on Natural is commutative re-written using tactics (Listing 1.4)
- 
- 
- \begin{lstlisting}[language=haskell, numbers=none, basicstyle=\ttfamily,  caption=Addition function for Natural Numbers,  captionpos=b, xleftmargin=.1\textwidth]
-
-Lemma Addition_by_zero : forall (n : Natural), n + O = n.
-  induction n; cbn; [auto | rewrite IHn; auto].
-Qed.
-
-
-Lemma Successor_addition : forall (n m : Natural),
-    Succ (n + m) = n + (Succ m).
-Proof.
-  induction n; intros m;
-    cbn; [auto | rewrite <- IHn; auto].
-Qed.
-
-
-Theorem Addition_is_commutative :
-  forall (n m : Natural), n +  m = m + n.
-Proof.
-  induction n; intro m;
-    [rewrite Addition_by_zero |
-     rewrite <- Successor_addition;
-     rewrite <- IHn]; auto.
-Qed.
-
-\end{lstlisting}
 
 
 
