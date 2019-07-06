@@ -4,8 +4,8 @@
 Before I start diving deep into explaining bits and pieces of this thesis (Formal verification of Schulze Method), 
 I still need to provide persuasive  argument that why did I choose to verifying Schulze algorithm in Coq theorem 
 prover given the fact that Schulze is not used in any democratic election, and Coq is not serious business in 
-development of mathematical theories or software artefact.   Well, the obvious and  honest answer 
-is that  the author wants to graduate (hopefully), but it's still not convincing argument because I could have chosen 
+development of mathematical theories or software artefact.   Well, the honest answer 
+is that  I want to graduate (hopefully), but it's still not convincing argument because I could have chosen 
 some other project and graduate.  On the serious note, this thesis started as a quest to 
 find the answer of question  "Can we afford bug or bugs in software used for vote counting ?".  Given that I am 
 computer scientist by profession, I would not try to justify my decisions by excessive use of philosophical 
@@ -23,11 +23,26 @@ arguments, but at this point it seems very apt to first investigate this questio
 weapon of openness. " 
 ―   Niels Bohr
 
-The answer of the question is, it depends. If you are a dictator, then off course you 
-would like the vote counting software to be full of bugs which would elect you, and if you believe 
-in democracy, then you would like vote counting software to be transparent and bug free.  The author 
-of this thesis believes in democracy, and  this thesis is  his journey (with his supervisor) about finding 
-a way to make vote counting software more robust and transparent.
+The answer depends on how you perceive democracy.  For a dictator, probably  bug in the 
+vote software would be a natural choice, among many others,  to rig the election. If you firmly believe 
+in democracy and democratic values, then 
+among many other things, transparency and bug freeness in vote counting software  would also be 
+in your agenda. There is no doubt that technology can play a critical role in maintaining the democratic values, 
+but assuming that it is the only factor would be a gross mistake. 
+In Azerbaijan's 2013 election, the running president Ilham Aliyev launched a iPhone app, to boost the 
+credibility of election, which enabled the citizens of Azerbaijan to 
+track the tallies as counting took place. There was just one problem. The app already showed that 
+Ilham Aliyev elected before even a ballot was counted.  In this particular case, technology merely helped in 
+surfacing the problem, but it did not do any other thing.  More often technology can be used to hide 
+the transparency of system than making it evident specially in corrupt society for personal gain. 
+
+
+Democracy is a complex system of different actors interacting with each other in certain fashion.  How to make 
+these interaction more productive and better for society, I leave this to political scientists and social scientist
+to figure out, and I stick to my job as a technology enabler.  This thesis is  my journey 
+(with my supervisor) about finding  a way to make vote counting software more robust and transparent.
+
+
 
 
 \section{Why Schulze ?}
@@ -35,10 +50,10 @@ a way to make vote counting software more robust and transparent.
 Even though Schulze method is not used in any democratic election, we settled down 
 with it because it is interesting and at the same time, non-trivial.  Schulze's method [cite Schulze]  elects 
 a single winner based on 
-preferential votes.  However; Arrow's impossibility theorem [cite Arrow]  states that no preferential voting 
+preferential votes.  However, Arrow's impossibility theorem [cite Arrow]  states that no preferential voting 
 scheme can have all the desired properties established by  social choice theorist,
-the Schulze's method offers a good balance of properties. Many of these properties are already 
-established in his original paper.
+the Schulze's method offers a good balance. Many of these properties are already 
+established in his original paper. 
 
 
 
