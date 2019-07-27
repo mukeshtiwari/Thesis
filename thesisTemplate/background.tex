@@ -1,4 +1,4 @@
-\chapter{Background (Introduction of Coq, and Schulze Method)}
+\chapter{Background}
 \label{cha:background}
 At the begging of each chapter, please introduce the motivation and high-level
 picture of the chapter. You also have to introduce sections in the
@@ -19,21 +19,107 @@ practical project to exploit the Curry-Howard isomorphism (proofs-as-programs an
  LCF (Logic for Computable Functions)  [cite Milner?], Mizar [cite], Nqthm/ACl2 [cite], PVS [cite], 
  HOL (a family of tools derived from LCF theorem prover), Agda [cite], and Lean [cite].
 
-The Coq proof assistant  is interactive theorem prover based on underlying theory of Calculus of 
-Inductive Construction [Cite Pualine Mohring]  which itself is a augmentation of Calculus of Construction 
-[cite Huet and Coquand] with inductive data-type.  Coq provides a highly expressive specification 
- language Gallina for development of mathematical theories and proving the theorems about these
- theories.  Even though Gallina is very expressive, writing proofs  in Gallina is very tedious and cumbersome.  
- In order to ease the proof development, Coq also provides tactics. The user interacting with Coq applies these 
- tactics to build the  Gallina term  which otherwise would  be very laborious.  In this chapter, I will give a 
- brief overview of Calculus of Construction, followed by Calculus of Inductive Construction, with a example 
- of building proof directly using Gallina and show that how same proof can be build easily using the tactics 
- provided by Coq. In final section, I will try to justify my decision of using Coq for verifying Schulze method.
+
  
 
 
-\section{Coq in Action (Example)}
+\section{Coq: Interactive Theorem prover}
 \label{sec:problemstatement}
+\fix{explain here a about Coq. What is Coq ?}
+The Coq proof assistant  is an interactive theorem prover based on
+underlying theory of Calculus of 
+Inductive Construction [Cite Pualine Mohring]  which itself is an 
+augmentation of Calculus of Construction 
+[cite Huet and Coquand] with inductive data-type.  
+ 
+% In this chapter, I will give a 
+% brief overview of Calculus of Construction, followed by Calculus of Inductive Construction, with a example 
+% of building proof directly using Gallina and show that how same proof can be build easily using the tactics 
+% provided by Coq. In final section, I will try to justify my decision of using Coq for verifying Schulze method.
+
+\subsection{Calculus of Inductive Construction}
+\fix{Flesh out the details of 
+ Calculus of construction and Inductive construction}
+ \fix{Write here about syntax and semantics of CIC}
+ 
+ 
+
+ 
+\subsection{Dependent Types}
+ \fix{Following from previous subsection, write description about 
+    dependent types. Show that how dependent types help in correct by 
+    construction}
+ \subsection{Correct by Construction}
+ \fix{Combing program with proofs leads to one stop solution, mainly 
+     correct by construction}
+  Well typed program can't go wrong. 
+  Give a example of dependent type lambda calculus(Dirk's white board)
+  Hello World is dependent type Vector 
+ \subsection{Types vs. Prop}
+ \fix{explain here the difference between Prop and Types. How it affects 
+  the code extraction }
+  It's good starting point to tell the reader that we have two definitions, 
+  one in type and other in prop. Why ? Because Type computes, but it's
+  not very intuitive for human inspection while Prop does not compute, 
+  but it's very intuitive for human inspection. We have connected that 
+  the definition expressed in Type is equivalent to Prop definition. 
+ 
+ \subsection{Gallina : The Specification Language}
+  Coq provides a highly expressive specification 
+  language Gallina for development of mathematical theories and proving the    
+  theorems about these  theories.  Even though Gallina is very expressive,
+   writing proofs  in Gallina is very tedious and cumbersome.  
+  In order to ease the proof development, Coq also provides tactics. 
+  The user interacting with Coq applies these 
+  tactics to build the  Gallina term  which otherwise would  
+  be very laborious.
+  
+ 
+  
+\section{Certificate : Ingredient for Verification}
+  \fix{There are two notion of verification. Software verification and 
+   election verification. A electronic voting scheme implemented in 
+   Coq is verified implementation, but it does not imply that method 
+   itself is verifiable. Explain the software independence } 
+   How dependent types helps 
+   \subsection{Software Independence}
+   \fix{Explain here software independence}
+   A voting system is software independent if an undetected change or error
+   in its software can not cause an undetected change or error in an 
+   election outcome.
+   \subsection{Proof Checker for Certificates}
+   To create the mass scrutineers, all we need is a simple proof checker
+   which would take proof certificate as input and spit true or false.
+   If it's true then we accept the outcome of election otherwise something 
+   wrong.
+ 
+ \section{Trusting Coq proofs}
+  The fundamental question for trusting the Coq proofs is two fold: 
+  i) is the logic (CIC) sound ?, ii) is the implementation correct ?. 
+  The logic has already been reviewed by many peers and proved correct 
+  using some meta-logic. The 
+  Coq implementation itself can be partitioned into two parts: 
+  i) Validity Checker (Small kernel), 
+  ii) Tactic language to build the proofs.
+  We lay our trust in validity checker, because it's small kernel. If there
+  is bug in tactic language which often is the case then build proof would 
+  not pass the validity checker.  
+
+\section{•}
+
+
+
+
+
+
+
+
+
+
+
+
+
+%\label{sec:problemstatement}
 Now I give a small example which defines natural number, addition of two natural numbers, and 
 proof that addition over natural number is commutative.   We can define 
 natural number in Coq using inductive data type (listing 1.1), addition of the natural numbers 
