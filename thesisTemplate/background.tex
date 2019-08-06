@@ -49,13 +49,13 @@ augmentation of Calculus of Construction
  \fix{Following from previous subsection, write description about 
     dependent types. Show that how dependent types help in correct by 
     construction}
- \subsection{Correct by Construction}
+ \subsubsection{Correct by Construction}
  \fix{Combing program with proofs leads to one stop solution, mainly 
      correct by construction}
   Well typed program can't go wrong. 
   Give a example of dependent type lambda calculus(Dirk's white board)
   Hello World is dependent type Vector 
- \subsection{Types vs. Prop}
+ \subsubsection{Types vs. Prop}
  \fix{explain here the difference between Prop and Types. How it affects 
   the code extraction }
   It's good starting point to tell the reader that we have two definitions, 
@@ -64,7 +64,7 @@ augmentation of Calculus of Construction
   but it's very intuitive for human inspection. We have connected that 
   the definition expressed in Type is equivalent to Prop definition. 
  
- \subsection{Gallina : The Specification Language}
+ \subsubsection{Gallina : The Specification Language}
   Coq provides a highly expressive specification 
   language Gallina for development of mathematical theories and proving the    
   theorems about these  theories.  Even though Gallina is very expressive,
@@ -76,24 +76,9 @@ augmentation of Calculus of Construction
   
  
   
-\section{Certificate : Ingredient for Verification}
-  \fix{There are two notion of verification. Software verification and 
-   election verification. A electronic voting scheme implemented in 
-   Coq is verified implementation, but it does not imply that method 
-   itself is verifiable. Explain the software independence } 
-   How dependent types helps 
-   \subsection{Software Independence}
-   \fix{Explain here software independence}
-   A voting system is software independent if an undetected change or error
-   in its software can not cause an undetected change or error in an 
-   election outcome.
-   \subsection{Proof Checker for Certificates}
-   To create the mass scrutineers, all we need is a simple proof checker
-   which would take proof certificate as input and spit true or false.
-   If it's true then we accept the outcome of election otherwise something 
-   wrong.
+
  
- \section{Trusting Coq proofs}
+ \subsection{Trusting Coq proofs}
   The fundamental question for trusting the Coq proofs is two fold: 
   i) is the logic (CIC) sound ?, ii) is the implementation correct ?. 
   The logic has already been reviewed by many peers and proved correct 
@@ -104,10 +89,31 @@ augmentation of Calculus of Construction
   We lay our trust in validity checker, because it's small kernel. If there
   is bug in tactic language which often is the case then build proof would 
   not pass the validity checker.  
+  
+  Try to write here how Fuzzer failed to find bugs in Compcert. 
+  
+  \section{Cryptography}
+    Write some basic crypto stuff
+    
+    \subsection{Homomorphic Encryption}
+     Add the details of 
+     homomorphic encryption 
+     \subsubsection{El-Gamal Encryption Scheme}
+        Give both additive and multiplicative
+     \subsubsection{Pallier Encryption Scheme}
+        Write some description
+     \subsection{Commitment Schemes}   
+        \subsubsection{Hash Based Commitment Scheme}
+        \subsubsection{Discrete Logarithm Based Commitment Scheme}
+         Pedersen's Commitment Scheme
+     \subsection{Zero Knowledge Proof}
+  		Details from 
+  	 \subsection{Sigma Protocol : Efficient Zero Knowledge Proof}
+  
 
-\section{•}
 
 
+\section{Summary}
 
 
 
@@ -260,27 +266,27 @@ Section~\ref{sec:motivation} xxxx.\\
 Section~\ref{sec:relatedwork} yyyy.\\
 
 
-\section{Motivation}
-\label{sec:motivation}
+%\section{Motivation}
+%\label{sec:motivation}
 
 
-\section{Related work}
-\label{sec:relatedwork}
-You may reference other papers. For example: 
-Generational garbage collection~\citep{LH:83,Moon:84,Ungar:84} is perhaps the
-single most important advance in garbage collection since the first collectors
-were developed in the early 1960s. (doi: "doi" should just be the doi part, not
-the full URL, and it will be made to link to dx.doi.org and resolve.
-shortname: gives an optional short name for a conference like PLDI '08.)
-
-
-
-
-
-\section{Summary}
-Summary what you discussed in this chapter, and mention the story in next
-chapter. Readers should roughly understand what your thesis takes about by only reading
-words at the beginning and the end (Summary) of each chapter.
+%\section{Related work}
+%\label{sec:relatedwork}
+%You may reference other papers. For example: 
+%Generational garbage collection~\citep{LH:83,Moon:84,Ungar:84} is perhaps the
+%single most important advance in garbage collection since the first collectors
+%were developed in the early 1960s. (doi: "doi" should just be the doi part, not
+%the full URL, and it will be made to link to dx.doi.org and resolve.
+%shortname: gives an optional short name for a conference like PLDI '08.)
+%
+%
+%
+%
+%
+%\section{Summary}
+%Summary what you discussed in this chapter, and mention the story in next
+%chapter. Readers should roughly understand what your thesis takes about by only reading
+%words at the beginning and the end (Summary) of each chapter.
 
 
 

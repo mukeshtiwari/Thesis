@@ -1,0 +1,41 @@
+\chapter{Scrutiny Sheet : Software Independence}
+\label{cha:software_independence}
+Same as the last chapter, introduce the motivation and the high-level picture to
+readers, and introduce the sections in this chapter. 
+
+One of the crucial 
+aspect in electronic voting is ability to detect change in outcome of 
+election because of software bugs. 
+
+
+   A voting system is software independent if an undetected change or error
+   in its software can not cause an undetected change or error in an 
+   election outcome.
+\section{Verification and Verifiability}
+  Paste Evote section 2
+
+\section{Certificate : Ingredient for Verification}
+  \fix{There are two notion of verification. Software verification and 
+   election verification. A electronic voting scheme implemented in 
+   Coq is verified implementation, but it does not imply that method 
+   itself is verifiable. Explain the software independence } 
+   
+   \subsection{Plaintext Ballot Certificate}
+    Flesh out the details needed here for writing proof checker
+    
+    \subsection{Encrypted Ballot Certificate}
+    Flesh out the details needed here for writing proof checker
+    
+   
+\section{Proof Checker}
+  Write the details of proof checker for both certificates
+  
+  	\subsection{A Verified Proof Checker : IACR 2018}
+  	Write some details about proof checker.
+  
+\section{Summary}
+   Write some advantage of proof checker for certificates.
+   To create the mass scrutineers, all we need is a simple proof checker
+   which would take proof certificate as input and spit true or false.
+   If it's true then we accept the outcome of election otherwise something 
+   wrong.
