@@ -1,10 +1,174 @@
 \chapter{Background}
 \label{cha:background}
-At the begging of each chapter, please introduce the motivation and high-level
-picture of the chapter. You also have to introduce sections in the
-chapter. \\
+%At the begging of each chapter, please introduce the motivation and high-level
+%picture of the chapter. You also have to introduce sections in the
+%chapter. 
 
-\fix{Write about Hilbert's idea of mathematical formalism}
+
+\section{Electronic Voting}
+   Electronic voting is a nightmare because of a minuscule possibility of 
+   bug in software used in voting could lead to a disaster, possibly 
+   inverting the results[swisspost]. Given that the cost of 
+   electronic voting is 
+   so high, we should totally refrain from it; however, on contrary
+   it is gaining popularity. Some of the notable countries using some form
+   of electronic voting are Estonia (probably the only success story), India,
+   Australia, Canada and USA. 
+    \begin{figure}[htb]
+	\begin{center}
+	\includegraphics[scale=0.5]{e-voting_worldmap_2015.pdf}
+	\caption{World map of Electronic Voting}
+	\end{center}
+  \end{figure}  
+   
+  The world can be divided into five categories on 
+  parameter of electronic voting\footnote{https://www.e-voting.cc/en/it-elections/world-map}[Figure 2.1]
+  \begin{itemize}
+  \item No electronic voting (Grey Area)
+  \item Discussion and/or voting technology pilots (Yellow Area)
+  \item Discussion, concrete plans for Internet voting (Orange Area)
+  \item Ballot scanners, Electronic Voting Machines, and Internet Voting
+        (Green and Dark Green)
+  \item Withdrawn voting technology because of public concern (Red Area)
+        Germany, The Nederlands, and UK  
+  \end{itemize}    
+  
+ 
+
+   
+%  The input method, form of ballot, used the countries participating 
+%  in electronic voting can be broadly divided into three group 
+  Arguments in favour of electronic voting are 
+  increased voter turnout, faster result and cost. Senate 
+  election conducted in Western Australia in September 2013 were 
+  declared void by high court because of loss of 1370 votes. It was 
+  re-conducted in April 2014 with cost of 20 Million AUD with additional 
+  delay in results\footnote{https://www.theguardian.com/world/2014/feb/28/western-australia-senate-election-re-run-to-be-held-on-5-april}. Sometimes, 
+  the cost is not only concern, but the time involved in counting 
+  is. \fix{Give a example of seat which took considerable amount 
+  of time in declaring result}. 
+  \fix{Add time and cost saving in Indian election after using 
+  electronic voting machines} 
+  The advantages of electronic voting 
+  looks so promising, so why some countries (Red Area) retracted 
+  from electronic voting ? Off course, electronic voting makes 
+  the process faster, but it has its own layer of added complexities 
+  which creates a trust issue among voters. 
+  In 2005 German election, two voters filed a case in German 
+  Constitutional Court (Bundesverfassungsgericht) because their 
+  appeal to scrutinize the elections 
+  was not heeded by the Committee. They argued that using electronic 
+  voting machines to conduct the election was unconstitutional, and 
+  these machines could be hacked, hence results of the 2005 election 
+  could not be trusted. The case was argued on the grounds 
+  of "all essential steps in the elections are subject to 
+  public examinability." according to German Constitution 
+  (Basic Law for the Federal Republic of Germany). 
+  The Court noted that, under the constitution, elections are 
+  required to be public in nature
+  
+  "The principle of the public nature of elections requires that all 
+  essential steps in the elections are subject to public examinability
+  unless other constitutional interests justify an exception. 
+  Particular significance attaches here to the monitoring of the 
+  election act and to the ascertainment of the election result. "
+  \footnote{https://www.bundesverfassungsgericht.de/
+  SharedDocs/Entscheidungen/EN/2009/03/cs20090303\_2bvc000307en.html}
+
+  The court did not rule out or prevent the usage of electronic 
+  voting machines,  but suggested to make the process more 
+  transparent and trustworthy.  
+  
+  "The legislature is not prevented from using electronic voting machines 
+  in the elections if the constitutionally required possibility of a 
+  reliable correctness check is ensured. In particular, voting machines 
+  are conceivable in which the votes are recorded elsewhere in addition
+   to electronic storage. This is for instance possible with electronic
+   voting machines which print out a visible paper report of the vote 
+   cast for the respective voter, in addition to electronic recording 
+   of the vote, which can be checked prior to the final ballot and is
+    then collected to facilitate subsequent checking. Monitoring that is
+     independent of the electronic vote record also remains possible when
+     systems are deployed in which the voter marks a voting slip and the 
+     election decision is recorded simultaneously, 
+     or subsequently by electronic means in 
+     order to evaluate these by electronic means at the end of the 
+     election day."
+  
+  The Netherlands were among few countries who adopted electronic voting 
+  in early nineties (1990), but it did not go very well long run and was 
+  abolished in 2008 
+  [http://www.cs.ru.nl/B.Jacobs/PAPERS/E-votingHistory.pdf]. 
+  The reason for abolishing electronic voting was that   
+  the voting machines used in election were susceptible to many attacks
+   and could not stand 
+  for public verifiability of results. The decision was victory for 
+  Dutch public foundation, Wij vertrouwen stemcomputers niet
+  \footnote{English Translation "We do not trust voting computers"}, which 
+  demonstrated that e-voting machines used in election leaks enough
+  information to guess the option, 
+  and they can be easily intercepted from 20 to 30 meters
+  \footnote{https://www.youtube.com/watch?v=B05wPomCjEY}. 
+  
+  
+  Germany and The Netherlands are some of the rarest cases where 
+  electronic voting was withdrawn because it was not able to 
+  replicate the same trust environment as created by paper ballot.
+  At this point, the reader can get into the impression that 
+  countries who are using electronic voting have successfully 
+  created the trust environment in electronic voting. Sadly, 
+  it is not the case. India, one of the largest democracy in world, 
+  uses electronic voting machines (also known as EVMs) for national 
+  and state level 
+  elections even though many political parties raised security 
+  concern against it.
+  It was already shown in 2010 in the paper 
+  Security Analysis of India's Electronic Voting Machines by 
+  Scott Wolchok et. al 
+  [https://jhalderm.com/pub/papers/evm-ccs10.pdf] that it 
+  is possible to manipulate the election results by replacing the 
+  parts of machine with malicious look alike components with sending 
+  them instructions over wireless
+  \footnote{https://www.youtube.com/watch?v=ZlCOj1dElDY} 
+  \footnote{https://indiaevm.org/}. 
+  In recent elections of 2019, the Election Commission of India 
+  announced, to ensure the transparency and 
+  increase the trust of public, that it would use 
+  voter-verified paper audit trail (VVPAT) 
+  one per assembly; however, the Supreme Court of India ordered Election 
+  Commission of India to increase it to five
+  \footnote{https://www.news18.com/news/india/sc-directs-ec-to-increase-vvpat-verification-from-one-evm-to-five-evms-per-constituency-2093363.html}.
+  The Commission  would count VVPAT slips 
+  in randomly selected one polling booth per assembly 
+  constituency in state election and 
+  in one polling booth in each assembly segment for national election, but 
+  now following the Supreme Court decision it has to do the same for 
+  5 randomly selected assembly constituencies/segments. 
+  \fix{Find out if there is a document at Election Commission of 
+  India website and how the process works}. The design of these 
+  machines are closely guard secret,  but it not impossible to gain 
+  access as shown by  Scott Wolchok et. al. It would be more 
+  interesting and beneficial for Indian democracy if Election 
+  Commission of India
+  releases the design to public scrutiny (very much like cryptographic
+  implementation review process).
+  
+  
+  
+ 
+  
+    
+  
+   
+   \subsection{Software Bugs : Origin of Problem}
+   
+   
+   \subsection{Estonia : Success Story}
+
+   \subsection{Universal Verifiability}
+
+
+\fix{Can I introduce Write Hilbert's idea of mathematical formalism/Frege}
 
 A proof assistant is a computer program which assists users in development of mathematical proofs. The idea of 
 developing mathematical proofs using computer goes back to Automath (automating mathematics)
@@ -20,7 +184,32 @@ practical project to exploit the Curry-Howard isomorphism (proofs-as-programs an
  HOL (a family of tools derived from LCF theorem prover), Agda [cite], and Lean [cite].
 
 
+In this chapter, I will give a overview of theoretical foundation of 
+Coq thorem prover i.e. Calculus of Construction and  
+Calculus of Inductive Construction, followed by Dependent type 
+and how it leads to 
+correct by construction (paradigm?) with a example of dependent 
+typed lambda calculus. I will also discuss distinction between Type and Prop 
+and how it affects the code extraction, a feature for extracting 
+certified functional programs from specification proofs, and the 
+specification language Gallina. Finally, I would 
+argue that why should we trust the Coq proofs even though it does not 
+match or look like a mathematical proof.
+
+
+
  
+\section{Computer Programming and Type Theory}
+	\begin{itemize}
+	\item Some tracking of History about how type theory was introduced 
+	     to computer programming. Use Dirk's expertise here
+	\item Type theory is a logical foundation introduced by 
+	      Russel to solve the problem of  paradox in Frege's 
+	      Begriffsschrift.
+	\item A Church invented formal system of computation, Lambda calculus
+	\item A typed lambda calculus
+	\item Curry Howard isomorphism
+	\end{itemize}
 
 
 \section{Coq: Interactive Theorem prover}
@@ -32,11 +221,8 @@ Inductive Construction [Cite Pualine Mohring]  which itself is an
 augmentation of Calculus of Construction 
 [cite Huet and Coquand] with inductive data-type.  
  
-% In this chapter, I will give a 
-% brief overview of Calculus of Construction, followed by Calculus of Inductive Construction, with a example 
-% of building proof directly using Gallina and show that how same proof can be build easily using the tactics 
-% provided by Coq. In final section, I will try to justify my decision of using Coq for verifying Schulze method.
 
+\subsection{Calculus of Construction}
 \subsection{Calculus of Inductive Construction}
 \fix{Flesh out the details of 
  Calculus of construction and Inductive construction}
@@ -46,16 +232,20 @@ augmentation of Calculus of Construction
 
  
 \subsection{Dependent Types}
- \fix{Following from previous subsection, write description about 
-    dependent types. Show that how dependent types help in correct by 
-    construction}
+    Type system is a wide spectrum ranging from Scheme where 
+    type is runtime concept to Haskell to Coq 
+    
+    \subsubsection{Example : Dependent Type Lambda Calculus}
+     Lambda Calculus encoded in Coq using Inductive data type. 
+     
  \subsubsection{Correct by Construction}
  \fix{Combing program with proofs leads to one stop solution, mainly 
      correct by construction}
   Well typed program can't go wrong. 
   Give a example of dependent type lambda calculus(Dirk's white board)
   Hello World is dependent type Vector 
- \subsubsection{Types vs. Prop}
+ \subsubsection{Program Execution : Proof Certificate}
+ \subsubsection{Type vs. Prop : Code Extraction}
  \fix{explain here the difference between Prop and Types. How it affects 
   the code extraction }
   It's good starting point to tell the reader that we have two definitions, 
@@ -65,14 +255,20 @@ augmentation of Calculus of Construction
   the definition expressed in Type is equivalent to Prop definition. 
  
  \subsubsection{Gallina : The Specification Language}
-  Coq provides a highly expressive specification 
-  language Gallina for development of mathematical theories and proving the    
-  theorems about these  theories.  Even though Gallina is very expressive,
-   writing proofs  in Gallina is very tedious and cumbersome.  
-  In order to ease the proof development, Coq also provides tactics. 
-  The user interacting with Coq applies these 
+  The example, dependent type lambda calculus, I gave in previous 
+  section was encoded in Coq's specification language Gallina. 
+  Gallina is a highly expressive specification 
+  language for development of mathematical theories and proving the    
+  theorems about these  theories; however, writing proofs in Gallina
+  is very tedious and cumbersome. It's not suitable for large proof 
+  development, and to ease the proof development Coq also provides 
+  tactics.  The user interacting with Coq theorem prover applies these 
   tactics to build the  Gallina term  which otherwise would  
   be very laborious.
+  
+  \fix{Can I give a simple example to demonstrate the difference 
+     between proof build directly in Gallina and proof build using 
+     tactics}
   
  
   
@@ -92,7 +288,10 @@ augmentation of Calculus of Construction
   
   Try to write here how Fuzzer failed to find bugs in Compcert. 
   
-  \section{Cryptography}
+\section{Summary} 
+  Paves the path to Cryptography. 
+    
+\section{Cryptography}
     Write some basic crypto stuff
     
     \subsection{Homomorphic Encryption}
