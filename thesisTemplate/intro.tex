@@ -1,55 +1,151 @@
 \chapter{Introduction}
 \label{cha:intro}
-\fix{Leave this chapter till end}
-\fix{This place is why formalizing Electronic voting scheme ?}
+
+\epigraph{The best weapon of a dictatorship is secrecy, but the best weapon of a democracy should be the weapon of openness.} 
+{\textit{Niels Bohr}} 
+
+%"People shouldn't be afraid of their government. Governments should be afraid of their people." - Alan Moore, V for Vendetta 
+%
+%"Those who cast the vote decides nothing. Those who count the vote decide everything." - Joseph Stalin
+
+
 A democracy can be best describe as a system where every participant 
-has equal right to express his opinion(s) on different matters. 
+has equal right to express his opinion(s) on different matters. Each
+eligible participant expresses his opinion, and a winner is elected 
+by using some method to combine every participant's opinion.
+In current context of democratic elections, 
+every eligible participant expresses his opinion on a paper, also 
+known as ballot, 
+by marking a tick against the preferred candidate 
+(first-past-the-post) or ranking the candidates in some order
+(preferential voting). 
+One of the most fundamental assumption during any democratic 
+election, privacy and anonymity about the voter's choices, was not the case 
+in past. It was Victoria, Australia who first introduce the 
+concept of secret ballot in 1856 \footnote{
+ https://trove.nla.gov.au/work/25532676?q\&versionId=30761831}
+ \footnote{https://www.nma.gov.au/defining-moments/
+	  resources/secret-ballot-introduced} and gradually, it 
+	  got adoption all over the world. Before 1856, Victoria
+	  and NSW held their elections to elect its 
+	  democratic representative in pub where it was legal for 
+	  candidates to offer beer to voters to influence their 
+	  decision! 
+	  
+Verifiability or transparency is other fundamental assumption for 
+any democratic election. Transparency insures that each step of 
+of election process is easily understood and can be scrutinize by 
+every stake holders e.g. voters, political parties, and external 
+observers. Privacy and verifiability  is basic 
+ingredient for coercion free election, i.e. people 
+can express their opinion with any concern, and at the same time,
+they can not sell their votes. Without privacy and verifiability, 
+we can not expect a true democracy.   
 
  
-has equal right/power, and this power is exercised through 
+ \begin{figure}[htb]
+	\begin{center}
+	\includegraphics[scale=0.25]{NorthBourke.jpg}
+	\caption{Election held in 1855 in Victoria, Australia 
+	  was conducted in pub!}
+	\end{center}
+  \end{figure}   
+  
+ Electronic voting is very different from paper ballot election. 
+ Reasoning 
+ about privacy and verifiability in paper ballot election 
+ is straight forward, but we can not do the same for 
+ electronic voting election. The reason is, electronic voting constitutes 
+ of various untrusted component of software
+ \footnote{Unix operating system has 15 million code which can not 
+ trusted at all} and hardware
+ \footnote{Intel has many undocumented instructions in its x86 
+ processor. https://github.com/xoreaxeaxeax/sandsifter} which 
+ exposes a large attack surface. These attack surfaces could 
+ potentially be exploited for illegal gain in election. 
+ 
+ Even though electronic voting is gaining popularity, none of 
+ the software used in the election process is verified, but just
+ tested. One of the most natural question to ask is that 
+ can we trust the result if software is buggy, or a more fundamental, 
+ why should we trust the result produced by a software even 
+ if it's formally proved correct ? This thesis is an attempt to 
+ explore these question by using Schulze method as a case study.
+ [To myself : Can you improve this statement]   
+ \footnote{At the time of writing this thesis, Microsoft and Galios 
+  announced ElectionGuard}
+   
+ 
+\textbf{Chapter Overview}
+[Write chapter overview at each section]
 
 
-Before I start diving deep into explaining bits and pieces of this thesis (Formal verification of Schulze Method), 
-I still need to provide persuasive  argument that why did I choose to verifying Schulze algorithm in Coq theorem 
-prover given the fact that Schulze is not used in any democratic election, and Coq is not serious business in 
-development of mathematical theories or software artefact.   Well, the honest answer 
-is that  I want to graduate (hopefully), but it's still not convincing argument because I could have chosen 
-some other project and graduate.  On the serious note, this thesis started as a quest to 
-find the answer of question  "Can we afford bug or bugs in software used for vote counting ?".  Given that I am 
-computer scientist by profession, I would not try to justify my decisions by excessive use of philosophical 
-arguments, but at this point it seems very apt to first investigate this question from philosophical point. 
+\section{Motivation and Problem Statement}
+ \fix{What is the motivation behind this research ? Clearly state your \
+      Problem statement}
+	      
+  Before I start diving deep into explaining the bits and pieces 
+  of electronic voting, Schulze method, and Coq theorem prover, 
+  I still need to persuade the reader that why this thesis 
+  exists in first place ?  Why did I choose to certify Schulze 
+  algorithm in Coq given the fact that it is not used in 
+  any democratic election and Coq is not serious business
+  in certifying the software used in electronic voting.  
+  Probably, this is the only time where I would unearth 
+  the philosopher inside me and go to length to explain 
+  the implication of my work. 
+  
+  
+       
+%  Well, the honest answer is that  I want to graduate (hopefully), but
+%  it's still not convincing argument because I could have chosen 
+%  some other project and graduate. 
+%   
+  [Motivate should refer to some past research, but none of 
+  them address the problem of bugs in software.  
+  
+  On the serious note, the motivation
+  behind this thesis to find the answer of question:  
+  
+  Can we afford bugs in software used for vote counting, and 
+  can we engineer a system which has all the "desirable properties" ?
+  
+  We would answer the 
+  
+    
+      
+ 
 
-"People shouldn't be afraid of their government. Governments should be afraid of their people."
-― Alan Moore, V for Vendetta 
+\section{Contribution}
 
+	\subsection{Publication}
 
-"Those who cast the vote decides nothing. Those who count the vote decide everything."
-―  Joseph Stalin
-
-
-"The best weapon of a dictatorship is secrecy, but the best weapon of a democracy should be the 
-weapon of openness. " 
-―   Niels Bohr
-
-The answer depends on how you perceive democracy.  For a dictator, probably  bug in the 
-vote software would be a natural choice, among many others,  to rig the election. If you firmly believe 
-in democracy and democratic values, then 
-among many other things, transparency and bug freeness in vote counting software  would also be 
-in your agenda. There is no doubt that technology can play a critical role in maintaining the democratic values, 
-but assuming that it is the only factor would be a gross mistake. 
-In Azerbaijan's 2013 election, the running president Ilham Aliyev launched a iPhone app, to boost the 
-credibility of election, which enabled the citizens of Azerbaijan to 
-track the tallies as counting took place. There was just one problem. The app already showed that 
-Ilham Aliyev elected before even a ballot was counted.  In this particular case, technology merely helped in 
-surfacing the problem, but it did not do any other thing.  More often technology can be used to hide 
-the transparency of system than making it evident specially in corrupt society for personal gain. 
-
-
-Democracy is a complex system of different actors interacting with each other in certain fashion.  How to make 
-these interaction more productive and better for society, I leave this to political scientists and social scientist
-to figure out, and I stick to my job as a technology enabler.  This thesis is  my journey 
-(with my supervisor) about finding  a way to make vote counting software more robust and transparent.
-
+\section{Outline of the Chapters}
+%
+%Given that I am 
+%computer scientist by profession, I would not try to justify my decisions by excessive use of philosophical 
+%arguments, but at this point it seems very apt to first investigate this question from philosophical point. 
+%
+%
+%
+%The answer depends on how you perceive democracy.  For a dictator, probably  bug in the 
+%vote software would be a natural choice, among many others,  to rig the election. If you firmly believe 
+%in democracy and democratic values, then 
+%among many other things, transparency and bug freeness in vote counting software  would also be 
+%in your agenda. There is no doubt that technology can play a critical role in maintaining the democratic values, 
+%but assuming that it is the only factor would be a gross mistake. 
+%In Azerbaijan's 2013 election, the running president Ilham Aliyev launched a iPhone app, to boost the 
+%credibility of election, which enabled the citizens of Azerbaijan to 
+%track the tallies as counting took place. There was just one problem. The app already showed that 
+%Ilham Aliyev elected before even a ballot was counted.  In this particular case, technology merely helped in 
+%surfacing the problem, but it did not do any other thing.  More often technology can be used to hide 
+%the transparency of system than making it evident specially in corrupt society for personal gain. 
+%
+%
+%Democracy is a complex system of different actors interacting with each other in certain fashion.  How to make 
+%these interaction more productive and better for society, I leave this to political scientists and social scientist
+%to figure out, and I stick to my job as a technology enabler.  This thesis is  my journey 
+%(with my supervisor) about finding  a way to make vote counting software more robust and transparent.
 
 
 

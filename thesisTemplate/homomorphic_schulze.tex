@@ -1,0 +1,36 @@
+\chapter{Homomorphic Schulze Algorithm : Axiomatic Approach}
+\label{cha:homormorphic_schulze}
+Same as the last chapter, introduce the motivation and the high-level picture to
+readers, and introduce the sections in this chapter. 
+
+The problem with the previous methods is it's clearly exposes the ballots 
+in plaintext possible leading to coercion. 
+
+\section{Verifiable Homomorphic Tallying}
+  \subsection{Ballot Representation}
+     Argue here why do we changed the ballot representation 
+     to encrypted matrix
+     \subsubsection{Validity of Ballots}
+  \subsection{Cryptographic Primitives}
+  	\subsubsection{Construction Primitive}
+  	  Write here about how you construct the data
+  	\subsubsection{Verification Primitive}
+  	  Write here about how you verify the constructed 
+  	  data
+
+\section{Realization in Theorem Prover}
+    Discuss the primitives and axioms
+\section{Correctness by Construction}
+  Describe inductive data type and assertion in the 
+  system to make sure you can not construct any 
+  illegal term
+\section{Implementation : A Experience Report}
+  \subsection{Extraction}
+  \subsection{Unicrypt : Java Library for Realizing Cryptographic Primitives}
+     
+\section{Experimental Result and Scrutiny Sheet} 
+  Here goes the result and certificate
+  Also point here the weakness of the system is
+\section{summary}
+  Discuss here the weakness of system and pave the path to next chapter
+  that how software independence can help in verifying the election
