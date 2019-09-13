@@ -53,7 +53,8 @@ we can not expect a true democracy.
   
  Electronic voting is very different from paper ballot election. 
  Reasoning 
- about privacy and verifiability in paper ballot election 
+ about privacy and verifiability and many other properties 
+ in paper ballot election 
  is straight forward, but we can not do the same for 
  electronic voting election. The reason is, electronic voting constitutes 
  of various untrusted component of software
@@ -63,11 +64,58 @@ we can not expect a true democracy.
  processor. https://github.com/xoreaxeaxeax/sandsifter} which 
  exposes a large attack surface. These attack surfaces could 
  potentially be exploited for illegal gain in election. 
+ Even though electronic voting is gaining popularity, none so far has 
+ addressed the software bug issue in electronic voting context. 
+ Most of the software used in electronic voting process are 
+ inadequately tested which evidently can not rule out all 
+ the possibilities.
+
+ \textbf{Properties of electronic voting protocols}
+  How should we measure the quality of electronic voting protocol. 
+  What is a good voting protocol ? 
+  The agreed upto consensus in electronic voting research
+  community is or commonly sought properties are  
+  [http://www.lsv.fr/Projects/anr-avote/PUBLIS/DKR-jcs08.pdf]
+  [Receipt free secret ballot elections Jose Benaloh paper]
+  
+ \begin{itemize}
+ \item Privacy 
+ \item Verifiability
+ \item Uncoercibility
+ \item 
+ \end{itemize} 
  
- Even though electronic voting is gaining popularity, none of 
+ \textbf{Motivation and Thesis Statement}:
+ [Come back here and add more context]
+ Electronic voting has gained a lot of attention in recent year, 
+ and there are many related work which 
+ addresses different issues of electronic voting in
+ symbolic model.  
+ 
+   
+ but there are very few or almost none, to best of my knowledge, 
+ which has used theorem prover to implement the counting algorithm 
+ and verify the its correctness properties. 
+ [Reference: Flory Verity, Milad's work on STV, may be more ].
+ 
+   
+ After inspecting the current state of art in electronic voting, we 
+ asked ourselves two questions
+ 1. Can we engineer a system which is formally verified to 
+    guarantee the correctness property, and practical enough
+    to count the real life election involving millions of ballots ? 
+ 2. Can we decouple the verifiability from implementation i.e. 
+    generating enough evidence so that any independent auditor can 
+    verify the outcome of election. ? 
+  
+ 
+ of 
  the software used in the election process is verified, but just
  tested. One of the most natural question to ask is that 
  can we trust the result if software is buggy, or a more fundamental, 
+ 
+ 
+ 
  why should we trust the result produced by a software even 
  if it's formally proved correct ? This thesis is an attempt to 
  explore these question by using Schulze method as a case study.
