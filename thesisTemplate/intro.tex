@@ -70,6 +70,7 @@ we can not expect a true democracy.
  inadequately tested which evidently can not rule out all 
  the possibilities.
 
+Move this to electronic voting chapter
  \textbf{Properties of electronic voting protocols}
   How should we measure the quality of electronic voting protocol. 
   What is a good voting protocol ? 
@@ -84,13 +85,52 @@ we can not expect a true democracy.
  \item Uncoercibility
  \item 
  \end{itemize} 
+
+\textbf{Properties of Electronic voting} 
+ Some properties commonly sought forvoting protocols are the following:–Eligibility: Only legitimate voters can vote, and only once.–Fairness: No early results can be obtained which could influence the remain-ing voters.–Individual verifiability: A voter can verify that her vote was really counted.–Universal verifiability: The published outcome really is the sum of all thevotes.–Vote-privacy: The fact that a particular voter voted in a particular way isnot revealed to anyone.–Receipt-freeness: A voter does not gain any information (areceipt)whichcan be used to prove to a coercer that she voted in a certain way.–Coercion-resistance: A voter cannot cooperate with a coercer to prove tohim that she voted in a certain way.
+ 
  
  \textbf{Motivation and Thesis Statement}:
- [Come back here and add more context]
- Electronic voting has gained a lot of attention in recent year, 
- and there are many related work which 
- addresses different issues of electronic voting in
- symbolic model.  
+ [The motivation is that there are plenty of work in symbolic model, but so far no one has 
+  tried to implement the algorithm in theorem prover and prove its properties. There are some 
+  work by Carsten, Dirk, Flory, and Milad]
+  
+ Electronic voting has gained a lot of attention in recent year,  and  there are extensive work which 
+ addresses the different issues related to electronic voting protocols  in symbolic model, 
+ but there are very few, to the best of my knowledge, 
+ which has used theorem prover to implement the voting protocol (counting algorithm)
+ and verify its correctness properties. 
+ \cite{10.1007/978-3-540-31987-0_14}, and  \cite{Delaune2010} have used pi-calculus to model 
+ and analyse various properties, fairness, eligibility, vote-privacy, receipt-freeness and coercion-resistant,  
+ of the protocol FOO developed by \cite{10.1007/3-540-57220-1_66}.  \cite{Backes:2008:AVR:1380848.1381255}
+ presented a general technique to model  remote electronic 
+ voting protocol and automatically verifying  its security properties using pi-calculus. 
+ \cite{5992139} have used pi-calculus to analyse the ballot secrecy of \cite{Helios:2016:HVS}.
+ \cite{10.1007/978-3-642-28641-4_7} have used pi-calculus to ascertain the properties of 
+ Norwegian electronic voting protocol.
+ \cite{10.1007/978-3-319-68687-5_7} have used Tamarin  to prove receipt-freeness 
+ and vote-privacy of Selene voting protocol \citep{Selene}.  Most of these work differs from ours
+ in the sense that their primary focus is verification of security protocol in  
+ Dolev-Yao model or  complexity-theoretic model, whereas our work is 
+ more focused on verified implementation and  verifiability  aspect of election.
+[Note to myself: Cartauditable correctness of implementations
+ 
+ The closest to our work is \cite{DeYoung:2012:LLV}, \cite{Pattinson:2015:VCM}, \cite{Pattinson:2016:MSP},
+ \cite{Verity:2017:FVI:3014812.3014845}, and \cite{Ghale:2017:FVS}.  \cite{DeYoung:2012:LLV} 
+ used linear logic\citep{GIRARD19871} to model the different entity in electronic voting as a resource. 
+ The use of linear logic makes it very natural to capture the different entities in electronic voting  
+ depending on their usage by means of modality e.g. a voter can cast only one vote, but he might 
+ need to show his photo id to multiple times at counting booth. \cite{Pattinson:2015:VCM} treated 
+ the process of vote counting from
+ the perspective of mathematical proof. They used (mathematical) proof theory to model the 
+ counting. \cite{Ghale:2017:FVS} have formalized the single transferable votes in Coq and 
+ extracted a Haskell code from the formalization. The extracted Haskell code produces the result 
+ and a certificate on a given set of input ballots. The certificate can be used by any third party to verify 
+ or audit the outcome of election result.  However, none of these work considers the encrypted ballots, 
+ and they simple count on plaintext ballot. Our work 
+ 
+ 
+ 
  
    
  but there are very few or almost none, to best of my knowledge, 
