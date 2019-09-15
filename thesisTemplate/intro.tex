@@ -69,37 +69,14 @@ we can not expect a true democracy.
  Most of the software used in electronic voting process are 
  inadequately tested which evidently can not rule out all 
  the possibilities.
-
-Move this to electronic voting chapter
- \textbf{Properties of electronic voting protocols}
-  How should we measure the quality of electronic voting protocol. 
-  What is a good voting protocol ? 
-  The agreed upto consensus in electronic voting research
-  community is or commonly sought properties are  
-  [http://www.lsv.fr/Projects/anr-avote/PUBLIS/DKR-jcs08.pdf]
-  [Receipt free secret ballot elections Jose Benaloh paper]
   
- \begin{itemize}
- \item Privacy 
- \item Verifiability
- \item Uncoercibility
- \item 
- \end{itemize} 
-
-\textbf{Properties of Electronic voting} 
- Some properties commonly sought forvoting protocols are the following:–Eligibility: Only legitimate voters can vote, and only once.–Fairness: No early results can be obtained which could influence the remain-ing voters.–Individual verifiability: A voter can verify that her vote was really counted.–Universal verifiability: The published outcome really is the sum of all thevotes.–Vote-privacy: The fact that a particular voter voted in a particular way isnot revealed to anyone.–Receipt-freeness: A voter does not gain any information (areceipt)whichcan be used to prove to a coercer that she voted in a certain way.–Coercion-resistance: A voter cannot cooperate with a coercer to prove tohim that she voted in a certain way.
- 
- 
- \textbf{Motivation and Thesis Statement}:
- [The motivation is that there are plenty of work in symbolic model, but so far no one has 
-  tried to implement the algorithm in theorem prover and prove its properties. There are some 
-  work by Carsten, Dirk, Flory, and Milad]
-  
+ \textbf{Motivation and Research Statement}:
  Electronic voting has gained a lot of attention in recent year,  and  there are extensive work which 
- addresses the different issues related to electronic voting protocols  in symbolic model, 
- but there are very few, to the best of my knowledge, 
- which has used theorem prover to implement the voting protocol (counting algorithm)
- and verify its correctness properties. 
+ addresses the different issues related of electronic voting protocols  in symbolic model.
+% , 
+% but there are very few, to the best of my knowledge, 
+% which has used theorem prover to implement the voting protocol (counting algorithm)
+% and verify its correctness properties. 
  \cite{10.1007/978-3-540-31987-0_14}, and  \cite{Delaune2010} have used pi-calculus to model 
  and analyse various properties, fairness, eligibility, vote-privacy, receipt-freeness and coercion-resistant,  
  of the protocol FOO developed by \cite{10.1007/3-540-57220-1_66}.  \cite{Backes:2008:AVR:1380848.1381255}
@@ -113,102 +90,119 @@ Move this to electronic voting chapter
  in the sense that their primary focus is verification of security protocol in  
  Dolev-Yao model or  complexity-theoretic model, whereas our work is 
  more focused on verified implementation and  verifiability  aspect of election.
-[Note to myself: Cartauditable correctness of implementations
+[Note to myself: Carsten has used the term "auditable correctness of implementations" for this]
  
  The closest to our work is \cite{DeYoung:2012:LLV}, \cite{Pattinson:2015:VCM}, \cite{Pattinson:2016:MSP},
  \cite{Verity:2017:FVI:3014812.3014845}, and \cite{Ghale:2017:FVS}.  \cite{DeYoung:2012:LLV} 
  used linear logic\citep{GIRARD19871} to model the different entity in electronic voting as a resource. 
- The use of linear logic makes it very natural to capture the different entities in electronic voting  
- depending on their usage by means of modality e.g. a voter can cast only one vote, but he might 
+ The use of linear logic makes it very natural to capture the different entities in electronic voting,  
+ depending on their usage, by means of modality e.g. a voter can cast only one vote, but he might 
  need to show his photo id to multiple times at counting booth. \cite{Pattinson:2015:VCM} treated 
  the process of vote counting from
  the perspective of mathematical proof. They used (mathematical) proof theory to model the 
  counting. \cite{Ghale:2017:FVS} have formalized the single transferable votes in Coq and 
  extracted a Haskell code from the formalization. The extracted Haskell code produces the result 
- and a certificate on a given set of input ballots. The certificate can be used by any third party to verify 
+ and a certificate for a given set of input ballots. The certificate can be used by any third party to verify 
  or audit the outcome of election result.  However, none of these work considers the encrypted ballots, 
- and they simple count on plaintext ballot. Our work 
+ and they simply count on plaintext ballot which is susceptible to "italian attack" \citep{Benaloh:2009:SSC}. 
+ This work not only considers the plaintext ballot, but extends the counting to encrypted ballot 
+ using homomorphic encryption and uses the zero-knowledge-proof to make sure that outcome of 
+election can be verified by any independent third party. 
  
- 
- 
- 
-   
- but there are very few or almost none, to best of my knowledge, 
- which has used theorem prover to implement the counting algorithm 
- and verify the its correctness properties. 
- [Reference: Flory Verity, Milad's work on STV, may be more ].
- 
-   
- After inspecting the current state of art in electronic voting, we 
- asked ourselves two questions
- 1. Can we engineer a system which is formally verified to 
+
+After inspecting the current state of art in electronic voting, we 
+ asked ourselves two questions:
+ \begin{enumerate}
+  \item Can we engineer a system which is formally verified to 
     guarantee the correctness property, and practical enough
     to count the real life election involving millions of ballots ? 
- 2. Can we decouple the verifiability from implementation i.e. 
+ \item  Can we decouple the verifiability from implementation i.e. 
     generating enough evidence so that any independent auditor can 
-    verify the outcome of election. ? 
+    ascertain the outcome of election without trusting the implementation 
+    of software used to conduct the election ? 
+  \end{enumerate}
   
- 
- of 
- the software used in the election process is verified, but just
- tested. One of the most natural question to ask is that 
- can we trust the result if software is buggy, or a more fundamental, 
- 
- 
- 
- why should we trust the result produced by a software even 
- if it's formally proved correct ? This thesis is an attempt to 
- explore these question by using Schulze method as a case study.
- [To myself : Can you improve this statement]   
- \footnote{At the time of writing this thesis, Microsoft and Galios 
-  announced ElectionGuard}
-   
- 
+  
+ In order to answer these two questions, we needed two things: i) A voting protocol and ii): A theorem 
+ prover. For voting protocol, we settled down with \cite{Schulze:2011:NMC},  and for theorem prover, our preference 
+ was \cite{Bertot:2004:ITP}. Even though Schulze method is not used in any democratic election, the reason 
+ we went ahead with it because it is interesting  and at the same time, non-trivial. 
+ Schulze's method elects  a single winner based on 
+preferential votes.  At the same time, Arrow's impossibility theorem \citep{Arrow:1950:DCS} states
+ that no preferential voting 
+scheme can have all the desired properties established by  social choice theorist,
+the Schulze's method offers a good balance. Many of these properties are already 
+established in his original paper.  We will discuss more about Schulze method in 
+\ref{cha:schulze_method}, and about its properties in \ref{cha:machine_checked}. The 
+reason for choosing Coq is that it supports an expressive logic and  (crucial for us) dependent 
+inductive types.  Coq has a well developed extraction facility that 
+we use to extract proofs into OCaml programs, and using these extracted OCaml programs, we 
+have counted the ballots from election to produce the result.  We will discuss more about the Coq in 
+\ref{cha:background}
+
+
+
 \textbf{Chapter Overview}
-[Write chapter overview at each section]
+[Leave it till the end. Do I need chapter overview for this chapter ?]
 
 
-\section{Motivation and Problem Statement}
- \fix{What is the motivation behind this research ? Clearly state your \
-      Problem statement}
+%\section{Motivation and Problem Statement}
+% \fix{What is the motivation behind this research ? Clearly state your \
+%      Problem statement}
 	      
-  Before I start diving deep into explaining the bits and pieces 
-  of electronic voting, Schulze method, and Coq theorem prover, 
-  I still need to persuade the reader that why this thesis 
-  exists in first place ?  Why did I choose to certify Schulze 
-  algorithm in Coq given the fact that it is not used in 
-  any democratic election and Coq is not serious business
-  in certifying the software used in electronic voting.  
-  Probably, this is the only time where I would unearth 
-  the philosopher inside me and go to length to explain 
-  the implication of my work. 
-  
+%  Before I start diving deep into explaining the bits and pieces 
+%  of electronic voting, Schulze method, and Coq theorem prover, 
+%  I still need to persuade the reader that why this thesis 
+%  exists in first place ?  Why did I choose to certify Schulze 
+%  algorithm in Coq given the fact that it is not used in 
+%  any democratic election and Coq is not serious business
+%  in certifying the software used in electronic voting.  
+%  Probably, this is the only time where I would unearth 
+%  the philosopher inside me and go to length to explain 
+%  the implication of my work. 
+%  
   
        
 %  Well, the honest answer is that  I want to graduate (hopefully), but
 %  it's still not convincing argument because I could have chosen 
 %  some other project and graduate. 
-%   
-  [Motivate should refer to some past research, but none of 
-  them address the problem of bugs in software.  
-  
-  On the serious note, the motivation
-  behind this thesis to find the answer of question:  
-  
-  Can we afford bugs in software used for vote counting, and 
-  can we engineer a system which has all the "desirable properties" ?
-  
-  We would answer the 
-  
+%%   
+%  [Motivate should refer to some past research, but none of 
+%  them address the problem of bugs in software.  
+%  
+%  On the serious note, the motivation
+%  behind this thesis to find the answer of question:  
+%  
+%  Can we afford bugs in software used for vote counting, and 
+%  can we engineer a system which has all the "desirable properties" ?
+%  
+%  We would answer the 
+%  
     
       
  
+ 
 
 \section{Contribution}
+ 	
 
 	\subsection{Publication}
+	
 
 \section{Outline of the Chapters}
+[Rewrite again when you finish everything]
+In chapter 2, we will give a brief history of electronic voting, the glitches that cause some countries 
+to withdraw from electronic voting.  
+
+
+
+We will evaluate our work based on the agreed upon properties of electronic voting in 
+the research community.  It is privacy, verifiability and practicality. In the end of each chapter, 
+we will give a critical summary of  our work and which parameter is passed successfully and which 
+one it failed. 
+
+
+
 %
 %Given that I am 
 %computer scientist by profession, I would not try to justify my decisions by excessive use of philosophical 
@@ -236,37 +230,37 @@ Move this to electronic voting chapter
 %(with my supervisor) about finding  a way to make vote counting software more robust and transparent.
 
 
-
-\section{Why Schulze ?}
-\label{sec:thesisstatement}
-Even though Schulze method is not used in any democratic election, we settled down 
-with it because it is interesting  and at the same time, non-trivial. 
- Schulze's method [cite Schulze]  elects  a single winner based on 
-preferential votes.  At the same time, Arrow's impossibility theorem [cite Arrow]  states that no preferential voting 
-scheme can have all the desired properties established by  social choice theorist,
-the Schulze's method offers a good balance. Many of these properties are already 
-established in his original paper. These properties are Non-dictatorship,  Pareto,  Monotonicity, 
-Resolvability, Independence of Clones 
-
-I will discuss some of its properties in next chapter. 
-
-
-A  quantitative  comparison of voting methods 
-[cite An Optimal Single-Winner Preferential Voting System Based onGame Theory]  also shows that 
-Schulze voting is better (in a game theoretic sense) than other, more established, systems.  The 
-Schulze Method is rapidly gaining popularity in the open software community, and It is one of the most 
-popular voting protocol over internet to elect candidates. At of 22 July 2019, Wikipedia entry on Schulze 
-method [cite Wiki entry] shows at least 70 users, and some of 
-notable users among them are Gentoo Foundation, Debian, GNU Privacy Guard (GnuPG), Ubuntu, and 
-Pirate Party in Australia, Austria, Belgium, Brazil, Germany, Iceland, Italy, 
-Netherlands, New Zealand, Sweden, Switzerland, and United States.  
-
-
-
-
-
-
-\section{Why Coq}
+%
+%\section{Why Schulze ?}
+%\label{sec:thesisstatement}
+%Even though Schulze method is not used in any democratic election, we settled down 
+%with it because it is interesting  and at the same time, non-trivial. 
+% Schulze's method [cite Schulze]  elects  a single winner based on 
+%preferential votes.  At the same time, Arrow's impossibility theorem [cite Arrow]  states that no preferential voting 
+%scheme can have all the desired properties established by  social choice theorist,
+%the Schulze's method offers a good balance. Many of these properties are already 
+%established in his original paper. These properties are Non-dictatorship,  Pareto,  Monotonicity, 
+%Resolvability, Independence of Clones 
+%
+%I will discuss some of its properties in next chapter. 
+%
+%
+%A  quantitative  comparison of voting methods 
+%[cite An Optimal Single-Winner Preferential Voting System Based onGame Theory]  also shows that 
+%Schulze voting is better (in a game theoretic sense) than other, more established, systems.  The 
+%Schulze Method is rapidly gaining popularity in the open software community, and It is one of the most 
+%popular voting protocol over internet to elect candidates. At of 22 July 2019, Wikipedia entry on Schulze 
+%method [cite Wiki entry] shows at least 70 users, and some of 
+%notable users among them are Gentoo Foundation, Debian, GNU Privacy Guard (GnuPG), Ubuntu, and 
+%Pirate Party in Australia, Austria, Belgium, Brazil, Germany, Iceland, Italy, 
+%Netherlands, New Zealand, Sweden, Switzerland, and United States.  
+%
+%
+%
+%
+%
+%
+%\section{Why Coq}
 \label{sec:outline}
 How many chapters you have? You may have Chapter~\ref{cha:background},
 Chapter~\ref{cha:design}, Chapter~\ref{cha:methodology},
