@@ -120,12 +120,21 @@ After inspecting the current state of art in electronic voting, we
     generating enough evidence so that any independent auditor can 
     ascertain the outcome of election without trusting the implementation 
     of software used to conduct the election ? 
+  \item How "good"  is our proposed solution ?
   \end{enumerate}
   
   
- In order to answer these two questions, we needed two things: i) A voting protocol and ii): A theorem 
- prover. For voting protocol, we settled down with \cite{Schulze:2011:NMC},  and for theorem prover, our preference 
- was \cite{Bertot:2004:ITP}. Even though Schulze method is not used in any democratic election, the reason 
+ In order to answer these three questions, we needed three things:
+\begin{enumerate}
+  \item A voting protocol
+  \item A theorem prover to implement the voting protocol
+  \item Parameters, agreed upon properties in electronic voting research community, against which 
+  		  we will measure our solution
+\end{enumerate} 
+ 
+ \textbf{Voting Protocol:}
+ For voting protocol, we settled down with \cite{Schulze:2011:NMC}.
+ Even though Schulze method is not used in any democratic election, the reason 
  we went ahead with it because it is interesting  and at the same time, non-trivial. 
  Schulze's method elects  a single winner based on 
 preferential votes.  At the same time, Arrow's impossibility theorem \citep{Arrow:1950:DCS} states
@@ -133,17 +142,41 @@ preferential votes.  At the same time, Arrow's impossibility theorem \citep{Arro
 scheme can have all the desired properties established by  social choice theorist,
 the Schulze's method offers a good balance. Many of these properties are already 
 established in his original paper.  We will discuss more about Schulze method in 
-\ref{cha:schulze_method}, and about its properties in \ref{cha:machine_checked}. The 
+\ref{cha:schulze_method}, and about its properties in \ref{cha:machine_checked}. 
+
+\textbf{Theorem Prover:}
+Our preference for theorem prover was Coq \citep{Bertot:2004:ITP}. The 
 reason for choosing Coq is that it supports an expressive logic and  (crucial for us) dependent 
 inductive types.  Coq has a well developed extraction facility that 
 we use to extract proofs into OCaml programs, and using these extracted OCaml programs, we 
 have counted the ballots from election to produce the result.  We will discuss more about the Coq in 
-\ref{cha:background}
+\ref{cha:background}. 
+
+\textbf{Properties of Electronic Voting Protocol:} 
+ What makes a electronic voting protocol  "good" or "desirable" \citep{5958051}, 
+ \citep{Benaloh:1994:RSE:195058.195407},  \citep{Delaune:2010:VPT} ?
+ 
+	\begin{itemize}
+	\item Correctness
+	\item Coercion-resistance
+	\item Eligibility
+	\item Fairness
+	\item Privacy
+	\item Practicality
+	\item Individual-verifiability
+	\item Universal-verifiability
+	\item Receipt-freeness
+	\end{itemize}
 
 
-
-\textbf{Chapter Overview}
-[Leave it till the end. Do I need chapter overview for this chapter ?]
+We are only concern about the \textit{Correctness}, \textit{Coercion-resistance}, 
+ \textit{Practicality}, \textit{Privacy}, \textit{Universal-verifiability}, and we will measure 
+ our solution against these properties. 
+ 
+ 
+%
+%\textbf{Chapter Overview}
+%[Leave it till the end. Do I need chapter overview for this chapter ?]
 
 
 %\section{Motivation and Problem Statement}
