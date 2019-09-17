@@ -70,7 +70,7 @@ we can not expect a true democracy.
  inadequately tested which evidently can not rule out all 
  the possibilities.
   
- \textbf{Motivation and Research Statement}:
+ \section{Motivation and Research Statement}:
  Electronic voting has gained a lot of attention in recent year,  and  there are extensive work which 
  addresses the different issues related of electronic voting protocols  in symbolic model.
 % , 
@@ -132,7 +132,7 @@ After inspecting the current state of art in electronic voting, we
   		  we will measure our solution
 \end{enumerate} 
  
- \textbf{Voting Protocol:}
+ \subsection{Voting Protocol}
  For voting protocol, we settled down with \cite{Schulze:2011:NMC}.
  Even though Schulze method is not used in any democratic election, the reason 
  we went ahead with it because it is interesting  and at the same time, non-trivial. 
@@ -144,7 +144,7 @@ the Schulze's method offers a good balance. Many of these properties are already
 established in his original paper.  We will discuss more about Schulze method in 
 \ref{cha:schulze_method}, and about its properties in \ref{cha:machine_checked}. 
 
-\textbf{Theorem Prover:}
+\subsection{Theorem Prover:}
 Our preference for theorem prover was Coq \citep{Bertot:2004:ITP}. The 
 reason for choosing Coq is that it supports an expressive logic and  (crucial for us) dependent 
 inductive types.  Coq has a well developed extraction facility that 
@@ -152,26 +152,71 @@ we use to extract proofs into OCaml programs, and using these extracted OCaml pr
 have counted the ballots from election to produce the result.  We will discuss more about the Coq in 
 \ref{cha:background}. 
 
-\textbf{Properties of Electronic Voting Protocol:} 
- What makes a electronic voting protocol  "good" or "desirable" \citep{5958051}, 
- \citep{Benaloh:1994:RSE:195058.195407},  \citep{Delaune:2010:VPT} ?
+[Todo : Fill the details]
+
+\subsection{Properties of Electronic Voting Protocol:} 
+ What makes a electronic voting protocol  "good" or "desirable" ?  Some commonly sought 
+ properties which a electronic voting protocol must have are given below \citep{5958051}, 
+ \citep{Benaloh:1994:RSE:195058.195407},  \citep{Delaune:2010:VPT}, \citep{Bernhard:2017:PES}.
+ \begin{itemize}
  
-	\begin{itemize}
-	\item Correctness
-	\item Coercion-resistance
-	\item Eligibility
-	\item Fairness
-	\item Privacy
-	\item Practicality
-	\item Individual-verifiability
-	\item Universal-verifiability
-	\item Receipt-freeness
-	\end{itemize}
+  \item Correctness:
+ 	The produced results are correct, and convincing to all leaving no  ground for suspicion. 
+ 	
+ \item Privacy:
+    All the votes must be secret, and voter should not be able to convince anyone the 
+    value of his vote.
+ 
+ \item End-to-end Verifiability:
+ 
+ \begin{itemize}
+  \item Cast-as-intended: Every voter can verify that their ballot was cast as
+  intended
+  \item Collected-as-cast: Every voter can verify that their ballot was collected as
+  cast
+  \item Tallied-as-cast: Everyone can verify final result on the basis of the
+  collected ballots.
+\end{itemize}
+
+\item Practicality:
+  
+\item Coercion-resistance:
+	A voter cannot cooperate with a coercer to prove to him that she voted in a certain way.
+  
+
+\item Voter Eligibility:
+  Only eligible voter can cast the ballot, and only once.
+
+\item Fairness:
+  No intermediate results can be obtained which could influence the remain-ing voters
+
+\item Receipt-freeness:
+A voter does not gain any information (receipt) which can be used to prove to a coercer that
+she voted in a certain way
+
+ \end{itemize}
+ 
+  
+ 
+% 
+%	\begin{itemize}
+%	\item Correctness : The produced results are correct, and convincing to all leaving no 
+%	          ground for suspicion. 
+%	\item Coercion-resistance: 
+%	\item Eligibility
+%	\item Fairness
+%	\item Privacy
+%	\item Practicality
+%	\item Individual-verifiability
+%	\item Universal-verifiability
+%	\item Receipt-freeness
+%	\end{itemize}
 
 
-We are only concern about the \textit{Correctness}, \textit{Coercion-resistance}, 
- \textit{Practicality}, \textit{Privacy}, \textit{Universal-verifiability}, and we will measure 
- our solution against these properties. 
+The focus of our study is the \textit{Correctness}, 
+ \textit{Practicality}, \textit{Verifiability}, i.e. generating enough evidence so that 
+ everyone can verify final result on the basis of the collected ballots, and \textit{Privacy}. In the critical 
+ summary of each chapter, we will measure our solution against these properties. 
  
  
 %

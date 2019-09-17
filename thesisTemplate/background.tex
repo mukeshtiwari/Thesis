@@ -5,7 +5,7 @@
 %chapter. 
 
 
-\section{Electronic Voting}
+
    Electronic voting is a nightmare because the minuscule possibility of 
    a bug in software used in voting could lead to a disaster, possibly 
    inverting the results
@@ -40,6 +40,7 @@
    
 %  The input method, form of ballot, used the countries participating 
 %  in electronic voting can be broadly divided into three group 
+\section{Electronic Voting}
   Electronic voting is already happening, and the
   arguments in favour of electronic voting 
   include increased voter turnout, faster result and lower cost. The Senate 
@@ -274,7 +275,7 @@
    prove the  correctness of software
    by using formal verification techniques \cite{BECKERT2014115}.
    I will argue that  having a rigorous software development methodology would alleviate 
-	the bug problem with few case studies. The success of these 
+	the bug problem with few case studies as a supporting evidence. The success of these 
 	case studies should be a good motivation for us to 
 	adopt formal method for electronic voting software development. 
    
@@ -387,26 +388,198 @@
 	rigorously using formal method techniques.  
 	
 	
- \subsection{Electronic Voting Properties}
-   	\subsubsection{Privacy}
-         Give some overview to Encryption, Decryption and 
-         Zero knowledge proof
-       
-   	\subsubsection{Verifiability}
-       Verifiability in electronic voting context is that outcome 
-       any one verify the outcome of election based on produced data. 
-       
+% \subsection{Electronic Voting Properties}
+%   	\subsubsection{Privacy}
+%         Give some overview to Encryption, Decryption and 
+%         Zero knowledge proof
+%       
+%   	\subsubsection{Verifiability}
+%       Verifiability in electronic voting context is that outcome 
+%       any one verify the outcome of election based on produced data. 
+%       
 		
  \subsection{Verification and Verifiability}
-   \fix{How to make electronic voting more successful ?}   
+%   \fix{How to make electronic voting more successful ?}   
    Formal verification is useful in producing the 
    bug free code, but it does not answer the question that 
-   why a voter should trust the formally verified system ? We solely can not 
+   why a voter should trust the formally verified system. We solely can not 
    establish the trust in the system based on argument of 
-   formal verification.  I would call it is a necessary, but not sufficient condition. 
-   Combing both 
+   formal verification.  I would call formal verification a necessary, but not the sufficient condition. 
+   Combing both \emph{verification} of the
+	computer software that counts votes, and
+	\emph{verifiability} of individual counts are critical for
+	building trust in an election process.  Given the mission-critical importance of
+	 correctness of vote-counting,
+	both for the legal integrity of the process and for
+	building public trust,  it is imperative to replace the
+	currently used black-box software for vote-counting with a
+	counterpart that is both verified and produces 
+	evidence, we call it certificate or scrutiny sheet, which can later be used to certify
+	the outcome of election.
+	
+	In order to ascertain that the results of a verified program are
+indeed correct, one therefore needs to
+\begin{enumerate}
+\item read, understand and validate the formal specification: is it
+error free, and does it indeed reflect the intended functionality?
+\item scrutinize the formal correctness proof: has the verification
+been carried out with due diligence, is the proof complete or does
+it rely on other assumptions?
+\item ensure that the computing equipment on which the (verified)
+program is executed has not been tampered with or is otherwise
+compromised, and finally
+\item ascertain that it was indeed the verified program that was
+executed in order to obtain the claimed results.
+\end{enumerate}
+
+\noindent
+The trust in correctness of any result rests on all items above.
+The second two items are
+more problematic as they require trust in the integrity of
+equipment, and individuals, both of which can be hard to ascertain
+once the computation has completed. The
+first two trust requirements can be met by publishing both the
+specification and the correctness proof so that the specification
+can be analysed, and the proof can be replayed. Both need a
+considerable amount of expertise but can be carried out by (ideally
+more than one group of) domain experts. Trust in the correctness of the
+result can still be achieved if a large enough number of domain
+experts manage to replicate the computation, using equipment they
+know is not compromised, and running the program they know has been
+verified. As such, trust in \emph{verified} computation mainly rests
+on a relatively small number of domain experts.
+
+
+	
+
+
    
    
+\subsection{Legal Aspects of Verification and Verifiability}
+Any system for counting votes in democratic elections needs to
+satisfy at least three conditions: (1) each person's vote must be
+counted accurately, according to a mandated procedure, (2) the
+system and process should be subjectively trusted by the electorate,
+(3) there should be an objective basis for such trust, or in other
+words the system must be trustworthy. While subjective trust cannot
+be guaranteed through greater transparency \cite{ONeill:2002:QT}, transparency about
+both the voting system and the actual counting of the vote in a
+particular election are important in reducing errors and ensuring an
+accurate count, promoting public trust and providing the evidential
+basis for demonstrated trustworthiness. In particular, it is a lack
+of transparency that has been the primary source of criticism of
+existing systems, both in the literature
+\cite{Carrier:2012:VCT,Conway:2017:ANS} and among civil
+society organisations \cite{Vogl:2012:WWC} (for example,
+\texttt{blackboxvoting.org} and
+\texttt{trustvote.org}). International commitment to transparency is also
+demonstrated through initiatives such as the Open Government
+Partnership. Another important concept referred to both in the
+literature and by civil society organisations is public
+accountability, which requires both giving an “account” or
+explanation to the public and when called on (for example, in court)
+as well as being held publicly responsible for failures.
+Transparency is thus a crucial component of accountability, although
+the latter will involve other features (such as enforcement
+mechanisms) that are beyond the scope of this paper. 
+
+There are two contexts in which transparency is important in the
+running of elections. First, there should be transparency in Hood's
+sense \cite{Hood:2001:T} as to the process used in elections generally. This is
+generally done through legislation with detailed provisions
+specifying such matters as the voting method to be used 
+%(as noted above, the Schulz method is not generally used in public office
+%elections)
+ as well as the requirements for a vote to count as valid.
+In a semi-automated process, this requires a combination of
+legislation (instructions to humans) and computer code (instructions
+to machines). The second kind of transparency, corresponding to
+Meijer’s use of the term \cite{Meijer:2014:T}, is required in relation to the
+performance of these procedures in a specific election. In a manual
+process, procedural transparency is generally only to
+intermediaries, the scrutineers, who are able to observe the
+handling and tallying of ballot papers in order to monitor officials
+in the performance of their tasks. While the use of a limited number
+of intermediaries is not ideal, measures such as allowing
+scrutineers to be selected by candidates (eg Commonwealth Electoral
+Act 1918 (Australia) s 264) promote public confidence that the
+procedure as a whole is unbiased. However imperfect, procedural
+transparency reduces the risk of error and fraud in execution of the
+mandated procedure and enhances trust. 
+
+Electronic vote counting ought to achieve at least a similar level
+of transparency along both dimensions as manual systems in order to
+promote equivalent levels of trust. Ideally, it would go further
+given physical limitations (such as the number of scrutineers
+able to fit in a room) apply to a smaller part of the process. The
+use of a verified, and fully verifiable system is transparent in both senses, with members of
+the public able to monitor both the rules that are followed
+and the workings and performance of the system in a particular
+instance. 
+
+First, the vote counting procedure needs to be transparent. For
+electronic vote counting, the procedure is specified in both
+legislation (which authorises the electronic vote counting
+procedure) and in the software employed. The use of open source code
+ensures that the public has the same level of access to instructions
+given to the computer as it has to legislative commands given to
+election officials. The use of open source code is crucial as is
+demonstrated through a comparison of different jurisdictions of
+Australia. In Australia, for example, the Federal Senate and NSW
+state election vote counting are based on proprietary black box
+systems while the Australian Capital Territory uses open source
+eVACS software
+\cite{AEC:2013:LMM,Conway:2017:ANS,EA:2016:EVC}. This has
+significant impact on the ability of researchers to detect errors
+both in advance of elections and in time to correct results
+\cite{Conway:2017:ANS}.
+Private verification systems have been less successful, in both
+Australia and the US, in providing equivalent protection against
+error to open source software
+\cite{Carrier:2012:VCT,Conway:2017:ANS}. Further, private
+verification provides a lower level of public transparency than the
+use of manual systems which rely on public legislation (instructions
+to humans) as the primary source of vote counting procedures
+\cite{Carrier:2012:VCT}. It
+should also be noted that there are few public advantages in secrecy
+since security is usually enhanced by adopting an open approach
+(unless high quality open source vote counting software were
+unavailable), and private profit advantages are outweighed by the
+importance of trust in democratic elections. 
+
+Second, verifiability provides a method of ascertaining the
+correctness of
+results of a specific election. External parties are able to check a
+certificate to confirm that the counting process has operated
+according to the rules of the voting procedure.
+% (here, the Schultz method). 
+Under a manual process, tallying and counting can only be confirmed by a small number of scrutineers directly observing human
+officials. The certification process allows greater transparency not
+limited to the number of people able to fit within a physical space,
+although we recognise that physical scrutiny is still required for
+earlier elements of the voting and vote counting process (up to
+verification of optical scanning of ballots). Certification reduces
+the risk of error and fraud that would compromise accuracy and
+provides an evidence-base for trustworthiness. It is also likely to
+increase subjective public trust, although this will require
+engagement with the public as to the nature of verification
+involved. While it is likely that in practice checking will be
+limited to a small group with the technical expertise,
+infrastructure and political interest to pursue it, knowledge as to
+the openness of the model is likely to increase public trust.
+Currently in Australia, neither open source nor proprietary vote
+counting systems provide an equivalent level of procedural
+transparency for monitoring the count in a particular election (for
+example, compare Commonwealth Electoral Act 1918 (Australia) s
+273A). 
+
+Ultimately, legislation, computer code (where relevant) and
+electoral procedures need to combine to safeguard an accurate count
+in which the public has justified confidence. The verification and
+verifiability measures suggested here go further to ensure this than
+current methods used in Australia and, as far as we are aware,
+public office elections around the world.
+
    		
 		
    

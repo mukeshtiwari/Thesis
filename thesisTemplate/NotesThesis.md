@@ -2,6 +2,17 @@
 In [verifying voting schemes](https://www.sciencedirect.com/science/article/pii/S2214212614000246), Beckert et.al has already argued about use of formal methods in 
 electronic voting scheme *We argue that formal methods can and should be used to ensure that such schemes behave as intended and conform to the desired democratic properties.*
 
+#### Linke related to properties of electronic voting scheme
+[Public Evidence from Secret Ballots](https://arxiv.org/pdf/1707.08619.pdf)
+
+[A Practical Privacy Preserving E-Voting
+Protocol Using Dynamic Ballots](https://pdfs.semanticscholar.org/2cdf/62b42699ebf058b4be8d021666c123343515.pdf)
+
+[Survey on Remote Electronic Voting](https://arxiv.org/pdf/1702.02798.pdf)
+
+
+
+
 
 Move this to electronic voting chapter
  \textbf{Properties of electronic voting protocols}
@@ -21,3 +32,8 @@ Move this to electronic voting chapter
  
  \textbf{Properties of Electronic voting} 
  Some properties commonly sought forvoting protocols are the following:–Eligibility: Only legitimate voters can vote, and only once.–Fairness: No early results can be obtained which could influence the remain-ing voters.–Individual verifiability: A voter can verify that her vote was really counted.–Universal verifiability: The published outcome really is the sum of all thevotes.–Vote-privacy: The fact that a particular voter voted in a particular way isnot revealed to anyone.–Receipt-freeness: A voter does not gain any information (areceipt)whichcan be used to prove to a coercer that she voted in a certain way.–Coercion-resistance: A voter cannot cooperate with a coercer to prove to him that she voted in a certain way.
+ 
+ https://arxiv.org/pdf/1707.08619.pdf
+ 
+ 
+ 
