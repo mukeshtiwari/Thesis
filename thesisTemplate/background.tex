@@ -402,7 +402,7 @@
 %   \fix{How to make electronic voting more successful ?}   
    Formal verification is useful in producing the 
    bug free code, but it does not answer the question that 
-   why a voter should trust the formally verified system. We solely can not 
+   why should a voter trust the formally verified system. We solely can not 
    establish the trust in the system based on argument of 
    formal verification.  I would call formal verification a necessary, but not the sufficient condition. 
    Combing both \emph{verification} of the
@@ -417,7 +417,7 @@
 	evidence, we call it certificate or scrutiny sheet, which can later be used to certify
 	the outcome of election.
 	
-	In order to ascertain that the results of a verified program are
+In order to ascertain that the results of a verified program are
 indeed correct, one therefore needs to
 \begin{enumerate}
 \item read, understand and validate the formal specification: is it
@@ -448,11 +448,6 @@ experts manage to replicate the computation, using equipment they
 know is not compromised, and running the program they know has been
 verified. As such, trust in \emph{verified} computation mainly rests
 on a relatively small number of domain experts.
-
-
-	
-
-
    
    
 \subsection{Legal Aspects of Verification and Verifiability}
@@ -580,6 +575,7 @@ verifiability measures suggested here go further to ensure this than
 current methods used in Australia and, as far as we are aware,
 public office elections around the world.
 
+
    		
 		
    
@@ -618,19 +614,36 @@ public office elections around the world.
 %       Write here about why do we need Privacy and Verifiability.
 %       How do we achieve them.
        
-       
-     
-   \subsection{Legislation and Accountability}
-    Write here about what legislation states and how accountability 
-    is enforced. 
-   	 
+%       
+%     
+%   \subsection{Legislation and Accountability}
+%    Write here about what legislation states and how accountability 
+%    is enforced. 
+%   	 
   
 	       
     
    \subsection{Scrutiny Sheet}
-       Inspired by Deductive runtime certification. 
-    We will discuss more on this in chapter 5
+   Scrutiny sheet in tabulation of relevant data to ascertain the result of election. 
+   The idea of requiring that computations provide not only results, but also proofs attesting
+    to the correctness of the computation is not new,
+	and has been put forward in \cite{Arkoudas:2005:DRC} for
+	computations in general, and in \cite{Schurmann:2009:EET} in the context
+	of electronic voting. 
+
+    
    
+\section{Summary}
+We reiterate that to maximise trust, reliability and auditability of electronic vote counting, we
+need both approaches, verification and verifiability, to be combined. To ensure
+(universal) verifiability, we advocate that vote-counting programs
+do not only compute a final result, but additionally produce an
+independently verifiable certificate that attests to the correctness
+of the computation, together with a formal verification that
+valid certificates indeed imply the correct determination of
+winners. Given a certificate-producing vote-counting program, external
+parties or stakeholders can then satisfy themselves to the
+correctness of the count by checking the certificate.   
 
 \fix{Can I introduce Write Hilbert's idea of mathematical formalism/Frege}
 
@@ -786,169 +799,169 @@ augmentation of Calculus of Construction
 
 
 
-
-%\label{sec:problemstatement}
-Now I give a small example which defines natural number, addition of two natural numbers, and 
-proof that addition over natural number is commutative.   We can define 
-natural number in Coq using inductive data type (listing 1.1), addition of the natural numbers 
-(listing 1.2), and proof that addition of natural numbers is commutative written in Gallina (listing 1.3).
-
-\begin{lstlisting}[language=haskell, numbers=none, basicstyle=\ttfamily, 
-caption=Inductive Data Type for Natural Numbers,  captionpos=b, xleftmargin=.1\textwidth]
-
-Inductive Natural : Type :=
- | O : Natural
- | Succ : Natural -> Natural
-
-\end{lstlisting}
-
-More precisely, the interpretation is that Natural is a inductive type with two constructors: i) O representing zero,
-and ii) Succ representing successor which takes a Natural number and gives next Natural number.
-
-\fix{Change the Addition into infix symbol + and use + in proofs. It will convey the idea more clearly}
-\begin{lstlisting}[language=haskell, numbers=none, basicstyle=\ttfamily,  caption=Addition function for Natural Numbers,  captionpos=b, xleftmargin=.1\textwidth]
-
- 
-Fixpoint Addition (n m : Natural) : Natural :=
-  match n with
-  | O => m
-  | Succ n' => Succ (Addition n' m)
-  end.
-
-(* Notation for Addition. Now we can use + instead of 
-   writing Addition *)
-Notation "x + y" := (Addition x y)
-            (at level 50, left associativity).
-\end{lstlisting}
-
-We define the addition by pattern matching on first argument \textbf{n}. When \textbf{n} is 
-O (zero), then we sum is \textbf{m}, and if \textbf{n} is \textbf{Succ n'}, then sum is successor of 
-\textbf{n' +  m}.
-
-\begin{lstlisting}[language=haskell, numbers=none, basicstyle=\ttfamily,  caption=Addition function for Natural Numbers,  captionpos=b, xleftmargin=.1\textwidth]
-
-Theorem Addition_by_zero : forall (n : Natural), n + O = n.
-  refine (fix IHa (n : Natural) : n + O = n :=
-            match n as nz return (nz + O = nz) with
-            | O => eq_refl
-            | Succ n' =>
-              let IHn' := IHa n' in
-              eq_ind_r (fun m => Succ m = Succ n') eq_refl IHn'
-            end).
-Qed.
-
-  
-Lemma Successor_addition : forall (n m : Natural),
-    Succ (n + m) = n + (Succ m).
-  refine
-    (fix IHn (n : Natural) : forall m : Natural,
-        Succ (n + m) = n + (Succ m) :=
-       match n as nz return (forall m : Natural,
-                                Succ (nz + m) =
-                                nz + (Succ m)) with
-       | O => fun m : Natural => eq_refl
-       | Succ n' =>
-         fun m : Natural =>
-           eq_ind (Succ (n' + m))
-                  (fun t => Succ (Succ (n' + m)) = Succ t)
-                  eq_refl (n' + (Succ m)) (IHn n' m)
-       end).
-Qed.
-     
-
-    
-Theorem Addition_is_commutative :
-  forall (n m : Natural), n +  m = m + n.
-  refine
-    (fix IHn (n : Natural) : forall m : Natural,
-        n + m = m + n :=
-       match n as nz return (forall m : Natural,
-                                nz + m =
-                                m + nz) with
-       | O => fun m : Natural => eq_ind_r (fun t => m = t)
-                                      eq_refl
-                                      (Addition_by_zero m)
-       | Succ n' =>
-         fun m  =>
-           eq_ind (Succ (m + n'))
-                  (fun t => Succ (n' + m) = t)
-                  (eq_ind_r (fun t => Succ t = Succ (m + n'))
-                            eq_refl (IHn n' m))
-                  (m + (Succ n'))
-                  (Successor_addition m n')
-       end).
-Qed.
-
-
-\end{lstlisting}
-
-
-We need two additional Lemma:
- i) $Addition\_by\_zero$, a proof of n + 0 = 0,
- and ii) $Successor\_addition$, a proof of Succ (n + m) = n + (Succ m) 
- to prove that addition on Natural is commutative ($Addition\_is\_commutative$), 
- 
- One thing that can't escape from the reader's eyes is that the proofs written in Gallina is verbose, and they don't 
- appear anywhere compared to a proof that would have been written by a mathematician. Well, we can lift the burden 
- of verbosity by using tactics provided by Coq; however, there is no universally accepted solution in Coq community 
- for second problem. There has been some research in declarative style proof writing 
- \footnote{www-verimag.imag.fr/~corbinea/ftp/publis/bricks-poster.pdf}, but it is not widely practised in Coq 
- community. The proof of addition on Natural is commutative re-written using tactics (Listing 1.4)
- 
- 
- \begin{lstlisting}[language=haskell, numbers=none, basicstyle=\ttfamily,  caption=Addition function for Natural Numbers,  captionpos=b, xleftmargin=.1\textwidth]
-
-Lemma Addition_by_zero : forall (n : Natural), n + O = n.
-  induction n; cbn; [auto | rewrite IHn; auto].
-Qed.
-
-
-Lemma Successor_addition : forall (n m : Natural),
-    Succ (n + m) = n + (Succ m).
-Proof.
-  induction n; intros m;
-    cbn; [auto | rewrite <- IHn; auto].
-Qed.
-
-
-Theorem Addition_is_commutative :
-  forall (n m : Natural), n +  m = m + n.
-Proof.
-  induction n; intro m;
-    [rewrite Addition_by_zero |
-     rewrite <- Successor_addition;
-     rewrite <- IHn]; auto.
-Qed.
-
-\end{lstlisting}
-
-Section~\ref{sec:motivation} xxxx.\\
-
-
-Section~\ref{sec:relatedwork} yyyy.\\
-
-
-%\section{Motivation}
-%\label{sec:motivation}
-
-
-%\section{Related work}
-%\label{sec:relatedwork}
-%You may reference other papers. For example: 
-%Generational garbage collection~\citep{LH:83,Moon:84,Ungar:84} is perhaps the
-%single most important advance in garbage collection since the first collectors
-%were developed in the early 1960s. (doi: "doi" should just be the doi part, not
-%the full URL, and it will be made to link to dx.doi.org and resolve.
-%shortname: gives an optional short name for a conference like PLDI '08.)
+%
+%%\label{sec:problemstatement}
+%Now I give a small example which defines natural number, addition of two natural numbers, and 
+%proof that addition over natural number is commutative.   We can define 
+%natural number in Coq using inductive data type (listing 1.1), addition of the natural numbers 
+%(listing 1.2), and proof that addition of natural numbers is commutative written in Gallina (listing 1.3).
+%
+%\begin{lstlisting}[language=haskell, numbers=none, basicstyle=\ttfamily, 
+%caption=Inductive Data Type for Natural Numbers,  captionpos=b, xleftmargin=.1\textwidth]
+%
+%Inductive Natural : Type :=
+% | O : Natural
+% | Succ : Natural -> Natural
+%
+%\end{lstlisting}
+%
+%More precisely, the interpretation is that Natural is a inductive type with two constructors: i) O representing zero,
+%and ii) Succ representing successor which takes a Natural number and gives next Natural number.
+%
+%\fix{Change the Addition into infix symbol + and use + in proofs. It will convey the idea more clearly}
+%\begin{lstlisting}[language=haskell, numbers=none, basicstyle=\ttfamily,  caption=Addition function for Natural Numbers,  captionpos=b, xleftmargin=.1\textwidth]
+%
+% 
+%Fixpoint Addition (n m : Natural) : Natural :=
+%  match n with
+%  | O => m
+%  | Succ n' => Succ (Addition n' m)
+%  end.
+%
+%(* Notation for Addition. Now we can use + instead of 
+%   writing Addition *)
+%Notation "x + y" := (Addition x y)
+%            (at level 50, left associativity).
+%\end{lstlisting}
+%
+%We define the addition by pattern matching on first argument \textbf{n}. When \textbf{n} is 
+%O (zero), then we sum is \textbf{m}, and if \textbf{n} is \textbf{Succ n'}, then sum is successor of 
+%\textbf{n' +  m}.
+%
+%\begin{lstlisting}[language=haskell, numbers=none, basicstyle=\ttfamily,  caption=Addition function for Natural Numbers,  captionpos=b, xleftmargin=.1\textwidth]
+%
+%Theorem Addition_by_zero : forall (n : Natural), n + O = n.
+%  refine (fix IHa (n : Natural) : n + O = n :=
+%            match n as nz return (nz + O = nz) with
+%            | O => eq_refl
+%            | Succ n' =>
+%              let IHn' := IHa n' in
+%              eq_ind_r (fun m => Succ m = Succ n') eq_refl IHn'
+%            end).
+%Qed.
+%
+%  
+%Lemma Successor_addition : forall (n m : Natural),
+%    Succ (n + m) = n + (Succ m).
+%  refine
+%    (fix IHn (n : Natural) : forall m : Natural,
+%        Succ (n + m) = n + (Succ m) :=
+%       match n as nz return (forall m : Natural,
+%                                Succ (nz + m) =
+%                                nz + (Succ m)) with
+%       | O => fun m : Natural => eq_refl
+%       | Succ n' =>
+%         fun m : Natural =>
+%           eq_ind (Succ (n' + m))
+%                  (fun t => Succ (Succ (n' + m)) = Succ t)
+%                  eq_refl (n' + (Succ m)) (IHn n' m)
+%       end).
+%Qed.
+%     
+%
+%    
+%Theorem Addition_is_commutative :
+%  forall (n m : Natural), n +  m = m + n.
+%  refine
+%    (fix IHn (n : Natural) : forall m : Natural,
+%        n + m = m + n :=
+%       match n as nz return (forall m : Natural,
+%                                nz + m =
+%                                m + nz) with
+%       | O => fun m : Natural => eq_ind_r (fun t => m = t)
+%                                      eq_refl
+%                                      (Addition_by_zero m)
+%       | Succ n' =>
+%         fun m  =>
+%           eq_ind (Succ (m + n'))
+%                  (fun t => Succ (n' + m) = t)
+%                  (eq_ind_r (fun t => Succ t = Succ (m + n'))
+%                            eq_refl (IHn n' m))
+%                  (m + (Succ n'))
+%                  (Successor_addition m n')
+%       end).
+%Qed.
+%
+%
+%\end{lstlisting}
+%
+%
+%We need two additional Lemma:
+% i) $Addition\_by\_zero$, a proof of n + 0 = 0,
+% and ii) $Successor\_addition$, a proof of Succ (n + m) = n + (Succ m) 
+% to prove that addition on Natural is commutative ($Addition\_is\_commutative$), 
+% 
+% One thing that can't escape from the reader's eyes is that the proofs written in Gallina is verbose, and they don't 
+% appear anywhere compared to a proof that would have been written by a mathematician. Well, we can lift the burden 
+% of verbosity by using tactics provided by Coq; however, there is no universally accepted solution in Coq community 
+% for second problem. There has been some research in declarative style proof writing 
+% \footnote{www-verimag.imag.fr/~corbinea/ftp/publis/bricks-poster.pdf}, but it is not widely practised in Coq 
+% community. The proof of addition on Natural is commutative re-written using tactics (Listing 1.4)
+% 
+% 
+% \begin{lstlisting}[language=haskell, numbers=none, basicstyle=\ttfamily,  caption=Addition function for Natural Numbers,  captionpos=b, xleftmargin=.1\textwidth]
+%
+%Lemma Addition_by_zero : forall (n : Natural), n + O = n.
+%  induction n; cbn; [auto | rewrite IHn; auto].
+%Qed.
+%
+%
+%Lemma Successor_addition : forall (n m : Natural),
+%    Succ (n + m) = n + (Succ m).
+%Proof.
+%  induction n; intros m;
+%    cbn; [auto | rewrite <- IHn; auto].
+%Qed.
+%
+%
+%Theorem Addition_is_commutative :
+%  forall (n m : Natural), n +  m = m + n.
+%Proof.
+%  induction n; intro m;
+%    [rewrite Addition_by_zero |
+%     rewrite <- Successor_addition;
+%     rewrite <- IHn]; auto.
+%Qed.
+%
+%\end{lstlisting}
+%
+%Section~\ref{sec:motivation} xxxx.\\
+%
+%
+%Section~\ref{sec:relatedwork} yyyy.\\
+%
+%
+%%\section{Motivation}
+%%\label{sec:motivation}
+%
+%
+%%\section{Related work}
+%%\label{sec:relatedwork}
+%%You may reference other papers. For example: 
+%%Generational garbage collection~\citep{LH:83,Moon:84,Ungar:84} is perhaps the
+%%single most important advance in garbage collection since the first collectors
+%%were developed in the early 1960s. (doi: "doi" should just be the doi part, not
+%%the full URL, and it will be made to link to dx.doi.org and resolve.
+%%shortname: gives an optional short name for a conference like PLDI '08.)
+%%
+%%
+%%
+%%
+%%
+%%\section{Summary}
+%%Summary what you discussed in this chapter, and mention the story in next
+%%chapter. Readers should roughly understand what your thesis takes about by only reading
+%%words at the beginning and the end (Summary) of each chapter.
 %
 %
 %
-%
-%
-%\section{Summary}
-%Summary what you discussed in this chapter, and mention the story in next
-%chapter. Readers should roughly understand what your thesis takes about by only reading
-%words at the beginning and the end (Summary) of each chapter.
-
-
-

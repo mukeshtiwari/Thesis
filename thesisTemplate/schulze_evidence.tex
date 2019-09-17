@@ -1,12 +1,11 @@
 \chapter{Schulze Method : Evidence Carrying Computation}
 \label{cha:schulze_method}
-Same as the last chapter, introduce the motivation and the high-level picture to
-readers, and introduce the sections in this chapter.
+%Same as the last chapter, introduce the motivation and the high-level picture to
+%readers, and introduce the sections in this chapter.
 
  The correctness of vote counting in electronic voting is one of 
  the main pillars that engenders trust in electronic voting. Even 
- though, assuming 
- that election results are verifiable, a bug in 
+ though, assuming  that election results are verifiable, a bug in 
  counting software which can cause a incorrect result and only 
  caught later during verification phase would create a atmosphere of 
  distrust among voters about electronic voting. The present state of 
@@ -27,8 +26,8 @@ readers, and introduce the sections in this chapter.
   the basis of the evidence for correctness that is produced
   along with determination of election winners.
   
-  [Todo: Write here the chapter outline.]
-  In this chapter, we explain the Schulze method with a example
+  \textbf{Chapter overview:} In this chapter, we explain the Schulze algorithm,
+   followed by formal specification and 
 
 
 \section{Schulze Algorithm}
@@ -53,9 +52,6 @@ strength of the strongest path that joins $c$ and $d$. A candidate
 $c$ then wins a Schulze count if the generalised margin between $c$
 and any other candidate $d$ is at least as large as the generalised
 margin between $d$ and $c$. More concretely:
-
-
-[Todo : Figure out the exact meaning of strict linear preorder]
 
 \begin{itemize}
 
@@ -117,16 +113,13 @@ beaten by any (other) candidate.
 	 and resolve by the Schulze Method. Take the example from PhD pre
 	 
 	
-\section{Scrutiny Sheet }	 
 	
-\section{Formal Specification}
+\section{Formal Specification} \label{sec:spec}
 	We start our Coq formalization assuming finite and non-empty 
 	set of candidates. Also, we assume decidable equality on 
 	candidates. For our purposes, the
 	easiest way of stipulating that a type be finite is to require
 	existence of a list containing all inhabitants of this type.
-
-Todo : Added minted package to highlight Coq code.
 
 \begin{verbatim}
   Variable cand : Type.
@@ -150,19 +143,36 @@ variable:
 We formalise the notion of path and strength of a path by means of a
 single (but ternary) inductive proposition that asserts the
 existence of a path of strength $\geq k$ between two candidates, for
-$k \in Z$.
+$k \in Z$. The notion of winning candidate is that it beats every other candidates, i.e.  all the paths from 
+the winner to other candidates are at least as strong as the reverse path. Dually, the notion of loser
+ is that there is a candidate who beats the loser, i.e. the path from the candidate to the loser is 
+ stronger than the reverse path. 
+
 
 \begin{verbatim}
+  (* prop-level path *)
   Inductive Path (k: Z) : cand -> cand -> Prop :=
     | unit c d : marg c d >= k -> Path k c d
     | cons  c d e : marg c d >= k -> Path k d e -> Path k c e.
+    
+  (* winning condition of Schulze Voting *)
+  Definition wins_prop (c: cand) := forall d: cand, exists k: Z,
+      Path k c d /\ (forall l, Path l d c -> l <= k).
+
+  (* dually, the notion of not winning: *)
+  Definition loses_prop (c : cand) := exists k: Z, exists  d: cand,
+      Path k d c /\ (forall l, Path l c d -> l < k).
+
 \end{verbatim}
+
 
 \noindent
 We reflect the fact that the above are \emph{propositions} in
 the name of the definitions, in anticipation of type-level
-definitions of these notions later. As we discussed in 
-Type vs. Prop section of first chapter, the main reason 
+definitions of these notions later. The reason for having a \textit{Prop} level definition is that 
+ it is very easy for human to inspect the definitions, and ascertain the correctness of formalization.
+As we discussed in 
+\textbf{Type vs. Prop} section of first chapter, the main reason 
 for having equivalent
 type-level versions of the above is that purely propositional
 information is discarded during program extraction, unlike
@@ -170,7 +180,7 @@ the type-level notions of winning and losing that represent evidence
 of the correctness of the determination of winners. Our goal is to 
 not only compute winners and losers according to the
 definition above, but also to provide independently verifiable
-evidence of the correctness of our computation. The propositional
+evidence, scrutiny sheet or certificate, of the correctness of our computation. The propositional
 definitions of winning and losing above serve as a reference to
 calibrate their type level counterparts, and we demonstrate the
 equivalence between propositional and type-level conditions in the
@@ -180,18 +190,21 @@ next section.
 \label{sec:prop-type}
 One of the fundamental question about the declaring some one 
 as a winner or loser is that 
-how can we \emph{know} that, say, a candidate $c$ in fact wins a
+how can we know that, say, a candidate $c$ in fact wins a
 Schulze election, and that, say, $d$ is not a winner? One possible 
 answer is simply  re-run an independent implementation of the method
 (usually hoping that results would be confirmed). But what happens
 if results diverge?  
 
-We can answer this question
+One major aspect of our work is that we can answer this question
 by not only computing the set of winners, but in fact presenting
 \emph{evidence} for the fact that a particular
 candidate does or does not
-win. In the context of electronic vote counting, this is known as a
-\emph{scrutiny sheet}: a tabulation of all relevant data that allows
+win. This is a re-emphasis on \emph{Correctness}, i.e. the produced result is correct, 
+and convincing to all, specially to losers, leaving  no ground for speculation. As we stated earlier that 
+in the context of
+electronic vote counting, this is known as a
+\emph{scrutiny sheet, or certification}: a tabulation of all relevant data that allows
 us to verify the election outcome.
 Again drawing on an already computed margin function, to
 demonstrate that a candidate $c$ wins, we need to exhibit an integer
@@ -252,12 +265,10 @@ k$ (so that $c, d, \dots$ cannot be the start of a path of strength
 $\geq k$) or we don't have a path between $d$ and $e$ of strength
 $\geq k$. We use the following terminology:
 
-%\begin{definition} 
-Let $R \subseteq C \times C$ be a subset and $k \in
+\begin{definition} Let $R \subseteq C \times C$ be a subset and $k \in
 Z$. Then $R$ is \emph{$W_k$-coclosed}, or simply
 \emph{$k$-coclosed}, if $R \subseteq W_k(R)$.
-
-%\end{definition}
+\end{definition}
 
 \noindent
 Mathematically, the operator $W_k$ acts on subsets of $C \times C$
@@ -272,11 +283,11 @@ given integer) for clarity:
     Zlt_bool (marg (fst p) (snd p)) k.
 
   Definition W (k : Z) (p: cand * cand -> bool) (x: cand * cand) :=
-    andb
-      (marg_lt k x)
-      (forallb (fun m => orb (marg_lt k (fst x, m)) (p (m, snd x))) cand_all).
-
+    andb 
+    (marg_lt k x)
+    (forallb (fun m => orb (marg_lt k (fst x, m)) (p (m, snd x))) cand_all).
 \end{verbatim}
+
 \noindent
 In order to formulate type-level definitions, we need to promote the
 notion of path from a Coq proposition to a proper type, and
@@ -295,7 +306,8 @@ formulate the notion of $k$-coclosed predicate.
 The only difference between type level paths (of type
 \texttt{PathT}) and (propositional) paths defined earlier is the
 fact that the former are proper types, not propositions, and are
-therefore not erased during extraction. Given the above, we have the
+therefore not erased during extraction. 
+Given the above, we have the
 following type-level definitions of winning (and dually,
 non-winning) for Schulze counting:
 
@@ -319,6 +331,11 @@ are in fact equivalent.
  Lemma wins_type_prop : forall c, wins_type c -> wins_prop c.
 
  Lemma wins_prop_type : forall c, wins_prop c -> wins_type c.
+ 
+ Lemma loses_type_prop : forall c, loses_type c -> loses_prop c.
+ 
+ Lemma loses_prop_type : forall c, loses_prop c -> loses_type c.
+
 \end{verbatim}
 
 \noindent
