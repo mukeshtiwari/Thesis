@@ -121,23 +121,22 @@ beaten by any (other) candidate.
 	easiest way of stipulating that a type be finite is to require
 	existence of a list containing all inhabitants of this type.
 
-\begin{verbatim}
+\begin{minted}{coq}
   Variable cand : Type.
   Variable cand_all : list cand.
   Hypothesis cand_fin : forall c: cand, In c cand_all.
   Hypothesis dec_cand : forall n m : cand, {n = m} + {n <> m}.
   Hypothesis cand_in : cand_all <> nil.
-\end{verbatim}
-
+\end{minted}
 
 \noindent
 For the specification of winners of Schulze elections, we take the
 margin function as given for the moment (and later construct it from
 the incoming ballots). In Coq, this is conveniently expressed as a
 variable:
-\begin{verbatim}
+\begin{minted}{coq} 
    Variable marg : cand -> cand -> Z.
-\end{verbatim}
+\end{minted}
 
 \noindent
 We formalise the notion of path and strength of a path by means of a
@@ -149,7 +148,8 @@ the winner to other candidates are at least as strong as the reverse path. Duall
  stronger than the reverse path. 
 
 
-\begin{verbatim}
+%\begin{verbatim}
+\begin{minted}{coq} 
   (* prop-level path *)
   Inductive Path (k: Z) : cand -> cand -> Prop :=
     | unit c d : marg c d >= k -> Path k c d
@@ -162,8 +162,8 @@ the winner to other candidates are at least as strong as the reverse path. Duall
   (* dually, the notion of not winning: *)
   Definition loses_prop (c : cand) := exists k: Z, exists  d: cand,
       Path k d c /\ (forall l, Path l c d -> l < k).
-
-\end{verbatim}
+\end{minted}
+%\end{verbatim}
 
 
 \noindent
@@ -278,7 +278,8 @@ definitions where we isolate the function \texttt{marg\_lt} (that
 determines whether the margin between two candidates is less than a
 given integer) for clarity:
 
-\begin{verbatim}
+%\begin{verbatim}
+\begin{minted}{coq} 
   Definition marg_lt (k : Z) (p : (cand * cand)) :=
     Zlt_bool (marg (fst p) (snd p)) k.
 
@@ -286,21 +287,24 @@ given integer) for clarity:
     andb 
     (marg_lt k x)
     (forallb (fun m => orb (marg_lt k (fst x, m)) (p (m, snd x))) cand_all).
-\end{verbatim}
+\end{minted}
+%\end{verbatim}
 
 \noindent
 In order to formulate type-level definitions, we need to promote the
 notion of path from a Coq proposition to a proper type, and
 formulate the notion of $k$-coclosed predicate.
 
-\begin{verbatim}
+%\begin{verbatim}
+\begin{minted}{coq} 
   Definition coclosed (k : Z) (f : (cand * cand) -> bool) :=
     forall x, f x = true -> W k f x = true.
 
   Inductive PathT (k: Z) : cand -> cand -> Type :=
   | unitT : forall c d, marg c d >= k -> PathT k c d
   | consT : forall c d e, marg c d >= k -> PathT k d e -> PathT k c e.
-\end{verbatim}
+\end{minted}
+%\end{verbatim}
 
 \noindent
 The only difference between type level paths (of type
@@ -311,7 +315,8 @@ Given the above, we have the
 following type-level definitions of winning (and dually,
 non-winning) for Schulze counting:
 
-\begin{verbatim}
+%\begin{verbatim}
+\begin{minted}{coq} 
   Definition wins_type c := forall d : cand, existsT (k : Z),
     ((PathT k c d) * (existsT (f : (cand * cand) -> bool),
       f (d, c) = true /\ coclosed (k + 1) f))%type.
@@ -320,14 +325,16 @@ non-winning) for Schulze counting:
     ((PathT k d c) * (existsT (f : (cand * cand) -> bool),
       f (c, d) = true /\ coclosed k f))%type.
 
-\end{verbatim}
+\end{minted}
+%\end{verbatim}
 
 \noindent
 The main result of this section is that type level and propositional
 evidence for winning (and dually, not winning) a Schulze election
 are in fact equivalent.
 
-\begin{verbatim}
+%\begin{verbatim}
+\begin{minted}{coq} 
  Lemma wins_type_prop : forall c, wins_type c -> wins_prop c.
 
  Lemma wins_prop_type : forall c, wins_prop c -> wins_type c.
@@ -336,7 +343,8 @@ are in fact equivalent.
  
  Lemma loses_prop_type : forall c, loses_prop c -> loses_type c.
 
-\end{verbatim}
+\end{minted}
+%\end{verbatim}
 
 \noindent
 The different nature of the two propositions does not allow
@@ -365,10 +373,12 @@ example in
 \cite{Carre:1971:ANR} that is based on cutting out segments of paths
 between repeated nodes and so reaches a fixed point.
 
-\begin{verbatim}
+%\begin{verbatim}
+\begin{minted}{coq} 
  Lemma iterated_marg_fp: forall (c d : cand) (n : nat),
       M n c d <= M (length cand_all) c d.
-\end{verbatim}
+\end{minted}
+%\end{verbatim}
 
 \noindent
 That is, the \emph{generalised margin}, i.e. the strength of the strongest (possibly infinite) path
@@ -381,26 +391,68 @@ implies that the generalised margin between this candidate and any
 other candidate $d$ is at least as large as the generalised margin between $d$
 and $c$.
 
-\begin{verbatim}
+%\begin{verbatim}
+\begin{minted}{coq} 
     Lemma wins_prop_iterated_marg (c : cand) : wins_prop c ->
       forall d, M (length cand_all) d c <= M (length cand_all) c d.
-\end{verbatim}
+\end{minted}
+%\end{verbatim}
 
 \noindent
 This condition on iterated margins can in turn be to establish the
 type-level winning condition, thus closing the loop to the type
 level winning condition.
 
-\begin{verbatim}
+%\begin{verbatim}
+\begin{minted}{coq} 
   Lemma iterated_marg_wins_type (c : cand) : (forall d,
       M (length cand_all) d c <= M (length cand_all) c d) ->
       wins_type c.
-\end{verbatim}
+ \end{minted}
+%\end{verbatim}
+
+Similarly, we connect the propositional losing to type level losing via generalized margin. We show that 
+candidate $c$ is losing then there is a candidate $d$ and generalized margin between candidate $d$ and 
+$c$ is more that generalized margin between $c$ and $d$.  Using this fact, we can prove the 
+type level losing condition. 
+
+%\begin{verbatim}
+\begin{minted}{coq} 
+  Lemma loses_prop_iterated_marg (c : cand):
+      loses_prop c ->
+      (exists d, M (length cand_all) c d < M (length cand_all) d c).
+
+
+  Lemma iterated_marg_loses_type (c : cand) :
+      (exists d, M (length cand_all) c d < M (length cand_all) d c) 
+      -> loses_type c.
+\end{minted}
+%\end{verbatim}
+
+\textbf{Todo : Write a notation Chapter. What does it mean to be exists, and existsT}
+
+The proof of lemma  $iterated\_marg\_loses\_type$ is not straight forward because
+Coq does not allow the case analysis on \texttt{Prop} when the goal in not in \texttt{Prop}, 
+hence,  we can not eliminate \texttt{exists n, P n} in order to show \texttt{existsT n, P n}. 
+The idea is basically turning proposition level existence, \emph{exists}, 
+to type level existence, \emph{existsT}. 
+We can do  a linear search on list of candidates  to find the witness constructively, and since, 
+the list of candidates is  finite we would eventually terminate and find one.  
+This completes our loop of prop level loser to type level loser. 
+
+%\begin{verbatim}
+\begin{minted}{coq} 
+Corollary reify_opponent (c: cand):
+      (exists  d, M  (length cand_all) c d < M (length cand_all) d c) ->
+      (existsT d, M  (length cand_all) c d < M (length cand_all) d c).
+\end{minted}
+%\end{verbatim}
+
+
 
 \noindent
 The crucial part of establishing the type-level winning conditions
-in the proof of the lemma above is the construction of a co-closed
-set. 
+in the proof of the lemma above is the construction of a co-closed set. 
 First note that \texttt{M (length cand\_all)} is precisely
 the generalised margin function. Writing $g$ for this function, we
 assume that $g(c, d) \geq g(d, c)$ for all candidates $d$, and given
