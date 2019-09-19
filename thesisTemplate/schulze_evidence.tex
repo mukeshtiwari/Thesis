@@ -121,22 +121,22 @@ beaten by any (other) candidate.
 	easiest way of stipulating that a type be finite is to require
 	existence of a list containing all inhabitants of this type.
 
-\begin{minted}{coq}
+\begin{verbatim}
   Variable cand : Type.
   Variable cand_all : list cand.
   Hypothesis cand_fin : forall c: cand, In c cand_all.
   Hypothesis dec_cand : forall n m : cand, {n = m} + {n <> m}.
   Hypothesis cand_in : cand_all <> nil.
-\end{minted}
+\end{verbatim}
 
 \noindent
 For the specification of winners of Schulze elections, we take the
 margin function as given for the moment (and later construct it from
 the incoming ballots). In Coq, this is conveniently expressed as a
 variable:
-\begin{minted}{coq} 
+\begin{verbatim}
    Variable marg : cand -> cand -> Z.
-\end{minted}
+\end{verbatim}
 
 \noindent
 We formalise the notion of path and strength of a path by means of a
@@ -148,8 +148,7 @@ the winner to other candidates are at least as strong as the reverse path. Duall
  stronger than the reverse path. 
 
 
-%\begin{verbatim}
-\begin{minted}{coq} 
+\begin{verbatim}
   (* prop-level path *)
   Inductive Path (k: Z) : cand -> cand -> Prop :=
     | unit c d : marg c d >= k -> Path k c d
@@ -162,8 +161,7 @@ the winner to other candidates are at least as strong as the reverse path. Duall
   (* dually, the notion of not winning: *)
   Definition loses_prop (c : cand) := exists k: Z, exists  d: cand,
       Path k d c /\ (forall l, Path l c d -> l < k).
-\end{minted}
-%\end{verbatim}
+\end{verbatim}
 
 
 \noindent
@@ -278,8 +276,7 @@ definitions where we isolate the function \texttt{marg\_lt} (that
 determines whether the margin between two candidates is less than a
 given integer) for clarity:
 
-%\begin{verbatim}
-\begin{minted}{coq} 
+\begin{verbatim}
   Definition marg_lt (k : Z) (p : (cand * cand)) :=
     Zlt_bool (marg (fst p) (snd p)) k.
 
@@ -287,24 +284,22 @@ given integer) for clarity:
     andb 
     (marg_lt k x)
     (forallb (fun m => orb (marg_lt k (fst x, m)) (p (m, snd x))) cand_all).
-\end{minted}
-%\end{verbatim}
+\end{verbatim}
 
 \noindent
 In order to formulate type-level definitions, we need to promote the
 notion of path from a Coq proposition to a proper type, and
 formulate the notion of $k$-coclosed predicate.
 
-%\begin{verbatim}
-\begin{minted}{coq} 
+\begin{verbatim} 
   Definition coclosed (k : Z) (f : (cand * cand) -> bool) :=
     forall x, f x = true -> W k f x = true.
 
   Inductive PathT (k: Z) : cand -> cand -> Type :=
   | unitT : forall c d, marg c d >= k -> PathT k c d
   | consT : forall c d e, marg c d >= k -> PathT k d e -> PathT k c e.
-\end{minted}
-%\end{verbatim}
+ 
+\end{verbatim}
 
 \noindent
 The only difference between type level paths (of type
@@ -315,8 +310,7 @@ Given the above, we have the
 following type-level definitions of winning (and dually,
 non-winning) for Schulze counting:
 
-%\begin{verbatim}
-\begin{minted}{coq} 
+\begin{verbatim}
   Definition wins_type c := forall d : cand, existsT (k : Z),
     ((PathT k c d) * (existsT (f : (cand * cand) -> bool),
       f (d, c) = true /\ coclosed (k + 1) f))%type.
@@ -324,17 +318,14 @@ non-winning) for Schulze counting:
   Definition loses_type (c : cand) := existsT (k : Z) (d : cand),
     ((PathT k d c) * (existsT (f : (cand * cand) -> bool),
       f (c, d) = true /\ coclosed k f))%type.
-
-\end{minted}
-%\end{verbatim}
+\end{verbatim}
 
 \noindent
 The main result of this section is that type level and propositional
 evidence for winning (and dually, not winning) a Schulze election
 are in fact equivalent.
 
-%\begin{verbatim}
-\begin{minted}{coq} 
+\begin{verbatim}
  Lemma wins_type_prop : forall c, wins_type c -> wins_prop c.
 
  Lemma wins_prop_type : forall c, wins_prop c -> wins_type c.
@@ -342,9 +333,7 @@ are in fact equivalent.
  Lemma loses_type_prop : forall c, loses_type c -> loses_prop c.
  
  Lemma loses_prop_type : forall c, loses_prop c -> loses_type c.
-
-\end{minted}
-%\end{verbatim}
+\end{verbatim}
 
 \noindent
 The different nature of the two propositions does not allow
@@ -373,12 +362,10 @@ example in
 \cite{Carre:1971:ANR} that is based on cutting out segments of paths
 between repeated nodes and so reaches a fixed point.
 
-%\begin{verbatim}
-\begin{minted}{coq} 
+\begin{verbatim}
  Lemma iterated_marg_fp: forall (c d : cand) (n : nat),
       M n c d <= M (length cand_all) c d.
-\end{minted}
-%\end{verbatim}
+\end{verbatim}
 
 \noindent
 That is, the \emph{generalised margin}, i.e. the strength of the strongest (possibly infinite) path
@@ -391,43 +378,36 @@ implies that the generalised margin between this candidate and any
 other candidate $d$ is at least as large as the generalised margin between $d$
 and $c$.
 
-%\begin{verbatim}
-\begin{minted}{coq} 
+\begin{verbatim}
     Lemma wins_prop_iterated_marg (c : cand) : wins_prop c ->
       forall d, M (length cand_all) d c <= M (length cand_all) c d.
-\end{minted}
-%\end{verbatim}
+\end{verbatim}
 
 \noindent
 This condition on iterated margins can in turn be to establish the
 type-level winning condition, thus closing the loop to the type
 level winning condition.
 
-%\begin{verbatim}
-\begin{minted}{coq} 
+\begin{verbatim}
   Lemma iterated_marg_wins_type (c : cand) : (forall d,
       M (length cand_all) d c <= M (length cand_all) c d) ->
       wins_type c.
- \end{minted}
-%\end{verbatim}
+\end{verbatim}
 
 Similarly, we connect the propositional losing to type level losing via generalized margin. We show that 
 candidate $c$ is losing then there is a candidate $d$ and generalized margin between candidate $d$ and 
 $c$ is more that generalized margin between $c$ and $d$.  Using this fact, we can prove the 
 type level losing condition. 
 
-%\begin{verbatim}
-\begin{minted}{coq} 
+\begin{verbatim} 
   Lemma loses_prop_iterated_marg (c : cand):
       loses_prop c ->
       (exists d, M (length cand_all) c d < M (length cand_all) d c).
 
-
   Lemma iterated_marg_loses_type (c : cand) :
       (exists d, M (length cand_all) c d < M (length cand_all) d c) 
       -> loses_type c.
-\end{minted}
-%\end{verbatim}
+\end{verbatim}
 
 \textbf{Todo : Write a notation Chapter. What does it mean to be exists, and existsT}
 
@@ -440,13 +420,11 @@ We can do  a linear search on list of candidates  to find the witness constructi
 the list of candidates is  finite we would eventually terminate and find one.  
 This completes our loop of prop level loser to type level loser. 
 
-%\begin{verbatim}
-\begin{minted}{coq} 
+\begin{verbatim}
 Corollary reify_opponent (c: cand):
       (exists  d, M  (length cand_all) c d < M (length cand_all) d c) ->
       (existsT d, M  (length cand_all) c d < M (length cand_all) d c).
-\end{minted}
-%\end{verbatim}
+\end{verbatim}
 
 
 
@@ -571,9 +549,11 @@ an
 intermediate stages of constructing the margin function or the
 determination of the final election result:
 \begin{verbatim}
+
   Inductive State: Type :=
   | partial: (list ballot * list ballot)  -> (cand -> cand -> Z) -> State
   | winners: (cand -> bool) ->  State.
+
 \end{verbatim}
 
 \noindent
@@ -618,6 +598,7 @@ the following shape:
     (forall c, w c = true <-> (exists x, d c = inl x)) ->
     (forall c, w c = false <-> (exists x, d c = inr x)) ->
     Count bs (winners w).
+ 
 \end{verbatim}
 
 \noindent
@@ -689,12 +670,12 @@ list of ballots we can reach a state of the count where there are
 no more uncounted ballots, i.e. the margin function has been
 fully constructed.
 
-Todo : Give a definition of existsT in  notation chapter
 
 \begin{verbatim}
-Lemma all_ballots_counted:
-     forall (bs : list ballot), 
+
+Lemma all_ballots_counted: forall (bs : list ballot), 
         existsT i m, (Count bs (partial ([], i) m)).
+        
 \end{verbatim}
     
 
@@ -849,7 +830,7 @@ losing: C
 losing: D
   exists A: path A --> D of strength 9, 9-coclosed set:
     [(A,A),(A,B),(A,C),(B,A),(B,B),(B,C),(C,A),(C,B),(C,C),(D,A),(D,B),
-     (D,C),(D,D)]
+     (D,C),(D,D)]  
 \end{verbatim}
 \end{footnotesize}
 
@@ -898,32 +879,121 @@ is, i.e. in particular using Coq's unary representation of natural
 numbers. The results are displayed in Figure \ref{fig:straight}
 using a logarithmic scale. 
 
-Todo : Make it side by side as it appeared in our paper
+
+%\begin{figure}
+%\centering
+%\begin{minipage}{.5\textwidth}
+%  \centering
+%  \includegraphics[width=1.0\linewidth]{1.png}
+%  \caption{Direct Extraction}
+%  \label{fig:straight}
+%\end{minipage}
+%\begin{minipage}{.5\textwidth}
+%  \centering
+%  \includegraphics[width=1.0\linewidth]{2.png}
+% \caption{Extraction using Haskell Integers}
+% \label{fig:native}
+%\end{minipage}
+%\caption{Experimental Results}
+%\label{fig:test}
+%\end{figure}
+
 
 \begin{figure}
-\centering
+\centering     %%% not \center
+\subfigure[Direct Extraction]{\label{fig:straight}\includegraphics[width=60mm]{1.png}}
+\subfigure[Extraction using Haskell Integers]{\label{fig:native}\includegraphics[width=60mm]{2.png}}
+\caption{Experimental Results}
+\label{fig:test}
+\end{figure}
+
+%
+%\begin{figure}
+%\centering
+%\begin{subfigure}
+%  \centering
+%  {\includegraphics[width=.95\textwidth]{1.png}}
+%  \caption{Direct Extraction}
+%  \label{fig:straight}
+%\end{subfigure}%
+%\end{figure}
+%\begin{figure}
+%\begin{subfigure}
+%  \centering
+%  {\includegraphics[width=.95\textwidth]{2.png}}
+%  \caption{Extraction using Haskell Integers}
+%  \label{fig:native}
+%\end{subfigure}
+%\caption{Experimental Results}
+%\label{fig:test}
+%\end{figure}
+  
+ \section{Scaling it count millions of Ballots}
+ We investigated the extracted Haskell code  from Coq code.
+The most performance critical aspect of our code was the computation of  margin
+function. Recall that the margin function is of type
+\texttt{cand -> cand -> Z}
+and that it depends on the \emph{entire} set of ballots. Internally, it is
+represented by a closure \cite{Landin:1964:MEE} so that margins are
+re-computed with every call. The single largest efficiency
+improvement in our code was achieved by memoization, i.e.
+representing the margin function (in Coq) via list lookup. With
+this (and several smaller) optimisation, we can count millions of
+votes using verified code. Below, we include our timing graphs,
+based on randomly generated ballots while keeping number of candidates
+constant i.e. 4. 
+
+
+\begin{figure}
+\centering     %%% not \center
+\subfigure[Computation of Winners]{\label{fig:straight}\includegraphics[width=60mm]{without-cert.png}}
+\subfigure[Computation of Winners and Certificate]{\label{fig:native}\includegraphics[width=60mm]{with-cert.png}}
+\caption{Experimental Results}
+\label{fig:test}
+\end{figure}
+
+
+%\begin{figure}
+%\centering
 %\begin{subfigure}{.5\textwidth}
 %  \centering
-  {\includegraphics[width=.95\textwidth]{1.png}}
-  \caption{Direct Extraction}
-  \label{fig:straight}
+%  \includegraphics[width=.95\textwidth]{without-cert.png}
+%  \caption{Computation of Winners}
+%  \label{fig:straight}
 %\end{subfigure}%
-\end{figure}
-\begin{figure}
 %\begin{subfigure}{.5\textwidth}
-  \centering
-  {\includegraphics[width=.95\textwidth]{2.png}}
-  \caption{Extraction using Haskell Integers}
-  \label{fig:native}
+%  \centering
+%  \includegraphics[width=.95\textwidth]{with-cert.png}
+%  \caption{Computation of Winners and Certificate}
+%  \label{fig:native}
 %\end{subfigure}
-\caption{Experimental Results}
-%\label{fig:test}
-\end{figure}
-  
+%\caption{Experimental Results}
+%\end{figure}
+
+\noindent
+On the left, we report timings (in seconds) for the computation of
+winners, whereas on the right, we include the time to additionally
+compute a universally verifiable certificate that attests  to the
+correctness of the count. This is consistent with complexity of Schulze 
+counting i.e. linear in no of ballots and cubic in candidates. 
+The experiments were carried out on system 
+equipped with intel core i7 processor and 16 GB of ram. We notice that the
+computation of the certiciate adds comparatively little in
+computational cost. 
+
+Our implementation requires that we store \emph{all}
+ballots in main memory as we need to parse the entire list of
+ballots before making it available to our verified implementation so
+that the total number of ballots we can count is limited by main
+memory in practise. We can count real-world size elections (8
+million ballot papers) on a standard, commodity desktop computer with
+16 GB of main memory. 
+
   
  \section{Discussion} \label{sec:discussion}
 
-Our paper takes the approach that computation of winners in
+In this chapter,  we emphasize on correctness, and we take the approach that 
+computation of winners in
 electronic voting (and in situations where correctness is key in
 general) should not only produce an end result, but an end result,
 \emph{together} with a verifiable justification of the correctness
@@ -990,41 +1060,63 @@ certificates.
 
 \section{Summary}
 
-In this formalization, we have presented a formalisation of 
-the Schulze method for
-counting preferential ballots. Our formalisation focuses on the
-correct execution of the method. 
-In our formalisation of vote counting, there is a one-to-one
-correspondence between correct executions of the protocol, and
-inhabitants of a (dependent) inductive type. In our Coq development,
-we have used the propositions-as-types approach, and have
-constructed an existence proof, from which we have generated Haskell
-code. An alternative approach would be to implement a function that
-directly constructs inhabitants, and obtain a detailed performance
-comparison between both approaches. While we anticipate that a
-direct implementation brings performance benefits, our experimental
-evaluation shows that even with very little optimisation (Section
-\ref{sec:eval}), extracting
-vote counting program from an existence proof allows us to count a
-relatively large number of ballots already.
+%In this formalization, we have presented a formalisation of 
+%the Schulze method for
+%counting preferential ballots. Our formalisation focuses on the
+%correct execution of the method. 
+%In our formalisation of vote counting, there is a one-to-one
+%correspondence between correct executions of the protocol, and
+%inhabitants of a (dependent) inductive type. In our Coq development,
+%we have used the propositions-as-types approach, and have
+%constructed an existence proof, from which we have generated Haskell
+%code. An alternative approach would be to implement a function that
+%directly constructs inhabitants, and obtain a detailed performance
+%comparison between both approaches. While we anticipate that a
+%direct implementation brings performance benefits, our experimental
+%evaluation shows that even with very little optimisation (Section
+%\ref{sec:eval}), extracting
+%vote counting program from an existence proof allows us to count a
+%relatively large number of ballots already.
 
-
-There are some wrinkles in this formalization. One major is 
+Our formalization focuses on \textit{Correctness}, \textit{Practicality}, and 
+\textit{Verifiability}. There are some wrinkles in this formalization. One major is 
 that our ballots are in plaintext and could easily be identified
 if the number of candidates participating in election in 
 are large (Italian attack).
+\noindent
+In nutshell, the pros and cons of this formalization:
 
-Finally, we remark that extracting Coq developments into a
+\begin{itemize}
+\item Pros 
+\begin{itemize}
+\item Correctness: The implementation is formalized in Coq with emphasis on generating 
+         evidence to convince everyone about the outcome of election.
+\item Practicality: The extracted code can count millions of ballots. Therefore, we can use it 
+          in any real life election.
+\item Verifiability: The outcome of any election can be verified by any third party because 
+          of the generated certificates
+\item Verifiability:  Certificates generated for plaintext ballot 
+		 during the election 
+          are very simple.  It requires basic math literacy to audit the certificate which would 
+          lead to increase in number of scrutineers. 
+
+\end{itemize}
+\item Cons
+\begin{itemize}
+\item Privacy : There is no privacy, and possibly susceptible to coercion, because the ballots involved 
+         are simply plaintext. 
+\end{itemize}
+\end{itemize}
+
+ In the next chapter, we will try to solve privacy problem , possibly coercion, using encryption, and to keep 
+ it verifiable, we will use zero knowledge proof. However, solution for privacy comes with other cost, e.g. 
+ loss in pool of scrutineers because auditing a certificate generated by counting encrypted ballot 
+ would requires intricate knowledge of cryptography.  
+ 
+We remark that extracting Coq developments into a
 programming language itself is a non-verified process which could
 still introduce errors in our code. The most promising way to
 alleviate this is to independently implement (and verify) a
 certificate verifier, possibly in a language such as CakeML
 \cite{Kumar:2014:CVI} that is guaranteed to
 be correct to the machine level. 
-
-
- 
-\section{Summary}
-Same as the last chapter, summary what you discussed in this chapter and
-be the bridge to next chapter. Start a story here about how scrutiny sheet 
-can help in auditing the election.
