@@ -2,9 +2,8 @@
 \label{cha:homormorphic_schulze}
 
 As we stated in the  summary of last chapter that plaintext could lead to 
-privacy problems i.e. ballot identification (italian attack) \cite{Otten}. In this chapter, 
-we will try to achieve privacy, using encryption, and verifiability, using zero knowledge proof.
-
+privacy problems, e.g. ballot identification (italian attack) \cite{Otten}. In this chapter, 
+we will try to achieve privacy, using encryption, and (universal) verifiability, using zero knowledge proof, both.
 The encryption of ballots is crucial to maintaining integrity and 
 anonymity in electronic voting schemes. It enables, amongst other 
 things, each voter to verify that their encrypted ballot has been 
@@ -16,10 +15,12 @@ basis of encrypted ballots---that only reveals the final tally. We
 achieve verifiability by using zero knowledge proofs for ballot 
 validity and honest decryption of the final tally. Our formalisation 
 takes places inside the Coq theorem prover and is based on an 
-axiomatisation of cryptogtaphic primitives, and our main result is 
+axiomatisation of cryptographic primitives, and our main result is 
 the correctness of homomorphic tallying. We then instantiate 
 these primitives using an external library and show the feasibility 
 of our approach by means of case studies.
+
+\section{Introduction}
 
 Secure elections are a balancing act between integrity and privacy:
 achieving either is trivial but their combination is notoriously hard.
@@ -73,7 +74,7 @@ all problems for which solutions can be efficiently verified have zero knowledge
 proofs.
 
 
-In this chapter, we address the problem of verifiable homomorphic tallying
+This chapter addresses the problem of verifiable homomorphic tallying
 for a preferential voting scheme, the Schulze Method. We show
 how it can be implemented in a theorem prover to
 guarantee both provably correct and verifiable counting on the basis
@@ -86,7 +87,97 @@ experimental results, and discuss trust the trust base, security and
 privacy as well as the applicability of our work to real-world
 scenarios. 
 
-\section{Verifiable Homomorphic Tallying}
+
+\textbf{Chapter Outline:}
+  Write a chapter outline here once you finish the chapter
+  
+  
+  \smallskip\noindent\emph{The Schulze Method.} The Schulze Method
+  \cite{Schulze:2011:NMC} is a preferential, single-winner vote
+  counting scheme that is gaining popularity due to its relative
+  simplicity while retaining near optimal fairness
+  \cite{Rivest:2010:OSW}.  
+  A \emph{ballot} is a rank-ordered list of
+  candidates where different candidates may be given the same rank.
+  The protocol proceeds in two steps, and first computes the
+  \emph{margin matrix} $m$, where $m(x, y)$ is the relative margin
+  of $x$ over $y$, that is, the number of voters that prefer $x$
+  over $y$, minus the number of voters that prefer $y$ over $x$. In
+  symbols, given a collection $B$ of ballots, 
+  \[ m(x, y) = \sharp\lbrace b \in B \mid x <_b y \rbrace
+             - \sharp \lbrace b \in B \mid y <_b x \rbrace
+  \]
+  where $\sharp$ denotes cardinality, and $<_b$  is the preference
+  relation encoded by ballot $b$. 
+  We note that $m(x, y) = -m(y, x)$, i.e. the margin matrix is
+  symmetric. In a second step, a \emph{generalised margin} $g$ is
+  computed as the strongest path between two candidates
+ \[ g(x,y) = max \lbrace str(p) \mid p \mbox{ path from $x$ to
+  $y$} \rbrace \]
+  where a path from $x$ to $y$ is simply a sequence $x = x_0, \dots,
+  x_n = y$ of candidates, and the strength
+  \[ str(x_0, \dots, x_n) = min \lbrace m(x_i, x_{i+1}) \mid 0
+  \leq i < n
+  \rbrace  \]
+  is the lowest margin encountered on a path.
+  Informally, one may think of the
+  generalised margin $g(x, y)$ as transitive accumulated support for
+  $x$ over $y$. We say that $x$ beats $y$ if $g(x,y) \geq g(y, x)$ and a
+  winner is a candidate that cannot be beaten by anyone. 
+  That is, $w$ is a \emph{winner} if $g(w, x) \geq g(x, w)$ for
+  all other candidates $x$. Note that
+  winners may not be uniquely determined (e.g. in the case where no
+  ballots have been cast).
+
+  In previous work \cite{Pattinson:2017:SVE} we have demonstrated
+  how to achieve verifiability of counting plaintext ballots by
+  producing a verifiable \emph{certificate} of the count, where
+  ballot privacy and receipt freeness are not addressed. The
+  certificate has two parts: The first part witnesses the
+  computation of the margin matrix where each line of the
+  certificate amounts to updating the margin matrix by a single
+  ballot. The second part witnesses the determination of winners
+  based on the margin matrix. In the first phase, i.e. the
+  computation of the margin matrix, we perform the following
+  operations for every ballot:
+  \begin{enumerate}
+    \item if the ballot is informal it will be discarded
+    \item if the ballot is formal, the margin matrix will be
+    updated
+  \end{enumerate}
+  The certificate then contains one line for each ballot and thus
+  allows to independently verify the computation of the margin
+  matrix. Based on the final margin matrix, the second part of
+  the certificate presents verifiable evidence for the computation
+  of winners. Specifically, if a candidate $w$ is a winner, it
+  includes:
+  \begin{enumerate}
+    \item an integer $k$ and a path of strength $k$ from $w$ to any
+    other candidate
+    \item evidence, in the form of a co-closed set, of the fact that
+    there cannot be a path of strength $> k$ from any other
+    candidate to $w$.
+  \end{enumerate}
+  Crucially, the evidence of $w$ winning the election \emph{only}
+  depends on the margin matrix. 
+  We refer to \cite{Pattinson:2017:SVE} for details of the second
+  part of the certificate as this will remain unchanged in the work
+  we are reporting here.
+  
+  
+  
+  \section{Verifiable Homomorphic Tallying}
+%\texttt{
+%  Bullet points of content for reference and later deletion
+%\begin{itemize}
+%  \item general protocol, comparision with plaintext counting
+%  \item two-phase structure: margin matrix, then winners with
+%  winners as before: encryption commutes with margin computation
+%  \item homomorphic computation of margin matrix, ballot
+%  representation
+%  \item computation of winners (as for plaintext)
+%\end{itemize}
+%}
 The realisation of verifiable homomorphic tallying that we are about to
 describe follows the same two phases as the protocol: We first
 homomorphically compute the margin matrix, and then compute
@@ -101,9 +192,6 @@ consists of two parts: the first part evidences the correct
 (homomorphic) computation of the margin, and the second part the
 correct determination of winners. We describe both in detail.
 
- \subsection{Ballot Representation}
-     Argue here why do we changed the ballot representation 
-     to encrypted matrix
 \smallskip\noindent\emph{Format of Ballots.} In preferential voting
 schemes, ballots are rank-ordered lists of candidates. For the
 Schulze Method, we require that all candidates are ranked, and two
@@ -126,6 +214,7 @@ We instead represent ballots as matrices
 $b(x, y)$ where $b(x, y) = +1$ if $x$ is preferred
 over $y$, $b(x, y) = -1$ if $y$ is preferred over $x$ and $b(x, y) =
 0$ if $x$ and $y$ are equally preferred.
+
 While the advantage of the first representation is that each ranking
 function is necessarily a valid ranking, the advantage of the matrix 
 representation is that the computation of
@@ -152,11 +241,9 @@ $-1$
 \noindent
 Indeed, to achieve verifiability, we not only need \emph{verify}
 that a ballot is valid, we also need to \emph{evidence} its validity
-(or otherwise) in the certificate. 
+(or otherwise) in the certificate.  
 
- 
- \subsubsection{Validity of Ballots}
- \smallskip\noindent\emph{Validity of Ballots.} By a plaintext
+\smallskip\noindent\emph{Validity of Ballots.} By a plaintext
 (matrix) ballot
 we simply mean a function $b: C \times C \to Z$,
 where $C$ is the (finite) set of candidates. A 
@@ -190,6 +277,7 @@ of a ciphertext ballot $encb$ by
   evidence that $b'$ is indeed the decryption of $encb'$.
 \end{itemize}
 
+\noindent
 We use zero-knowledge proofs in the style of \cite{DBLP:conf/africacrypt/TereliusW10}
 to evidence the correctness of the shuffle, and zero-knowledge
 proofs of honest decryption \cite{DBLP:conf/crypto/ChaumP92} to evidence
@@ -208,22 +296,21 @@ correctness
 was valid, and
 \item the unchanged margin matrix, if the decrypted
 ballot is not valid.
-%\setcounter{mycnt}{\value{enumi}}
+\newcounter{mycnt}
+\setcounter{mycnt}{\value{enumi}}
 \end{enumerate}
 Once all ballots have been processed in this way, the certificate
 determines winners and contains
 winners by
 \begin{enumerate}
-%\setcounter{enumi}{\value{mycnt}}
+\setcounter{enumi}{\value{mycnt}}
 \item \label{it:pub-dm} the fully constructed margin, together with its decryption  
   and ZKP of honest decryption after counting all the ballots     
 \item publishes the winner(s), together with evidence to substantiate the
     claim
 \end{enumerate}
 
-  \subsection{Cryptographic Primitives}
-  
-  \smallskip\noindent\emph{Cryptographic primitives.}
+\smallskip\noindent\emph{Cryptographic primitives.}
 We require an additively homomorphic cryptosystem to
 compute the (encrypted) margin matrix according to Equation
 \ref{eqn:enc-mm} (this implements Item \ref{it:upd-marg} above). All
@@ -378,14 +465,11 @@ k$.
 We refer to \emph{op.cit.} for the (formal)
 proofs of the fact that existence of co-closed sets witnesses the
 winning conditions. 
-  	\subsubsection{Construction Primitive}
-  	  Write here about how you construct the data
-  	\subsubsection{Verification Primitive}
-  	  Write here about how you verify the constructed 
-  	  data
 
-\section{Realization in Theorem Prover}
-   	We formalise homomorphic tallying for the Schulze Method inside the
+
+\section{Realisation in a Theorem Prover} \label{sec:realisation}
+
+We formalise homomorphic tallying for the Schulze Method inside the
 Coq theorem prover \cite{Bertot:2004:ITP}. Apart from supporting an
 expressive logic and (crucial for us) dependent inductive types, Coq
 has a well developed extraction facility that 
@@ -395,7 +479,7 @@ certificate, and then prove that a valid certificate can be obtained
 from any set of (encrypted) ballots. Extracting this proof as a
 programme, we obtain an executable that is correct by construction. 
 
-The purpose of this paper is not to verify cryptographic primitives, 
+The purpose of this work was not to verify cryptographic primitives, 
 but use them as a tool to construct evidence which can be used 
 to audit and verify the outcome during different phase 
 of election. Here, we treat them as abstract entities and assume
@@ -459,8 +543,9 @@ that take plaintext, and ciphertexts, as values.
     Definition pballot := cand -> cand -> plaintext.
     Definition eballot := cand -> cand -> ciphertext.
 \end{lstlisting}
-\noindent
-  We now turn to the representation of certificates, and indeed to the
+
+
+ We now turn to the representation of certificates, and indeed to the
   definition of what it means to (a) count encrypted votes correctly
   according to the Schulze Method, and (b) produce a verifiable
   certificate of this fact. At a high level, we split the counting
@@ -492,6 +577,7 @@ where
  \item \texttt{ewinners} is the final determination of winners. 
 \end{itemize}
 This is readily translated to the following Coq code:
+ 
 \begin{lstlisting}[frame=single,basicstyle=\ttfamily\footnotesize]
 Inductive EState : Type :=
  | epartial : (list eballot * list eballot) ->
@@ -500,10 +586,74 @@ Inductive EState : Type :=
  | ewinners : (cand -> bool) -> EState.
 \end{lstlisting}
 
+
+% \includegraphics[width=\textwidth]{inductive.png}
+
+
 \noindent
 The constructors of \texttt{EState} then allow us to move from one
 state to the next, under appropriate conditions that guarantee
 correctness of the count.
+
+Inductive type $ECount$ with all the required constructors filled with \textit{state data}, 
+\textit{verification data}, and \textit{correctness constraint}.
+\begin{lstlisting}[frame=single,basicstyle=\ttfamily\footnotesize]
+ Inductive ECount (grp : Group) (bs : list eballot) : EState -> Type :=
+  | ecax (us : list eballot) (encm : cand -> cand -> ciphertext)
+           (decm : cand -> cand -> plaintext)
+           (zkpdec : cand -> cand -> DecZkp) :
+        us = bs ->
+        (forall c d : cand, decm c d = 0) -> 
+        (forall c d, verify_zero_knowledge_decryption_proof 
+                  grp (decm c d) (encm c d) (zkpdec c d) = true) ->
+        ECount grp bs (epartial (us, []) encm)
+  | ecvalid (u : eballot) (v : eballot) (w : eballot)
+              (b : pballot) (zkppermuv : cand -> ShuffleZkp)
+              (zkppermvw : cand -> ShuffleZkp) (zkpdecw : cand -> cand -> DecZkp)
+              (cpi : Commitment) (zkpcpi : PermZkp)
+              (us : list eballot) (m nm : cand -> cand -> ciphertext)
+              (inbs : list eballot) :
+        ECount grp bs (epartial (u :: us, inbs) m) ->
+        matrix_ballot_valid b ->
+        (* commitment proof *)
+        verify_permutation_commitment grp (List.length cand_all) cpi zkpcpi = true ->
+        (forall c, verify_row_permutation_ballot grp u v cpi zkppermuv c = true)  ->
+        (forall c, verify_col_permutation_ballot grp v w cpi zkppermvw c = true)  ->
+        (forall c d, verify_zero_knowledge_decryption_proof 
+                  grp (b c d) (w c d) (zkpdecw c d) = true)  ->
+        (forall c d, nm c d = homomorphic_addition grp (u c d) (m c d)) -> 
+        ECount grp bs (epartial (us, inbs) nm)
+  | ecinvalid (u : eballot) (v : eballot) (w : eballot)
+              (b : pballot) (zkppermuv : cand -> ShuffleZkp)
+              (zkppermvw : cand -> ShuffleZkp) (zkpdecw : cand -> cand -> DecZkp)
+              (cpi : Commitment) (zkpcpi : PermZkp)
+              (us : list eballot) (m : cand -> cand -> ciphertext)
+              (inbs : list eballot) :
+        ECount grp bs (epartial (u :: us, inbs) m) ->
+        ~matrix_ballot_valid b ->
+        (* commitment proof *)
+        verify_permutation_commitment grp (List.length cand_all) cpi zkpcpi = true ->
+        (forall c, verify_row_permutation_ballot grp u v cpi zkppermuv c = true) ->
+        (forall c, verify_col_permutation_ballot grp v w cpi zkppermvw c = true) ->
+        (forall c d, verify_zero_knowledge_decryption_proof 
+                  grp (b c d) (w c d) (zkpdecw c d) = true) ->
+        ECount grp bs (epartial (us, (u :: inbs)) m)
+  | ecdecrypt inbs (encm : cand -> cand -> ciphertext)
+                (decm : cand -> cand -> plaintext)
+                (zkp : cand -> cand -> DecZkp) :
+        ECount grp bs (epartial ([], inbs) encm) ->
+        (forall c d, verify_zero_knowledge_decryption_proof
+                  grp (decm c d) (encm c d) (zkp c d) = true) ->
+        ECount grp bs (edecrypt decm)
+  | ecfin dm w (d : (forall c, (wins_type dm c) + (loses_type dm c))) :
+        ECount grp bs (edecrypt dm) ->
+        (forall c, w c = true <-> (exists x, d c = inl x)) ->
+        (forall c, w c = false <-> (exists x, d c = inr x)) ->
+        ECount grp bs (ewinners w).  
+
+\end{lstlisting}
+
+Todo : Add more details for each constructor
 
 The first constructor, \texttt{Ecax} kick-starts the count, and
 ensures that 
@@ -517,10 +667,10 @@ The first constructor, as well as all the others, require
   and the encrypted homomorphic margin
   \item[verification data] a zero knowledge proof that the encrypted
   homomorphic margin is indeed an encryption of the zero margin
-  \item[correctness constraints] here, the constuctor may only be applied if
+  \item[correctness constraints] here, the constructor may only be applied if
   the list of uncounted ballots is equal to the list of ballots
   cast, and the fact that the zero knowledge proofs indeed verify
-  that the intitial margin matrix is identically zero.
+  that the initial margin matrix is identically zero.
 \end{description}
 
 \noindent
@@ -529,17 +679,17 @@ verification data is that the former can be simply be inspected
 (here by comparing lists) whereas the latter requires additional
 data (here  in the form of a zero knowledge proof).
 
-The translation of high level representation into Coq representation
-is now easy, and we arrive at the following Coq code.
-\begin{lstlisting}[frame=single,basicstyle=\ttfamily\footnotesize]
-ecax (us : list eballot) (encm : cand -> cand -> ciphertext)
- (decm : cand -> cand -> plaintext) 
- (zkpdec : cand -> cand -> DecZkp) :
- us = bs -> (forall c d : cand, decm c d = 0) -> 
- (forall c d, verify_zero_knowledge_decryption_proof 
-   group (decm c d) (encm c d) (zkpdec c d) = true) -> 
- ECount group bs (epartial (us, []) encm)
-\end{lstlisting}
+%The translation of high level representation into Coq representation
+%is now easy, and we arrive at the following Coq code.
+%\begin{lstlisting}[frame=single,basicstyle=\ttfamily\footnotesize]
+%ecax (us : list eballot) (encm : cand -> cand -> ciphertext)
+% (decm : cand -> cand -> plaintext) 
+% (zkpdec : cand -> cand -> DecZkp) :
+% us = bs -> (forall c d : cand, decm c d = 0) -> 
+% (forall c d, verify_zero_knowledge_decryption_proof 
+%   group (decm c d) (encm c d) (zkpdec c d) = true) -> 
+% ECount group bs (epartial (us, []) encm)
+%\end{lstlisting}
 
 
 \noindent
@@ -596,14 +746,10 @@ and we have:
 This last part is identical to our previous formalisation of the
 Schulze Method (for plaintext ballots), and we refer to 
 \cite{Pattinson:2017:SVE} for more details.
-	   
-   
-\section{Correctness by Construction}
-  Describe inductive data type and assertion in the 
-  system to make sure you can not construct any 
-  illegal term
-  
-  \label{sec:correct}
+
+
+\section{Correctness by Construction and Verification}
+\label{sec:correct}
 
 In the previous section, we have presented a data type that
 \emph{defines} the notion of a verifiably correct count of the
@@ -702,10 +848,9 @@ here are the coherence axioms that stipulate that zero knowledge
 proofs that verify indeed evidence shuffle and/or honest decryption.
 
 
-     
-\section{Experimental Result and Scrutiny Sheet} 
+\section{Extraction and Experiments} \label{sec:extract}
 
-	As already mentioned, we are using  the Coq extraction
+As already mentioned, we are using  the Coq extraction
 mechanism\cite{Letouzey:2003:NEC}  to extract programs from
 existence 
 proofs\footnote{https://github.com/mukeshtiwari/EncryptionSchulze/tree/master/code/Workingcode}. In particular, we extract the proof of the Theorem
@@ -772,8 +917,9 @@ Java data structures.
  are indexed by candidates and we display these matrices by listing
  their entries prefixed by a pair of candidates, e.g. the ellipsis
  in \texttt{AB(...)} denotes the matrix entry at row \texttt{A} and
-column \texttt{B}.
-{\small
+ column \texttt{B}.
+
+ {\small
  \begin{verbatim}
  M: AB(rel-marg-of-A-over-B-enc), AC(rel-marg-of-A-over-C-enc), ... 
  D: AB(0)                       , AC(0)                       , ...
@@ -866,7 +1012,19 @@ column \texttt{B}.
  type \texttt{ECount} that we have chosen to present schematically.
  Concrete certificates can be inspected with the accompanying proof
  development, and are obtained by simply implementing datatype to
-string conversion on the type \texttt{ECount}.\
+ string conversion on the type \texttt{ECount}.
+
+%%% DP: I don't understand this ... ? %%%%
+
+%The fact that the certificate was produced using formally verified
+%code implies that (modulo correctness of the implementation of the
+%cryptographic primitives) all certificates necessarily verify.
+%\emph{Verifiability} ensures that external stakeholders can convince
+%themselves in a hardware/software independent way of the correctness
+%of the count, whereas producing certiciates using \emph{verified}
+%code ensures that election authorities always produce correct, and
+%verifiable, results.
+
 
 To demonstrate proof of concept, 
 we have run our experiment on an  Intel  i7  2.6  GHz  Linux  desktop  computer
@@ -891,17 +1049,9 @@ practically feasible, our timing analysis substantiates that
 feasibility can be achieved by eliminating the overhead of the
 bindings. 
 
-  Here goes the result and certificate
-  Also point here the weakness of the system is
-  
-\section{Implementation : A Experience Report}
-  \subsection{Extraction}
-  \subsection{Unicrypt : Java Library for Realizing Cryptographic Primitives}  
-\section{summary}
-  Discuss here the weakness of system and pave the path to next chapter
-  that how software independence can help in verifying the election
-  
-  \noindent\emph{Summary.} The main contribution of our formalisation is that of independently
+\section{Analysis}
+
+\noindent\emph{Summary.} The main contribution of our formalisation is that of independently
 verifiable \emph{evidence} for a set of candidates to be the winners
 of an election counted according to the Schulze method. Our main
 claim is that our notion of evidence is both safeguarding the
@@ -956,6 +1106,3 @@ profiling) of the software artefact are necessary. Orthogonal to
 what we have presented here, it would also be of interest to develop
 a provably correct verifier for the notion of certificate presented
 here. 
-
-%\bibliographystyle{plain}
-%\bibliography{all2,delta2}
