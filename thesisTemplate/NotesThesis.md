@@ -36,7 +36,7 @@ Move this to electronic voting chapter
  https://arxiv.org/pdf/1707.08619.pdf
  
  \begin{minted}{coq} 
- Coq code highliter
+ Coq code highliter	
  \end{minted} 
  
  

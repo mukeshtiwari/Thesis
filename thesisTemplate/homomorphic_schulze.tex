@@ -92,7 +92,8 @@ scenarios.
   Write a chapter outline here once you finish the chapter
   
   
-  \smallskip\noindent\emph{The Schulze Method.} The Schulze Method
+  \smallskip\noindent\emph{The Schulze Method.} We give a brief overview of Schulze method 
+  for convenience of the reader.   The Schulze Method
   \cite{Schulze:2011:NMC} is a preferential, single-winner vote
   counting scheme that is gaining popularity due to its relative
   simplicity while retaining near optimal fairness
@@ -433,7 +434,48 @@ cryptosystem that implements the following:
 \begin{description}
 \item[Decryption Primitives.]
   decryption of a ciphertext, creation and verification of
-  honest decryption zero knowledge proofs.
+ honest decryption zero knowledge proofs. 
+% Below are the primitives 
+%  represented in Coq to achieve the needed functionality
+%  \begin{lstlisting}[frame=single,basicstyle=\ttfamily\footnotesize]
+%  
+%  Inductive Group : Type :=
+%     group : Prime -> Generator -> Pubkey -> Group.
+%    
+% 
+%  Variable encrypt_message :
+%    Group ->  plaintext -> ciphertext.
+%    
+% 
+%  Variable decrypt_message :
+%    Group -> Prikey -> ciphertext -> plaintext.
+%    
+% 
+%  Axiom decryption_left_inverse :
+%    forall (pt : plaintext),
+%      decrypt_message grp privatekey 
+%      (encrypt_message grp pt) = pt.
+%  
+%  
+%  Variable construct_zero_knowledge_decryption_proof :
+%    Group -> Prikey -> ciphertext -> DecZkp.
+%
+% 
+%  Axiom verify_zero_knowledge_decryption_proof :
+%    Group -> plaintext -> ciphertext -> DecZkp -> bool.
+%  
+%  
+%  Axiom verify_honest_decryption_zkp :
+%    forall (pt : plaintext) (ct : ciphertext)
+%      (H : pt = decrypt_message grp privatekey ct),
+%      verify_zero_knowledge_decryption_proof
+%        grp pt ct
+%        (construct_zero_knowledge_decryption_proof grp
+%         privatekey ct) = true.
+%        
+% 
+%        
+%  \end{lstlisting}
 \item[Commitment Primitives.]
   generating permutations, creation and verification of commitment
   zero knowledge proofs
@@ -1004,7 +1046,7 @@ Java data structures.
 \begin{wrapfigure}{R}{7.4cm}
 \centering
 \vspace*{-1cm}
-\includegraphics[scale=0.40]{PlotVer3.png}
+\includegraphics[scale=0.50]{PlotVer3.png}
 \vspace*{-1cm}
 \end{wrapfigure}
  We note that the schematic presentation of the certificate above is
@@ -1049,9 +1091,9 @@ practically feasible, our timing analysis substantiates that
 feasibility can be achieved by eliminating the overhead of the
 bindings. 
 
-\section{Analysis}
+\section{Summary}
 
-\noindent\emph{Summary.} The main contribution of our formalisation is that of independently
+\noindent The main contribution of our formalisation is that of independently
 verifiable \emph{evidence} for a set of candidates to be the winners
 of an election counted according to the Schulze method. Our main
 claim is that our notion of evidence is both safeguarding the
@@ -1078,10 +1120,8 @@ executable and the formal proofs. First and foremost, this is of
 course the implementation of the cryptographic primitives in an
 external (and unverified) library. We have minimised this gap by
 basing our implementation on a purpose-specific existing library
-(UniCrypt) to which we relegate most of the functionality. Another
-gap is the extraction mechanism of the Coq theorem prover which does
-not come with formal correctness guarantees that reach down to the
-machine code level such as for example CakeML~\cite{Kumar:2014:CVI}.
+(UniCrypt) to which we relegate most of the functionality. 
+
 
 \smallskip\noindent\emph{Modelling Assumptions.} In our modelling of
 the cryptographic primitives, in particular the zero knowledge
@@ -1106,3 +1146,39 @@ profiling) of the software artefact are necessary. Orthogonal to
 what we have presented here, it would also be of interest to develop
 a provably correct verifier for the notion of certificate presented
 here. 
+
+In nutshell, the pros and cons of this formalization:
+
+\begin{itemize}
+\item Pros 
+\begin{itemize}
+\item Correctness: The implementation is formalized in Coq assuming the cryptographic 
+          functions and correctness about their behaviour with emphasis on generating 
+         evidence to convince. 
+         
+\item Privacy : We don't reveal the content of ballot at any phase of election counting. Therefore, 
+         there is no possibility of anyone knowing the choices of a voter other than the voter himself. 
+                 
+\item Verifiability: The outcome of any election can be verified by any third party because 
+          of the generated certificates. However, certificates are only accessible to someone 
+          having specialized  knowledge of cryptography. 
+
+
+\end{itemize}
+\item Cons
+\begin{itemize}
+ \item Verifiability:  The nature of certificates in this case is very complex, and they can only be scrutinize 
+          by someone having specialized knowledge of cryptography which decreases the pool of potential 
+          scrutinizers dramatically.
+        
+ \item Practicality: The extracted code hardly counts 10,000 ballots over a night which is certainly not the 
+          case in real life election.  
+          
+ \item Correctness: We used external unverified libraries for cryptographic code.  These libraries could be buggy and 
+          may produce a wrong result. This, per say, is not a problem because it will be caught during the 
+          certificate checking by any independent party, but, it may create a atmosphere of distrust among 
+          voters about electronic voting.  
+ 
+ 
+\end{itemize}
+\end{itemize}
