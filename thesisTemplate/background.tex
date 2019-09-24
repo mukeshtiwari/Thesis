@@ -24,21 +24,25 @@
 	\label{fig:world_electronic_voting_map}
 	\end{center}
   \end{figure}  
-   
   The world can be divided into five broad categories according to 
   the usage of electronic voting\footnote{https://www.e-voting.cc/en/it-elections/world-map}
-  \ref{fig:world_electronic_voting_map}
-  \begin{enumerate}
-  \item No electronic voting (Grey Area)
-  \item Discussion and/or voting technology pilots (Yellow Area)
-  \item Discussion and concrete plans for Internet voting (Orange Area)
-  \item Ballot scanners, Electronic Voting Machines, and Internet Voting
-        (Green and Dark Green)
-  \item Withdrawn voting technology because of public concern (Red Area) 
-  \end{enumerate}    
-  
+  \ref{fig:world_electronic_voting_map}: i) No electronic voting (Grey Area), ii)
+  Discussion and/or voting technology pilots (Yellow Area), 
+  iii) Discussion and concrete plans for Internet voting (Orange Area),
+  iv) Ballot scanners, Electronic Voting Machines, and Internet Voting (Green and Dark Green),
+  v) Withdrawn voting technology because of public concern (Red Area) 
+%  \begin{enumerate}
+%  \item No electronic voting (Grey Area)
+%  \item Discussion and/or voting technology pilots (Yellow Area)
+%  \item Discussion and concrete plans for Internet voting (Orange Area)
+%  \item Ballot scanners, Electronic Voting Machines, and Internet Voting
+%        (Green and Dark Green)
+%  \item Withdrawn voting technology because of public concern (Red Area) 
+%  \end{enumerate}    
+%  
  
-
+\textbf{Chapter Outline:}
+  Write here a chapter outline
    
 %  The input method, form of ballot, used the countries participating 
 %  in electronic voting can be broadly divided into three group 
@@ -50,7 +54,7 @@
   declared void by the high court because of the loss of 1370 votes. It was 
   re-conducted in April 2014 with the cost of 20 Million 
   AUD with additional  delay in results\footnote{https://www.theguardian.com/world/2014/feb/28/western-australia-senate-election-re-run-to-be-held-on-5-april}. Sometimes, 
-  not only cost, but time as well is major concern.
+  not only cost, but time as well is a major concern.
   \fix{Give a example of seat which took considerable amount 
   of time in declaring result. I can't find it :(}. 
   The advantages of electronic voting 
@@ -112,7 +116,7 @@
   Dutch public foundation, Wij vertrouwen stemcomputers niet
   \footnote{English Translation "We do not trust voting computers"}. 
   They showed that e-voting machines used in election leaks enough
-  information to guess the option, 
+  information to guess the option or choice of a voter, 
   and they can be easily intercepted from 20 to 30 meters
   \footnote{https://www.youtube.com/watch?v=B05wPomCjEY}. 
   
@@ -626,12 +630,22 @@ public office elections around the world.
 	       
     
    \subsection{Scrutiny Sheet}
-   Scrutiny sheet in tabulation of relevant data to ascertain the result of election. 
-   The idea of requiring that computations provide not only results, but also proofs attesting
+   Scrutiny sheet is the tabulation of relevant data to ascertain the result of election. 
+   The idea of requiring that computations provide not only results, but also a witness attesting
     to the correctness of the computation is not new,
-	and has been put forward in \cite{Arkoudas:2005:DRC} for
-	computations in general, and in \cite{Schurmann:2009:EET} in the context
-	of electronic voting. 
+	and has been put forward in \citep{89397}, \cite{Blum:1995:DPC:200836.200880},
+	\cite{Arkoudas:2005:DRC}, and in \cite{Schurmann:2009:EET} in the context
+	of electronic voting.   In general, the idea of computation is that a computable function \textit{f}, it takes 
+	a input \textit{x} and produces output \textit{y}; however, in case of certified computation, 
+	the computable function \textit{f} on the given input \textit{x}, not only produces the output \textit{y},
+	but it also produces a witness \textit{w} for the fact that $ f (x) = y$.
+	
+	
+\begin{tikzpicture}
+\draw (5,5) rectangle (7,7) node[pos=0.5] {program for f};
+\end{tikzpicture}
+	
+	
 
     
    

@@ -70,7 +70,8 @@ we can not expect a true democracy.
  inadequately tested which evidently can not rule out all 
  the possibilities.
   
- \section{Motivation and Research Statement}:
+ \section{Motivation and Research Statement}
+ \textbf{Motivation:}
  Electronic voting has gained a lot of attention in recent year,  and  there are extensive work which 
  addresses the different issues related of electronic voting protocols  in symbolic model.
 % , 
@@ -103,20 +104,33 @@ we can not expect a true democracy.
  counting. \cite{Ghale:2017:FVS} have formalized the single transferable votes in Coq and 
  extracted a Haskell code from the formalization. The extracted Haskell code produces the result 
  and a certificate for a given set of input ballots. The certificate can be used by any third party to verify 
- or audit the outcome of election result.  However, none of these work considers the encrypted ballots, 
- and they simply count on plaintext ballot which is susceptible to "italian attack" \citep{Benaloh:2009:SSC}. 
- This work not only considers the plaintext ballot, but extends the counting to encrypted ballot 
- using homomorphic encryption and uses the zero-knowledge-proof to make sure that outcome of 
-election can be verified by any independent third party. 
+ or audit the outcome of election result.  However, none of these work considers privacy as a key 
+ issue in electronic voting, and their method simply works for plaintext ballots which are  susceptible to 
+ "italian attack"  \citep{Otten}   \citep{Benaloh:2009:SSC}.
  
-
+ This work not only considers the plaintext ballot, but extends the counting to encrypted ballot 
+ using homomorphic encryption to preserve the privacy of election. To ensure the verifiability, 
+ we use the zero-knowledge-proof to 
+ make sure that outcome of election can be attested by any independent third party. To ease the 
+ auditing or certificate-checking of election conducted on encrypted ballot with other complex 
+ cryptographic entities, we have developed 
+ a formally verified certificate checker for auditing the election \footnote{IACR 2018 election}. 
+ To the best of our knowledge, no one has developed a vote counting system which counts encrypted 
+ ballots, and at the same time, the implementation itself is verified inside a theorem prover.  
+ \citep{10.1007/978-3-030-03592-1_5} has developed a verified certificate checker, but, again, 
+ it involves plaintext ballots  with simple mathematics of addition and multiplication while  our checker
+ tackles the certificates involving complex cryptographic 
+ objects, e.g. encrypted ballots and zero-knowledge-proof of different statements.
+ 
+ 
+\textbf{Research Statement:}
 After inspecting the current state of art in electronic voting, we 
- asked ourselves two questions:
+ asked ourselves three questions:
  \begin{enumerate}
   \item Can we engineer a system which is formally verified to 
     guarantee the correctness property, and practical enough
     to count the real life election involving millions of ballots ? 
- \item  Can we decouple the verifiability from implementation i.e. 
+ \item  Can we decouple the verifiability from implementation, i.e. 
     generating enough evidence so that any independent auditor can 
     ascertain the outcome of election without trusting the implementation 
     of software used to conduct the election ? 
@@ -152,8 +166,6 @@ we use to extract proofs into OCaml programs, and using these extracted OCaml pr
 have counted the ballots from election to produce the result.  We will discuss more about the Coq in 
 \ref{cha:background}. 
 
-[Todo : Fill the details]
-
 \subsection{Properties of Electronic Voting Protocol:} 
  What makes a electronic voting protocol  "good" or "desirable" ?  Some commonly sought 
  properties which a electronic voting protocol must have are given below \citep{5958051}, 
@@ -168,6 +180,8 @@ have counted the ballots from election to produce the result.  We will discuss m
     value of his vote.
  
  \item End-to-end Verifiability:
+ Any independent third party should be able to verify the final outcome of election based on cast 
+ ballots.  It can be further divided into three sub-category:
  
  \begin{itemize}
   \item Cast-as-intended: Every voter can verify that their ballot was cast as
@@ -178,17 +192,16 @@ have counted the ballots from election to produce the result.  We will discuss m
   collected ballots.
 \end{itemize}
 
-\item Practicality:
+\item Practicality: 
   
 \item Coercion-resistance:
 	A voter cannot cooperate with a coercer to prove to him that she voted in a certain way.
   
-
 \item Voter Eligibility:
   Only eligible voter can cast the ballot, and only once.
 
 \item Fairness:
-  No intermediate results can be obtained which could influence the remain-ing voters
+  No intermediate results can be obtained which could influence the remaining voters.
 
 \item Receipt-freeness:
 A voter does not gain any information (receipt) which can be used to prove to a coercer that
@@ -269,8 +282,8 @@ The focus of our study is the \textit{Correctness},
 	Dr. Dirk Pattinson, co-supervisor Rajeev Goré, colleague Milad K. Ghale,  and external collaborators 
 	Dr. Thomas Haines from NTNU, Dr. Lyria Bennett Moses from UNSW, and Dr Ron Levy from ANU.  
 	\begin{enumerate}
-	\item Dirk Pattinson, Mukesh Tiwari:
-	Schulze Voting as Evidence Carrying Computation. ITP 2017: 410-426
+	\item Pattinson, D. and Tiwari, M., 2017. Schulze voting as evidence carrying computation. In Proc. 
+	ITP 2017, vol. 10499 of Lecture Notes in Computer Science, 410–426. Springer. 
 	\item Lyria Bennett Moses, Rajeev Goré, Ron Levy, Dirk Pattinson, Mukesh Tiwari:
 	No More Excuses: Automated Synthesis of Practical and Verifiable Vote-Counting Programs for Complex 
 	Voting 	Schemes. E-VOTE-ID 2017: 66-83
