@@ -1194,6 +1194,13 @@ practically feasible, our timing analysis substantiates that
 feasibility can be achieved by eliminating the overhead of the
 bindings. 
 
+
+\textbf{Personal Experience:}
+This project turned out to be very challenging than I anticipated when I started it. 
+Dirk : Would it be a good idea to write my personal experience about this project ? 
+    It was very challenging from proving the lemmas to writing the OCaml binding. 
+    I would like to write a section on it, but, only if, it is appropriate
+
 \section{Summary}
 
 \noindent The main contribution of our formalisation is that of independently
@@ -1248,12 +1255,13 @@ In a nutshell, the pros and cons of this formalization:
 \begin{itemize}
 \item Pros 
 \begin{itemize}
-\item Correctness: The implementation is formalized in Coq assuming the cryptographic 
-          functions and correctness about their behaviour with emphasis on generating 
-         evidence to convince. 
+\item Correctness: The implementation is formalized in Coq assuming the 
+         existence of cryptographic 
+         functions and axioms about their correctness behaviour. These primitives were 
+         used for constructing evidence, or certificate. 
          
 \item Privacy : We don't reveal the content of ballot at any phase of election counting. Therefore, 
-         there is no possibility of anyone knowing the choices of a voter other than the voter himself. 
+         there is no possibility of anyone knowing the choices of a voter other than the voter himself.
                  
 \item Verifiability: The outcome of any election can be verified by any third party because 
           of the generated certificates. However, certificates are only accessible to someone 
@@ -1266,7 +1274,7 @@ In a nutshell, the pros and cons of this formalization:
           by someone having specialized knowledge of cryptography which decreases the pool of potential 
           scrutinizers dramatically.
         
- \item Practicality: The extracted code hardly counts 10,000 ballots over a night which is certainly not the 
+ \item Practicality: The extracted code hardly counts 10,000 ballots in 25 hours which is certainly not the 
           case in real life election.  
           
  \item Correctness: We used external unverified libraries for cryptographic code.  These libraries could be buggy and 
@@ -1279,10 +1287,42 @@ In a nutshell, the pros and cons of this formalization:
 \end{itemize}
 
 
-\smallskip\noindent\emph{Future Work.} Our axiomatisation of the
-needed cryptographic primitives lays the foundation of creating a
-verified library. For scalability, a more detailed analysis (and
-profiling) of the software artefact are necessary. Orthogonal to
-what we have presented here, it would also be of interest to develop
-a provably correct verifier for the notion of certificate presented
-here. 
+Our formalization leaves some gaps which needed to be filled:
+\begin{itemize}
+\item A formally verified cryptographic library to fill the \textit{Practicality} gap
+\item A formally verified checker to easy the auditing of election to fill the \textit{Scrutineers} gap
+\end{itemize}
+
+
+Todo : Rewrite this once you finish the formally verified checker
+Developing a formally verified library to fill the practicality gap would probably be itself a PhD, so 
+we chose the other path. Technically, we have not developed the certificate checker for our 
+scheme, but for IACR election which is simpler than ours. 
+
+In the next chapter, we will focus on  bits and pieces of formally verified certificate checker. The reason 
+for formally verifying 
+the certificate checker is \emph{correctness}. Recall that the crucial requirement of certificate is: i) correctness, 
+and ii) simplicity.  Also, to affirm the public trust in electronic voting, it is a good idea to provide a reference 
+checker and make it open source.  Even though, the reference checker is formally verified, 
+the idea behind making it open source is to gain the public trust  via scrutiny or openness.  
+Providing a reference checker, also,  opens the gate for debate in case of 
+someone's implementation for checking certificate diverges from the reference checker.  
+In the case of diverging situation, there are two possibility, either the reference solution is verified 
+using wrong assumption,  or the implementation itself is wrong.  The first situation is certainly 
+not very pleasant because it would deteriorate the public trust, but nonetheless, it is always good to 
+have openness in democracy to make it more strong.
+
+%The idea is that if 
+% some one's reference solution diverges, then he can have a look 
+%at the reference solution.  Since the reference checker is open source and have gone through the 
+%public scrutiny, it is highly unlikely that it would produce the wrong result 
+
+
+
+% Our axiomatisation of the
+%needed cryptographic primitives lays the foundation of creating a
+%verified library. For scalability, a more detailed analysis (and
+%profiling) of the software artefact are necessary. Orthogonal to
+%what we have presented here, it would also be of interest to develop
+%a provably correct verifier for the notion of certificate presented
+%here. 
