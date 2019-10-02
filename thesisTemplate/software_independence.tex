@@ -1,4 +1,4 @@
-\chapter{Scrutiny Sheet : Software Independence}
+\chapter{Scrutiny Sheet : Software Independence (or Universal Verifiability)}
 \label{cha:software_independence}
 
 \epigraph{Somewhere inside of all of us is the power to change the world.} 
@@ -10,32 +10,74 @@ is almost next to impossible.  As we stated in earlier chapter [Give a link to t
 software is complex artefact and, often, poorly design and tested. It should not come as a surprise to anyone
 that we are far more competent in producing the incorrect software than producing a provable correct one. 
  In order to tackle the software complexity problem and ensure the 
-public trust in process, Ronald Rivest  proposed "software-independence". 
+public trust in process, Ronald Rivest and John Wack  proposed  the term "software-independence": 
+\footnote{https://people.csail.mit.edu/rivest/RivestWack-OnTheNotionOfSoftwareIndependenceInVotingSystems.pdf}
 
 \textit{A voting system is software independent if an undetected change or error
    in its software can not cause an undetected change or error in an 
    election outcome.}
  
- \noindent
- Software-independence put forward the 
- In his paper
- Software independence is one form of auditability, enabling detection and 
-   possible correction of election outcome errors caused by malicious software or software
-bugs.
+ 
+ Software-independence is weaker notion than  end-to-end verifiability. Software independence 
+ put forward the idea of detection (and possible correction) of outcome of election due to 
+ software bug, while the end-to-end verifiability makes the whole process transparent without trusting 
+ any component involved in the process (including any hardware and software) \citep{Bernhard:2017:PES}.
+ Recall that end-to-end verifiability:
+  \begin{itemize}
+  \item Cast-as-intended: Every voter can verify that their ballot was cast as
+  intended
+  \item Collected-as-cast: Every voter can verify that their ballot was collected as
+  cast
+  \item Tallied-as-cast: Everyone can verify final result on the basis of the
+  collected ballots.
+\end{itemize}
+
+
+\cite{Benaloh:2006:SVE:1251003.1251008} has given a detailed overview  about achieving each step of 
+end-to-end verifiability, we are only concern about the last phase, i.e. \texttt{Tallied-as-cast}.
+Scrutiny sheet not only provides the \texttt{Tallied-as-cast}
+(also known as universal verifiability) assuming that first two, \texttt{Cast-as-intended} and 
+\texttt{Collected-as-cast}, hold, but it makes our voting system  software independent. 
+It is worth noting that any bug or malicious behaviour in 
+software used to produce the result can not go undetected if the results produced were incorrect. The 
+rationale is that any independent third party auditing/verifying the result would
+write his own checker to accomplish the task, and statistically, if more people are auditing the election, then 
+it is highly unlikely that incorrect result produced by buggy/malicious software would survive for long. 
 
 
 
-Same as the last chapter, introduce the motivation and the high-level picture to
-readers, and introduce the sections in this chapter. 
+\textbf{Chapter Overview}[Possibly rewriting after finishing the chapter]
+In the closing remark of last chapter, we argued that it is always a good idea to provide a open source 
+reference checker. This chapter focuses on the technical details needed to develop a certified checker 
+for election conducted on encrypted ballots. 
+In section [refer the section], we discuss the structure of  encrypted-ballot scrutiny sheet, 
+elaborate the relevant details to understand the certificate, section [some number] discusses 
+about what it means to verify the zero-knowlege-proof of different statement. Developing a 
+formally verified certificate checker for our certificate could have taken long time, so in order 
+to demonstrate the idea we have the taken the IACR 2018 election which we discuss in section [some number].
+%
+%We then discuss the technical details needed to develop checker for plaintext-ballot scrutiny sheet, and 
+%encrypted-ballot scrutiny sheet. In the end, we briefly discuss a formally verified checker for 
+%IACR 2018 election. 
 
-One of the crucial 
-aspect in electronic voting is ability to detect change in outcome of 
-election because of software bugs. 
+\begin{enumerate}
+\item first paste the certificate
+\item take each piece of information, and show that how can it be verified
+\item Flesh the details of honest decryption zero knowledge proof
+\item Flesh the details of permutation shuffle
+\end{enumerate}
+
+%Same as the last chapter, introduce the motivation and the high-level picture to
+%readers, and introduce the sections in this chapter. 
+%
+%One of the crucial 
+%aspect in electronic voting is ability to detect change in outcome of 
+%election because of software bugs. 
 
 
-   A voting system is software independent if an undetected change or error
-   in its software can not cause an undetected change or error in an 
-   election outcome.
+%   A voting system is software independent if an undetected change or error
+%   in its software can not cause an undetected change or error in an 
+%   election outcome.
 %\section{Verification and Verifiability}
 %  Paste Evote section 2
 
