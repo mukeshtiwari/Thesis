@@ -4,9 +4,95 @@
 \epigraph{The best weapon of a dictatorship is secrecy, but the best weapon of a democracy should be the weapon of openness.} 
 {\textit{Niels Bohr}} 
 
-%"People shouldn't be afraid of their government. Governments should be afraid of their people." - Alan Moore, V for Vendetta 
-%
-%"Those who cast the vote decides nothing. Those who count the vote decide everything." - Joseph Stalin
+\section{Problem Statement}
+   Electronic voting is a nightmare because the minuscule possibility of 
+   a bug in software used in voting could lead to a disaster, possibly 
+   inverting the results
+   \footnote{https://people.eng.unimelb.edu.au/vjteague/UniversalVerifiabilitySwissPost.pdf}
+   \citep{Wolchok:2010:SAI:1866307.1866309},
+   \citep{10.1007/978-3-319-22270-7_3}, \citep{ARANHA2019335},
+   \citep{Feldman:2007:SAD:1323111.1323113}.
+   Given that the risk of  electronic voting is 
+   so high, we should totally refrain from it. However,
+   electronic voting is getting popular in many countries
+   despite the fact that 
+   electronic voting has many undesirable problems.  The reason that 
+   electronic voting is getting popularity in many countries is cost-effective, 
+   increase in voter turnout  and faster result.  India has 900 million eligible voter, 
+   and with 67 percent (roughly 600 million) voter turnout in 2019 general election, 
+   the result was declared in 2 days. This was possible because India uses  electronic 
+   voting machines (EVM) to conduct the election. Australia has 
+   compulsory voting, but its massive size with sparsely populated land makes 
+   the election a big logistic challenge.  Australia is actively pursuing Internet voting 
+   to ease the logistic challenges and engage more citizens from the remote places. Estonia
+   is praised for successfully implementing the Internet voting since 2005. The first country to
+   adopt internet voting and showing confidence in technology. In 2019 elections, 
+   as claimed on e-estonia \footnote {https://e-estonia.com/solutions/e-governance/i-voting/},
+   the time saved in was 11,000 working days. 
+  
+   
+   It seems that electronic voting is a silver bullet and solution to many problems, and 
+   we can safely ignore the problems posed by it.   It is a worthwhile discussion that 
+   what a democracy want? A faster, but wrong and unverifiable result, or a slower, but
+   correct and verifiable result.  By its inherent nature, electronic voting has many 
+   problems, which are not present in paper ballot election, that makes it perfectly susceptible 
+   to delivering wrong and unverifiable result.
+   Because of the  untrusted and complex software
+    \footnote{Unix operating system has 15 million code which can not trusted at all}
+    and hardware stack
+ \footnote{Intel has many undocumented instructions in its x86 
+ processor. https://github.com/xoreaxeaxeax/sandsifter}, 
+   electronic voting lacks:  
+   \begin{enumerate}
+   \item correctness, i.e. produced results are correct and convincing to everyone leaving 
+   no ground for suspicion.
+   \item privacy,  i.e.  protecting the identity of the voter of a cast ballot
+   and the choices on the cast ballot.
+   \item verification, i.e. treated as a black-box which  violates the fundamental property of
+   public examinability.
+   \end{enumerate}
+   
+	\noindent
+	These untrusted components exposes a large attack surface
+	which  could potentially be exploited for illegal gain in election, possibly by 
+	current government or foreign country. As a result, a man or women who have 
+	not legitimately received a majority or quota would be  put in charge of public office. 
+	In a  nutshell, 
+    electronic voting violates  fundamental principals of any democratic election, i.e.
+    correctness, privacy, and verifiability.
+ 	
+
+\section{Research Motivation}
+This thesis sets out to answer the question of correctness, privacy and verifiability in 
+electronic voting. The questions we asked ourself was:
+ \begin{enumerate} 
+  \item Can we implement a vote counting protocol with the  
+    guaranteed correctness of its properties, and practical enough
+    to count the real life election involving millions of ballots ? (Correctness and Usability)
+  \item Can we produce the result by counting encrypted ballot without revealing 
+  its content, and at the same time, 
+  assuring everyone that the result produced is only based on valid ballots, 
+  and invalid ones have been discarded ? (Privacy)
+ \item Can we decouple the verifiability from implementation, i.e. 
+    generating enough evidence so that any independent auditor can 
+    ascertain the outcome of election without trusting the implementation 
+    of software used to conduct the election ? (Verifiability)
+  \end{enumerate}
+
+
+We achieve the correctness by using formal verification, privacy using 
+encryption, and verifiability using scrutiny sheet. We achieve the:
+\begin{enumerate}
+\item correctness by formally specifying the protocol using the 
+ mathematical logic.
+ \item verifiability by generating a proof certificate which can later be used to 
+ attest the outcome.
+ \item privacy by encrypting the ballots.  
+\end{enumerate}
+
+ Our approach to achieve the 
+correctness is to formally specify the protocol inside theorem prover, and prove its 
+correctness properties. 
 
 
 A democracy can be best describe as a system where every participant 
