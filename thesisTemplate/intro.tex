@@ -28,7 +28,7 @@
    is praised for successfully implementing the Internet voting since 2005. The first country to
    adopt internet voting and showing confidence in technology. In 2019 elections, 
    as claimed on e-estonia \footnote {https://e-estonia.com/solutions/e-governance/i-voting/},
-   the time saved in was 11,000 working days. 
+   the time saved was 11,000 working days. 
   
    
    It seems that electronic voting is a silver bullet and solution to many problems, and 
@@ -48,18 +48,23 @@
    no ground for suspicion.
    \item privacy,  i.e.  protecting the identity of the voter of a cast ballot
    and the choices on the cast ballot.
-   \item verification, i.e. treated as a black-box which  violates the fundamental property of
-   public examinability.
+   \item verification, i.e. any independent observer  can establish/verify
+    the produced results are correct based on cast ballots. 
+   
+   
    \end{enumerate}
    
 	\noindent
-	These untrusted components exposes a large attack surface
+	The software and hardware used in the electronic voting process  
+	are treated as a black-box which  violates the 
+	fundamental property of  public examinability. Also, they 
+	expose a attack surface
 	which  could potentially be exploited for illegal gain in election, possibly by 
-	current government or foreign country. As a result, a man or women who have 
+	current government or foreign country. As a result, a person who has 
 	not legitimately received a majority or quota would be  put in charge of public office. 
 	In a  nutshell, 
-    electronic voting violates  fundamental principals of any democratic election, i.e.
-    correctness, privacy, and verifiability.
+    electronic voting lacks violates the  fundamental principals of any democratic election, i.e.
+    correctness, privacy, and verifiability. 
  	
 
 \section{Research Motivation}
@@ -80,19 +85,137 @@ electronic voting. The questions we asked ourself was:
   \end{enumerate}
 
 
-We achieve the correctness by using formal verification, privacy using 
-encryption, and verifiability using scrutiny sheet. We achieve the:
+We answer these question by taking \textbf{Schulze}\cite{Schulze:2011:NMC} 
+algorithm as an example and \textbf{Coq} \citep{Bertot:2004:ITP}
+theorem prover  for implementing and proving the correctness of  Schulze method.
+Even though Schulze method is not used in any democratic election, the reason 
+ we went ahead with it because it has many interesting properties and, 
+ at the same time, it is non-trivial.   Schulze's method elects  a single winner based on 
+preferential votes.  Arrow's impossibility theorem \citep{Arrow:1950:DCS} states
+ that no preferential voting 
+scheme can have all the desired properties established by  social choice theorist,
+the Schulze's method offers a good balance. We will discuss more about Schulze method in 
+\ref{cha:schulze_method}, and about its properties in \ref{cha:machine_checked}. 
+The reason for choosing Coq is that it supports an expressive logic and dependent 
+inductive types which is very crucial for us. We will discuss more about the Coq in 
+\ref{cha:background}. 
+
+We demonstrate the:
 \begin{enumerate}
-\item correctness by formally specifying the protocol using the 
- mathematical logic.
- \item verifiability by generating a proof certificate which can later be used to 
- attest the outcome.
- \item privacy by encrypting the ballots.  
+ \item \texttt{Correctness} by formally specifying the Schulze method  inside 
+ Coq theorem prover, and prove the correctness properties. 
+ Coq has a well developed extraction facility that 
+ we use to extract proofs into OCaml programs, and using these extracted OCaml programs, we 
+ have counted the ballots from election to produce the result. 
+ \item \texttt{Verifiability} by tabulating the relevant data of election. We call it scrutiny-sheet/certificate. 
+   Achieving verifiability in a plain-text ballot counting is fairly straight forward, but it is not 
+   the same with a encrypted ballot counting.  To achieve verifiability in encrypted ballot counting, 
+   we augment the scrutiny sheet with zero-knowledge-proof for the each claim we make during the 
+   counting which can  later be checked by any auditor.  
+ \item \texttt{Privacy} by encryption. We use homomorphic-encryption to compute the 
+  finally tally without decrypting any individual ballot.
 \end{enumerate}
 
- Our approach to achieve the 
-correctness is to formally specify the protocol inside theorem prover, and prove its 
-correctness properties. 
+
+\section{Cryptographic Assumption}
+The goal of this thesis is not to verify the cryptographic primitives, but use them as a 
+facilitator to achieve our goals of privacy and verifiability in electronic voting. We have 
+assumed the existence of cryptographic primitives inside Coq theorem prover with the 
+axioms about their correctness behaviour. These primitives, in general, provide functionality 
+of encrypting a plain-text, decrypting a cipher-text, constructing a zero-knowledge-proof, 
+and verifying a zero-knowledge-proof. Later, in extracted OCaml, these functions are instantiated 
+with some external library function.  We will discuss more on this in chapter 4 (Homomorphic 
+Schulze Algorithm: Axiomatic Approach).
+
+Formalizing the whole cryptographic stack used in our 
+project would be very time consuming (probably a PhD itself), but it would be worth trying. 
+Although, we have formalized the (El-Gamal) encryption, and decryption inside Coq, but we still 
+are very far from achieving the goal of fully verified cryptographic stack.  We leave the formalisation 
+of cryptographic primitives for future work (work in progress).
+
+
+
+
+
+\section{Publication}
+	\begin{enumerate}
+	\item Pattinson, D. and Tiwari, M., 2017. Schulze voting as evidence carrying computation. In Proc. 
+	ITP 2017, vol. 10499 of Lecture Notes in Computer Science, 410–426. Springer. 
+	\item Lyria Bennett Moses, Rajeev Goré, Ron Levy, Dirk Pattinson, Mukesh Tiwari:
+	No More Excuses: Automated Synthesis of Practical and Verifiable Vote-Counting Programs for Complex 
+	Voting 	Schemes. E-VOTE-ID 2017: 66-83
+	\item Milad K. Ghale, Rajeev Goré, Dirk Pattinson, Mukesh Tiwari:
+	Modular Formalisation and Verification of STV Algorithms. E-Vote-ID 2018: 51-66
+	\item VSSTE paper
+	\item CCS paper
+
+	\end{enumerate}
+
+
+
+
+\section{Related Work}
+ There are extensive work which 
+ addresses the different issues related of electronic voting protocols  in symbolic model, 
+ but there are very few, to the best of my knowledge, 
+ which has used theorem prover to implement the voting protocol (counting algorithm)
+ and verify its correctness properties. 
+ \cite{10.1007/978-3-540-31987-0_14}, and  \cite{Delaune2010} have used pi-calculus to model 
+ and analyse various properties, fairness, eligibility, vote-privacy, receipt-freeness and coercion-resistant,  
+ of the protocol FOO developed by \cite{10.1007/3-540-57220-1_66}.  \cite{Backes:2008:AVR:1380848.1381255}
+ presented a general technique to model  remote electronic 
+ voting protocol and automatically verifying  its security properties using pi-calculus. 
+ \cite{5992139} have used pi-calculus to analyse the ballot secrecy of \cite{Helios:2016:HVS}.
+ \cite{10.1007/978-3-642-28641-4_7} have used pi-calculus to ascertain the properties of 
+ Norwegian electronic voting protocol.
+ \cite{10.1007/978-3-319-68687-5_7} have used Tamarin  to prove receipt-freeness 
+ and vote-privacy of Selene voting protocol \citep{Selene}.  Most of these work differs from ours
+ in the sense that their primary focus is verification of security protocol in  
+ Dolev-Yao model or  complexity-theoretic model, whereas our work is 
+ more focused on verified implementation and  verifiability  aspect of election.
+
+ The closest to our work is \cite{DeYoung:2012:LLV}, \cite{Pattinson:2015:VCM}, \cite{Pattinson:2016:MSP},
+ \cite{Verity:2017:FVI:3014812.3014845}, and \cite{Ghale:2017:FVS}.  \cite{DeYoung:2012:LLV} 
+ used linear logic\citep{GIRARD19871} to model the different entity in electronic voting as a resource. 
+ The use of linear logic makes it very natural to capture the different entities in electronic voting,  
+ depending on their usage, by means of modality e.g. a voter can cast only one vote, but he might 
+ need to show his photo id to multiple times at counting booth. \cite{Pattinson:2015:VCM} treated 
+ the process of vote counting from
+ the perspective of mathematical proof. They used (mathematical) proof theory to model the 
+ counting. \cite{Ghale:2017:FVS} have formalized the single transferable votes in Coq and 
+ extracted a Haskell code from the formalization. The extracted Haskell code produces the result 
+ and a certificate for a given set of input ballots. The certificate can be used by any third party to verify 
+ or audit the outcome of election result.  However, none of these work considers privacy as a key 
+ issue in electronic voting, and their method simply works for plaintext ballots which are  susceptible to 
+ "italian attack"  \citep{Otten}   \citep{Benaloh:2009:SSC}.
+
+\section{Outline of the Chapters}
+[Rewrite again when you finish everything]
+In chapter 2, we will give a brief history of electronic voting, the glitches that cause some countries 
+to withdraw from electronic voting.  
+
+
+
+\section{Trivia}
+ Before 1856, Victoria and NSW held their elections to elect its 
+	  democratic representative in pub where it was legal for 
+	  candidates to offer beer to voters to influence their 
+	  decision! 
+	  
+	   \begin{figure}[htb]
+	\begin{center}
+	\includegraphics[scale=0.25]{NorthBourke.jpg}
+	\caption{Election held in 1855 in Victoria, Australia 
+	  was conducted in pub!}
+	\end{center}
+  \end{figure}   
+  
+  
+
+
+
+
+
 
 
 A democracy can be best describe as a system where every participant 
