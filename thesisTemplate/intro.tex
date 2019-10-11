@@ -67,13 +67,15 @@
     correctness, privacy, and verifiability. 
  	
 
-\section{Research Motivation}
-This thesis sets out to answer the question of correctness, privacy and verifiability in 
-electronic voting. The questions we asked ourself was:
+\section{Research Motivation and Contribution}
+Given the potential advantages of electronic voting,  we need to address
+the correctness, privacy and verifiability concerns for its widespread adoption. 
+This thesis sets out to address these concerns of electronic voting. 
+The questions we asked ourself was:
  \begin{enumerate} 
   \item Can we implement a vote counting protocol with the  
     guaranteed correctness of its properties, and practical enough
-    to count the real life election involving millions of ballots ? (Correctness and Usability)
+    to count the real life election involving millions of ballots ? (Correctness)
   \item Can we produce the result by counting encrypted ballot without revealing 
   its content, and at the same time, 
   assuring everyone that the result produced is only based on valid ballots, 
@@ -81,12 +83,12 @@ electronic voting. The questions we asked ourself was:
  \item Can we decouple the verifiability from implementation, i.e. 
     generating enough evidence so that any independent auditor can 
     ascertain the outcome of election without trusting the implementation 
-    of software used to conduct the election ? (Verifiability)
+    of software used to conduct the election? (Verifiability)
   \end{enumerate}
 
 
-We answer these question by taking \textbf{Schulze}\cite{Schulze:2011:NMC} 
-algorithm as an example and \textbf{Coq} \citep{Bertot:2004:ITP}
+We answer these question by taking \cite{Schulze:2011:NMC} 
+algorithm as an example and Coq \citep{Bertot:2004:ITP}
 theorem prover  for implementing and proving the correctness of  Schulze method.
 Even though Schulze method is not used in any democratic election, the reason 
  we went ahead with it because it has many interesting properties and, 
@@ -109,31 +111,36 @@ We demonstrate the:
  have counted the ballots from election to produce the result. 
  \item \texttt{Verifiability} by tabulating the relevant data of election. We call it scrutiny-sheet/certificate. 
    Achieving verifiability in a plain-text ballot counting is fairly straight forward, but it is not 
-   the same with a encrypted ballot counting.  To achieve verifiability in encrypted ballot counting, 
+   the same with encrypted ballot counting.  To achieve verifiability in encrypted ballot counting, 
    we augment the scrutiny sheet with zero-knowledge-proof for the each claim we make during the 
    counting which can  later be checked by any auditor.  
  \item \texttt{Privacy} by encryption. We use homomorphic-encryption to compute the 
-  finally tally without decrypting any individual ballot.
+  finally tally without decrypting any individual ballot. 
 \end{enumerate}
 
 
+In addition to this, we have also developed a formally verified certificate checker to ease the 
+auditing of election conducted on encrypted ballot.  Given that our certificate is very complex 
+and formalizing all primitives involved would be fairly time consuming, we have developed a 
+proof of concept for IACR 2018, relatively simple than ours, election scrutiny sheet
+\ref{cha:software_independence}. 
+Also, we have proved couple of properties, Condercet winner, and Reversal symmetry property 
+of Schulze method inside Coq theorem prover \ref{cha:machine_checked}.
+
 \section{Cryptographic Assumption}
 The goal of this thesis is not to verify the cryptographic primitives, but use them as a 
-facilitator to achieve our goals of privacy and verifiability in electronic voting. We have 
-assumed the existence of cryptographic primitives inside Coq theorem prover with the 
+facilitator to achieve privacy and verifiability in electronic voting. To achieve it, we have 
+taken the axiomatic approach, and assumed the existence of cryptographic primitives 
+inside Coq theorem prover with the 
 axioms about their correctness behaviour. These primitives, in general, provide functionality 
 of encrypting a plain-text, decrypting a cipher-text, constructing a zero-knowledge-proof, 
 and verifying a zero-knowledge-proof. Later, in extracted OCaml, these functions are instantiated 
-with some external library function.  We will discuss more on this in chapter 4 (Homomorphic 
-Schulze Algorithm: Axiomatic Approach).
-
-Formalizing the whole cryptographic stack used in our 
+with some external library function.  We will discuss more on this in \ref{cha:homormorphic_schulze}.
+\footnote{Formalizing the whole cryptographic stack used in our 
 project would be very time consuming (probably a PhD itself), but it would be worth trying. 
 Although, we have formalized the (El-Gamal) encryption, and decryption inside Coq, but we still 
 are very far from achieving the goal of fully verified cryptographic stack.  We leave the formalisation 
-of cryptographic primitives for future work (work in progress).
-
-
+of cryptographic primitives for future work (work in progress).}
 
 
 
