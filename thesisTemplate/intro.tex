@@ -5,10 +5,9 @@
 {\textit{Niels Bohr}} 
 
 \section{Problem Statement}
-   Electronic voting is a nightmare because the minuscule possibility of 
+   Electronic voting is a nightmare and chance because the minuscule possibility of 
    a bug in software used in voting could lead to a disaster, possibly 
-   inverting the results
-   \footnote{https://people.eng.unimelb.edu.au/vjteague/UniversalVerifiabilitySwissPost.pdf}
+   inverting the results \citep{TSwiss}
    \citep{Wolchok:2010:SAI:1866307.1866309},
    \citep{10.1007/978-3-319-22270-7_3}, \citep{ARANHA2019335},
    \citep{Feldman:2007:SAD:1323111.1323113}.
@@ -27,17 +26,48 @@
    to ease the logistic challenges and engage more citizens from the remote places. Estonia
    is praised for successfully implementing the Internet voting since 2005. The first country to
    adopt internet voting and showing confidence in technology. In 2019 elections, 
-   as claimed on e-estonia \footnote {https://e-estonia.com/solutions/e-governance/i-voting/},
-   the time saved was 11,000 working days. 
+   as claimed on e-estonia \citep{Estonia},  the time saved was 11,000 working days. 
   
    
-   It seems that electronic voting is a silver bullet and solution to many problems, and 
-   we can safely ignore the problems posed by it.   It is a worthwhile discussion that 
-   what a democracy want? A faster, but wrong and unverifiable result, or a slower, but
-   correct and verifiable result.  By its inherent nature, electronic voting has many 
+   Bases on the rapid adoption of electronic voting in Australia, India, and  Estonia, it seems that 
+   electronic voting has 
+   the potential to solve many problems, and we can safely 
+   ignore the problems posed by it.
+   Before we take any decision on ignoring the problems 
+   posed by electronic voting,  we need to understand the process of electronic voting to see 
+   the problems posed by it.  In electronic voting, we cast our (electronic) ballot with help 
+   of software and hardware used in the process. The process of casting a (electronic) ballot is roughly
+   equates to touching the screen of voting machine to choose the option and pressing some 
+   buttons on the screen to cast the vote. Once we have cast the ballot, it might show some 
+   message that your ballot has been successfully recorded.  Let us be a
+   responsible citizen and ask the few questions to ourselves about the whole process:
+   \begin{enumerate}
+   \item How do we know the ballot we have cast according to our intent is successfully recorded 
+   without any change by the software or hardware used in the process?
+   \item How do we know that the software or hardware used to conduct the election is not 
+   behaving maliciously and not  changing my intent ? 
+   \item How do we know that the software used in counting process has produced the correct result, and it
+   is based on the ballots cast by eligible voters, and it has not added  some fake ballots to favour 
+   some candidate ?
+   \item How do we know that software reading the ballot from ballot-storing-hardware 
+    is indeed the ballot we cast, and hardware has not changed it ? 
+   \item How do we know that the software used in counting process has no bugs, or the hardware is 
+    not malfunctioning ? 
+   \end{enumerate}
+   
+   \noindent
+   The possibility of these question are endless, but we get the idea.  
+   By its inherent nature electronic voting has many 
    problems, which are not present in paper ballot election, that makes it perfectly susceptible 
    to delivering wrong and unverifiable result.
-   Because of the  untrusted and complex software
+   The software and hardware used in the electronic voting process  
+	are treated as a black-box which  violates the 
+	fundamental property of  public examinability. Also, they 
+	expose a attack surface
+	which  could potentially be exploited for illegal gain in election, possibly by 
+	current government or foreign country. As a result, a person who has 
+	not legitimately received a majority or quota would be  put in charge of public office. 
+    Because of the complex software
     \footnote{Unix operating system has 15 million code which can not trusted at all}
     and hardware stack
  \footnote{Intel has many undocumented instructions in its x86 
@@ -49,23 +79,74 @@
    \item privacy,  i.e.  protecting the identity of the voter of a cast ballot
    and the choices on the cast ballot.
    \item verification, i.e. any independent observer  can establish/verify
-    the produced results are correct based on cast ballots. 
-   
-   
+    the produced results are correct based on cast ballots.
    \end{enumerate}
+  
+   
+   
+   
+%   
+%      
+%   Bases on the success stories of Australia, India, and  Estonia, it seems that electronic voting is 
+%   a solution to many problems, and 
+%   we can safely ignore the problems posed by it.   It is a worthwhile discussion that 
+%   what a democracy want? A faster, but wrong and unverifiable result, or a slower, but
+%   correct and verifiable result.  By its inherent nature, electronic voting has many 
+%   problems, which are not present in paper ballot election, that makes it perfectly susceptible 
+%   to delivering wrong and unverifiable result.
+%   Because of the  untrusted and complex software
+%    \footnote{Unix operating system has 15 million code which can not trusted at all}
+%    and hardware stack
+% \footnote{Intel has many undocumented instructions in its x86 
+% processor. https://github.com/xoreaxeaxeax/sandsifter}, 
+%   electronic voting lacks:  
+%   \begin{enumerate}
+%   \item correctness, i.e. produced results are correct and convincing to everyone leaving 
+%   no ground for suspicion.
+%   \item privacy,  i.e.  protecting the identity of the voter of a cast ballot
+%   and the choices on the cast ballot.
+%   \item verification, i.e. any independent observer  can establish/verify
+%    the produced results are correct based on cast ballots. 
+%   
+%   
+%   \end{enumerate}
    
 	\noindent
-	The software and hardware used in the electronic voting process  
-	are treated as a black-box which  violates the 
-	fundamental property of  public examinability. Also, they 
-	expose a attack surface
-	which  could potentially be exploited for illegal gain in election, possibly by 
-	current government or foreign country. As a result, a person who has 
-	not legitimately received a majority or quota would be  put in charge of public office. 
 	In a  nutshell, 
     electronic voting lacks violates the  fundamental principals of any democratic election, i.e.
-    correctness, privacy, and verifiability. 
+    correctness, privacy, and verifiability. These problems are well recognized in electronic voting 
+    community, 
+   and Some commonly sought 
+   properties which a electronic voting protocol must have are 
+    \citep{5958051}, 
+   \citep{Benaloh:1994:RSE:195058.195407},  \citep{Delaune:2010:VPT}, \citep{Bernhard:2017:PES}:
+ \begin{itemize}
+ 
+  \item Correctness:
+ 	The produced results are correct, and convincing to all leaving no  ground for suspicion. 
  	
+ \item Privacy:
+    All the votes must be secret, and voter should not be able to convince anyone the 
+    value of his vote.
+ 
+ \item End-to-end Verifiability:
+ Any independent third party should be able to verify the final outcome of election based on cast 
+ ballots.  It can be further divided into three sub-category:
+ 
+ \begin{itemize}
+  \item Cast-as-intended: Every voter can verify that their ballot was cast as
+  intended
+  \item Collected-as-cast: Every voter can verify that their ballot was collected as
+  cast
+  \item Tallied-as-cast: Everyone can verify final result on the basis of the
+  collected ballots.
+\end{itemize}
+\end{itemize}
+ 	
+   
+In this thesis, we focus on privacy, correctness, and tallied-as-cast, the third part of end-to-end verifiability.
+We assume the first two properties of end-to-end verifiability, cast-as-intended and collected as cast, hold
+for the ballots published on bulletin board. 
 
 \section{Research Motivation and Contribution}
 Given the potential advantages of electronic voting,  we need to address
@@ -75,32 +156,32 @@ The questions we asked ourself was:
  \begin{enumerate} 
   \item Can we implement a vote counting protocol with the  
     guaranteed correctness of its properties, and practical enough
-    to count the real life election involving millions of ballots ? (Correctness)
+    to count the real life election involving millions of ballots (Correctness) ?
   \item Can we produce the result by counting encrypted ballot without revealing 
   its content, and at the same time, 
   assuring everyone that the result produced is only based on valid ballots, 
-  and invalid ones have been discarded ? (Privacy)
+  and invalid ones have been discarded  (Privacy) ?
  \item Can we decouple the verifiability from implementation, i.e. 
     generating enough evidence so that any independent auditor can 
     ascertain the outcome of election without trusting the implementation 
-    of software used to conduct the election? (Verifiability)
+    of software used to conduct the election (Verifiability) ?
   \end{enumerate}
 
-
-We answer these question by taking \cite{Schulze:2011:NMC} 
-algorithm as an example and Coq \citep{Bertot:2004:ITP}
+\noindent
+We answer these question by taking the \cite{Schulze:2011:NMC} 
+method as an example and Coq \citep{Bertot:2004:ITP}
 theorem prover  for implementing and proving the correctness of  Schulze method.
-Even though Schulze method is not used in any democratic election, the reason 
+Even though Schulze method is not used in any democratic election to public office, the reason 
  we went ahead with it because it has many interesting properties and, 
  at the same time, it is non-trivial.   Schulze's method elects  a single winner based on 
 preferential votes.  Arrow's impossibility theorem \citep{Arrow:1950:DCS} states
  that no preferential voting 
 scheme can have all the desired properties established by  social choice theorist,
-the Schulze's method offers a good balance. We will discuss more about Schulze method in 
-\ref{cha:schulze_method}, and about its properties in \ref{cha:machine_checked}. 
+the Schulze's method offers a good balance. We will discuss more about the Schulze method in 
+chapter \ref{cha:schulze_method}, and about its properties in chapter \ref{cha:machine_checked}. 
 The reason for choosing Coq is that it supports an expressive logic and dependent 
 inductive types which is very crucial for us. We will discuss more about the Coq in 
-\ref{cha:background}. 
+chapter \ref{cha:theorem_crypto}.
 
 We demonstrate the:
 \begin{enumerate}
@@ -122,12 +203,12 @@ We demonstrate the:
 In addition to this, we have also developed a formally verified certificate checker to ease the 
 auditing of election conducted on encrypted ballot.  Given that our certificate is very complex 
 and formalizing all primitives involved would be fairly time consuming, we have developed a 
-proof of concept for IACR 2018, relatively simple than ours, election scrutiny sheet
-\ref{cha:software_independence}. 
+proof of concept for IACR 2018 election, relatively simple than ours, scrutiny sheet
+chapter \ref{cha:software_independence}. 
 Also, we have proved couple of properties, Condercet winner, and Reversal symmetry property 
-of Schulze method inside Coq theorem prover \ref{cha:machine_checked}.
+of the Schulze method inside Coq theorem prover chapter \ref{cha:machine_checked}.
 
-\section{Cryptographic Assumption}
+\section{Cryptographic Blackbox}
 The goal of this thesis is not to verify the cryptographic primitives, but use them as a 
 facilitator to achieve privacy and verifiability in electronic voting. To achieve it, we have 
 taken the axiomatic approach, and assumed the existence of cryptographic primitives 
@@ -135,7 +216,8 @@ inside Coq theorem prover with the
 axioms about their correctness behaviour. These primitives, in general, provide functionality 
 of encrypting a plain-text, decrypting a cipher-text, constructing a zero-knowledge-proof, 
 and verifying a zero-knowledge-proof. Later, in extracted OCaml, these functions are instantiated 
-with some external library function.  We will discuss more on this in \ref{cha:homormorphic_schulze}.
+with Unicrypt\citep{LocherH14} function.  We will discuss more on this in chapter
+\ref{cha:homormorphic_schulze}.
 \footnote{Formalizing the whole cryptographic stack used in our 
 project would be very time consuming (probably a PhD itself), but it would be worth trying. 
 Although, we have formalized the (El-Gamal) encryption, and decryption inside Coq, but we still 
@@ -162,7 +244,7 @@ of cryptographic primitives for future work (work in progress).}
 
 
 \section{Related Work}
- There are extensive work which 
+ There is extensive work which 
  addresses the different issues related of electronic voting protocols  in symbolic model, 
  but there are very few, to the best of my knowledge, 
  which has used theorem prover to implement the voting protocol (counting algorithm)
@@ -197,9 +279,18 @@ of cryptographic primitives for future work (work in progress).}
  "italian attack"  \citep{Otten}   \citep{Benaloh:2009:SSC}.
 
 \section{Outline of the Chapters}
-[Rewrite again when you finish everything]
-In chapter 2, we will give a brief history of electronic voting, the glitches that cause some countries 
-to withdraw from electronic voting.  
+Chapter \ref{cha:background} provides an overview of electronic voting around the world, 
+problems in general, and rationale for formal verification of election voting software. 
+Chapter \ref{cha:theorem_crypto} provides the overview of concept of 
+Coq theorem prover  and cryptographic primitives. Chapter \ref{cha:schulze_method} 
+describes Schulze method, its formal specification and proof of correctness. 
+Chapter \ref{cha:homormorphic_schulze} describes homomorphic Schulze method, 
+Chapter \ref{cha:software_independence} focuses on the notion of software independence, and 
+formalization of  
+Sigma protocol. Chapter \ref{cha:machine_checked} (ongoing work) describes the 
+properties of Schulze method. 
+
+Finally, chapter 9 concludes the thesis, and some possible direction of future work. 
 
 
 
