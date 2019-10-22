@@ -336,15 +336,15 @@
 	I would give two anecdote to answer this question. 
 	One of the most basic way to 
 	break the software is generating random tests and throwing it to 
-	the software under consideration \cite{Miller:1990:ESR:96267.96279}.
-	\cite{Yang:2011:FUB:1993316.1993532} developed random 
+	the software under consideration \citep{Miller:1990:ESR:96267.96279}.
+	\citep{Yang:2011:FUB:1993316.1993532} developed random 
 	C program generator and used these programs to test various 
 	compilers. In three years of its usage, they have found 325 unknown
 	bugs in various compiler including GCC
 	\footnote{https://embed.cs.utah.edu/csmith/gcc-bugs.html} and LLVM
 	\footnote{https://embed.cs.utah.edu/csmith/llvm-bugs.html}; however, 
 	they could not find any bug in verified component of CompCert. 
-	In their own words \cite{Yang:2011:FUB:1993316.1993532}:
+	In their own words \citep{Yang:2011:FUB:1993316.1993532}:
 	
 	\begin{displayquote}
 	
@@ -388,7 +388,7 @@
 	electronic voting software used in democratic election, where we 
 	can't afford to lose a single ballot or miscalculation 
 	or any undefined behaviour, should be developed 
-	rigorously using formal method techniques. 
+	using formal method techniques. 
 	
 	In order to ascertain that the formal verification of voting software has been 
 	carried out diligently, one therefore needs to
@@ -429,12 +429,24 @@
    
    \noindent
    Formal verification is certainly a necessary thing in electronic voting because 
-   it helps in achieving the correctness of software used in election, but it is not sufficient because
-   it has no mechanism to provide  verifiability of election. 
+   it helps in achieving the correctness of software, but it is not sufficient because
+   it has no mechanism to provide  verifiability.
    Combing both \emph{verification} of the
 	computer software that counts votes, and
 	\emph{verifiability} of individual counts are critical for
-	building trust in an election process.  Given the mission-critical importance of
+	building trust in an election process. These two facts, 
+	 \emph{verification}  and \emph{verifiability}, 
+	 can also be viewed as 
+    two sides of a coin from the perspective of two major stake holders of 
+    a democracy: i) electoral commission/government, and, ii) voters/participants.  
+    Using formally 
+    verified software to count the ballots would increase the confidence 
+    of electoral commission that he has produce the correct result, and 
+    the produced result always verifies would increase the confidence
+    of voter in the system. 
+	 
+	 
+	Given the mission-critical importance of
 	 correctness of vote-counting,
 	both for the legal integrity of the process and for
 	building public trust,  it is crucial to replace the
@@ -444,6 +456,18 @@
 	the outcome of election \citep{Bernhard:2017:PES} \citep{Rivest:2008:PTRS}.
 	
 	
+        
+%    Correctness and verifiability of electronic voting software can also be viewed as 
+%    two sides of a coin from the perspective of two major stake holders of 
+%    a democracy: i) electoral commission/government, and, ii) voters/participants.  
+%    Using formally 
+%    verified software to conduct the election would increase the confidence 
+%    of electoral commission that he has produce the correct result, and 
+%    the produced result always verifies would increase the confidence
+%    of voter in the system. 
+    
+    
+   
 	
 	
 %In order to ascertain that the results of a verified program are
@@ -480,7 +504,7 @@
    
    
    
-\subsection{Legal Aspects of Verification and Verifiability}
+\subsection{Aspects of Verification and Verifiability}
 Any system for counting votes in democratic elections needs to
 satisfy at least three conditions: (1) each person's vote must be
 counted accurately, according to a mandated procedure, (2) the
@@ -519,7 +543,7 @@ specifying such matters as the voting method to be used
 In a semi-automated process, this requires a combination of
 legislation (instructions to humans) and computer code (instructions
 to machines). The second kind of transparency, corresponding to
-Meijer’s use of the term \cite{Meijer:2014:T}, is required in relation to the
+Meijer’s use of the term \citep{Meijer:2014:T}, is required in relation to the
 performance of these procedures in a specific election. In a manual
 process, procedural transparency is generally only to
 intermediaries, the scrutineers, who are able to observe the
@@ -554,18 +578,18 @@ Australia. In Australia, for example, the Federal Senate and NSW
 state election vote counting are based on proprietary black box
 systems while the Australian Capital Territory uses open source
 eVACS software
-\cite{AEC:2013:LMM,Conway:2017:ANS,EA:2016:EVC}. This has
+\citep{AEC:2013:LMM,Conway:2017:ANS,EA:2016:EVC}. This has
 significant impact on the ability of researchers to detect errors
 both in advance of elections and in time to correct results
-\cite{Conway:2017:ANS}.
+\citep{Conway:2017:ANS}.
 Private verification systems have been less successful, in both
 Australia and the US, in providing equivalent protection against
 error to open source software
-\cite{Carrier:2012:VCT,Conway:2017:ANS}. Further, private
+\citep{Carrier:2012:VCT,Conway:2017:ANS}. Further, private
 verification provides a lower level of public transparency than the
 use of manual systems which rely on public legislation (instructions
 to humans) as the primary source of vote counting procedures
-\cite{Carrier:2012:VCT}. It
+\citep{Carrier:2012:VCT}. It
 should also be noted that there are few public advantages in secrecy
 since security is usually enhanced by adopting an open approach
 (unless high quality open source vote counting software were
@@ -654,28 +678,42 @@ public office elections around the world.
 	       
     
    \subsection{Scrutiny Sheet}
-   Scrutiny sheet is the tabulation of relevant data to ascertain the result of election. 
+   A scrutiny sheet is the tabulation of relevant data to verify the result of election. 
    The idea of requiring that computations provide not only results, but also a witness attesting
     to the correctness of the computation is not new,
 	and has been put forward in \citep{89397},  
-	Certifying-algorithms\footnote{https://people.mpi-inf.mpg.de/~mehlhorn/ftp/CertifyingAlgorithms.pdf},
-	\cite{Arkoudas:2005:DRC}, and in \cite{Schurmann:2009:EET} in the context
+	\citep{MCCONNELL2011119},
+	\citep{Arkoudas:2005:DRC}, and in \citep{Schurmann:2009:EET} in the context
 	of electronic voting.   In general, the idea of computation is that a computable function \textit{f}, it takes 
-	a input \textit{x} and produces output \textit{y}; however, in case of certified computation, 
+	a input \textit{x} and produces output \textit{y} (figure \ref{fig:fnxy}); however, in case of
+	 certified computation, 
 	the computable function \textit{f} on the given input \textit{x}, not only produces the output \textit{y},
-	but it also produces a witness \textit{w} for the fact that $ f (x) = y$.
+	but it also produces a witness \textit{w} for the fact that $ f (x) = y$ (figure \ref{fig:fnxyw}).
 	
-	[TODO: Draw a two pictures] 
-	x ---f----y and x --- f --y and w 
+	\begin{figure}[h!]
+	\centering
+  \includegraphics[width=0.5\linewidth]{figs/function_fx.png}
+  \caption{Function f computing y on input x}
+  \label{fig:fnxy}
+  \end{figure} 
+  
+  \begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.5\linewidth]{figs/funcxy.png}
+  \caption{Function f computing y and producing witness w on input x}
+  \label{fig:fnxyw}
+  \end{figure} 
+
+
 %\begin{tikzpicture}
 %\draw (0,0) rectangle (10,10) node[pos=0.5] {program for f};
 %\end{tikzpicture}
 
 
   \noindent
-   Below is simple piece of Haskell code, but the choice of language does not matter as long as it 
+   Below is a simple piece of Haskell code, but the choice of language does not matter as long as it 
    produces a certificate, which computes the greatest common divisor 
-   of two numbers with a certificate.  The first component of computation is the result and second one 
+   of two numbers with a certificate (trace).  The first component of computation is the result and second one 
    the certificate. 
    \begin{verbatim}
    gcdWithCertificate :: Integer -> Integer -> (Integer, String)
@@ -687,17 +725,13 @@ public office elections around the world.
    \end{verbatim}
   
    \noindent 
-   After running the program on the concrete input 144 and 89, it produces the result and certificate (below).
+   After running the program on the concrete input 34 and 21, it produces the result and certificate (below).
    \begin{verbatim}
-     gcd 144 89
+     gcd 34 21
      -------------
-     gcd 89 55
+     gcd 21 13
      -------------
           .
-          .
-          .
-     -------------
-     gcd 2 1
      -------------
      gcd 1 0 
      -------------
@@ -705,17 +739,68 @@ public office elections around the world.
    \end{verbatim}
    
    
-   In order to verify the correctness of computation of greatest common divisor ($\gcd$), all we need to do is 
-   check  that one of the rule, give below, is applicable at every stage of computation:
+   In order to verify the correctness of the computation of greatest common divisor, we need to 
+    make sure that one of the rules of Euclidean algorithm, given below, is applicable at 
+    each line of the certificate:
    \begin{enumerate}
-   \item  $\forall$ x, $\gcd$ x 0 = x
-   \item $\forall$ x y, $\gcd$ x y = $\gcd$ y (mod x y)
+   \item Rule-zero: $\forall$ x, $\gcd$ x 0 = x
+   \item Rule-inductive: $\forall$ x y, $\gcd$ x y = $\gcd$ y (mod x y)
    \end{enumerate}
+
+ \noindent	
+  The same certificate (augmented with rules) from checkers'  perspective.
+    \begin{verbatim}
+     gcd 34 21 = gcd 21 13 Rule-inductive: x := 34, y := 21, mod 34 21 = 13
+     ---------------------------------------------------------------------
+     gcd 21 13  = gcd 13 8 Rule-inductive: x := 21, y := 13, mod 21 13 = 8
+     ---------------------------------------------------------------------
+          .
+     ---------------------------------------------------------------------
+     gcd 1 0 = 1   Rule-zero: x = 0 
+   \end{verbatim}
    
-   \noindent 
+   
+   Unfortunately, the example we gave,  greatest common divisor, is very simple, and 
+   it is not 
+   very helpful example to put the usefulness of certificate in perspective.
+   However, this approach, generating a certificate to certify the computation later, is very useful in context 
+   of complicated and unverified  programs.   One such example is algorithmic library  
+   LEDA \citep{Mehlhorn:1995:LPC:204865.204889} ("Library of Efficient Data types and Algorithms") 
+   written in C++.  Checkers are integral part of LEDA 
+   which can later be invoked by user to certify that the result produced by unverified 
+   code is correct. 
+   Initially, the checkers came with library were unverified, and 
+   Kurt Mehlhorn defended this decision by admitting that \citep{Alkassar2014}: 
+   \begin{displayquote}
+   Checkers are simple programs with little algorithmic 
+   complexity. Hence, one may assume that their implementations are correct.
+	\end{displayquote}   
+	\noindent
+    Later, the 
+   checkers \citep{Alkassar2014} were verified by using VCC \citep{10.1007/978-3-642-03359-9_2}, 
+   and Isabelle/Hol \citep{Nipkow:2002:IPA:1791547}.  One advantages of this approach is 
+   that it is easier to formally verify the checker than the algorithm itself, because 
+   checkers are very simple in nature, and this approach scales very well. 
+   
+   One may ask the question that can we follow the same approach in vote counting context,
+   i.e. unverified counting code, and verified checker?  Our answer is negative, because 
+   it would be devastating from electoral perspective if 
+   the result produced by (unverified) counting program does not 
+   check by (verified) checker. We propose: i) formally verified vote counting
+   software which produces the result with evidence (certificate), and ii) formally verified 
+   certificate checker. The advantage of this approach is the result produced is always correct, 
+   a confidence building measure for electoral commission, and the produced certificate always checks out, 
+   return true, for all the certificate produced by verified counting program, confidence booster for 
+   voters. 
+     
+   
+
+  
   It is very crucial to know that the primary purpose of checkers are to verify the 
   correctness of computation, hence, it is important that they 
-  should be: i) correct, and ii) simple.  We will discuss more about certificate checking 
+  should be: i) correct, and ii) simple.  
+  
+  We will discuss more about certificate checking 
   in chapter Software Independence,  and we will argue that why formal verifying the checkers is 
   a good idea to achieve the correctness.  We will also present a case study of 
   formally verified checker for \textit{IACR 2018} election.
