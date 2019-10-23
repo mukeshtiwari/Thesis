@@ -26,9 +26,11 @@ co-operation of all on board it can be safely brought to part.}
  that every Schulze election have winners (\ref{sec:all_winners}).  Every inhabitant of 
  this dependent inductive data type not only produces a final result, but also all the 
  intermediate steps which lead to the notion of evidence or scrutiny sheet (section 
-  \ref{sec:scrunity_sheet}).  In the section \ref{sec:count_million}, we discuss the techniques
-   to overcome the deficiencies and scale it to count real life election involving millions of 
-   ballots.  Finally, we conclude the chapter in the section \ref{sec:discussion} with 
+  \ref{sec:scrunity_sheet}).  In the section \ref{sec:count_million}, we discuss the optimization techniques
+   to overcome the deficiencies in extracted Haskell code from Coq formalization. Based on 
+   these optimizations, the extracted Haskell code was able to count millions of ballots in few 
+   minutes. 
+   Finally, we conclude the chapter in the section \ref{sec:discussion} with 
    the achievements and drawbacks of our work on the scale of \textit{Correctness},
    \textit{Privacy}, and \textit{Verifiability}.
  
@@ -59,7 +61,7 @@ voters that prefer one candidate over another.  The margin induces
 an ordering between candidates, where a candidate $c$ is more
 preferred than $d$, if more voters prefer $c$ over $d$ than 
 vice versa. One can construct simple examples (see e.g.
-\cite{Rivest:2010:OSW}) where this order does not have a maximal
+\citep{Rivest:2010:OSW}) where this order does not have a maximal
 element (a so-called \emph{Condorcet Winner}). Schulze's observation
 is that this ordering \emph{can} be made transitive by considering
 sequences of candidates (called \emph{paths}). Given candidates $c$
@@ -85,7 +87,8 @@ margin between $d$ and $c$. More concretely:
 	
 \item Given a set of ballots $P$ and candidate set $C$, we construct graph $G$ based on the margin function $m: C \times C \to \mathbb{Z}$. Given two candidates $c, d \in C$,
 the \emph{margin} of $c$ over $d$ is
-the number of voters that prefer $c$ over $d$, minus the number of voters that prefer $d$ over $c$. In symbols
+the number of voters that prefer $c$ over $d$, minus the number of voters that prefer $d$ over $c$. 
+In symbols:
 \[
   m(c, d) = \sharp \lbrace b \in P \mid c >_b d \rbrace -
             \sharp \lbrace b \in P \mid d >_b c \rbrace
@@ -96,7 +99,7 @@ the number of voters that prefer $c$ over $d$, minus the number of voters that p
 
 
 
-\item A directed \emph{path} in graph, $G$, from
+\item A directed \emph{path} in the graph, $G$, from
 candidate $c$ to candidate $d$ is a sequence $p \equiv c_0, \dots, c_{n+1}$
 of candidates with $c_0 = c$ and $c_{n+1} = d$ ($n \geq 0$), and the
 \emph{strength}, st, of path, p, is the minimum margin of adjacent
@@ -107,7 +110,7 @@ nodes, i.e.
 	from c to d i.e. 
 	\[ S(c, d) = \max \lbrace st (p) : \text{p is path from c to d in G} \rbrace\]
 	
-\item The winning set (always non empty) is defined as 
+\item The winning set is, always non empty and  formally proved in \ref{sec:all_winners}, defined as 
  \[ W =  \lbrace c \in C : \forall d \in C \setminus \{c\}, S (c, d) \geq S (d, c) \rbrace\]
 
 \end{itemize}
@@ -135,11 +138,11 @@ beaten by any (other) candidate.
 	
 	
 \section{Formal Specification} \label{sec:spec}
-	We start our Coq formalization assuming finite and non-empty 
+	We start our Coq formalization assuming finite  and non-empty 
 	set of candidates. Also, we assume decidable equality on 
 	candidates. For our purposes, the
 	easiest way of stipulating that a type be finite is to require
-	existence of a list containing all inhabitants of this type.
+	existence of a list containing all inhabitants of this type \citep{DBLP:conf/icfp/FirsovU15}.
 
 \begin{verbatim}
   Variable cand : Type.
@@ -190,7 +193,8 @@ the name of the definitions, in anticipation of type-level
 definitions of these notions later. The reason for having a \textit{Prop} level definition is that 
  it is very easy for human to inspect the definitions, and ascertain the correctness of formalization.
 As we discussed in 
-\textbf{Type vs. Prop} section of first chapter, the main reason 
+\textbf{Type vs. Prop} section of first chapter [TODO: Remove this when you write the 
+chapter], the main reason 
 for having equivalent
 type-level versions of the above is that purely propositional
 information is discarded during program extraction, unlike
@@ -198,7 +202,8 @@ the type-level notions of winning and losing that represent evidence
 of the correctness of the determination of winners. Our goal is to 
 not only compute winners and losers according to the
 definition above, but also to provide independently verifiable
-evidence, scrutiny sheet or certificate, of the correctness of our computation. The propositional
+evidence, a scrutiny sheet or certificate, of the correctness of our computation.
+The propositional
 definitions of winning and losing above serve as a reference to
 calibrate their type level counterparts, and we demonstrate the
 equivalence between propositional and type-level conditions in the
@@ -218,9 +223,9 @@ One major aspect of our work is that we can answer this question
 by not only computing the set of winners, but in fact presenting
 \emph{evidence} for the fact that a particular
 candidate does or does not
-win. This is a re-emphasis on \emph{Correctness}, i.e. the produced result is correct, 
-and convincing to all, specially to losers, leaving  no ground for speculation. As we stated earlier that 
-in the context of
+win. This is a re-emphasis on \emph{Correctness},
+and convincing to all, specifically to losers, leaving  no ground for speculation. 
+As we stated earlier that in the context of
 electronic vote counting, this is known as a
 \emph{scrutiny sheet, or certification}: a tabulation of all relevant data that allows
 us to verify the election outcome.
@@ -251,7 +256,7 @@ Pow(C \times C) \to Pow(C \times C)$, defined by
 \rbrace \]
 It is easy to see that this operator is indeed monotone, and that
 the least fixpoint exists, e.g. using Kleene's theorem
-\cite{Stoltenberg-Hansen:1994:MTD}.  To show that there is \emph{no}
+\citep{Stoltenberg-Hansen:1994:MTD}.  To show that there is \emph{no}
 path between $d$ and $c$ of strength $> k$, we therefore need to
 establish that
 $(d, c) \notin LFP(V_{k+1})$.
@@ -266,7 +271,7 @@ and $GFP(W_k)$ is the greatest fixpoint of $W_k$.
 As a consequence, to demonstrate that there is \emph{no} path of
 strength $> k$ between candidates $d$ and $c$, we need to
 demonstrate that $(d, c) \in GFP(W_{k+1})$. By the Knaster-Tarski fixpoint
-theorem \cite{Tarski:1955:LTF}, this greatest fixpoint is the supremum of all
+theorem \citep{Tarski:1955:LTF}, this greatest fixpoint is the supremum of all
 $W_{k+1}$-coclosed sets, that is, sets $R \subseteq C \times C$ for which
 $R \subseteq W_{k+1}(R)$.
 That is, to demonstrate that $(d, c) \in GFP(W_{k+1})$, we need
@@ -301,9 +306,9 @@ given integer) for clarity:
     Zlt_bool (marg (fst p) (snd p)) k.
 
   Definition W (k : Z) (p: cand * cand -> bool) (x: cand * cand) :=
-    andb 
-    (marg_lt k x)
-    (forallb (fun m => orb (marg_lt k (fst x, m)) (p (m, snd x))) cand_all).
+    andb  (marg_lt k x)
+    (forallb (fun m => orb (marg_lt k (fst x, m)) 
+                           (p (m, snd x))) cand_all).
 \end{verbatim}
 
 \noindent
@@ -321,6 +326,8 @@ formulate the notion of $k$-coclosed predicate.
  
 \end{verbatim}
 
+[TODO: I think I have mentioned it couple of times, so may be it is a good idea to remove
+ this one]
 \noindent
 The only difference between type level paths (of type
 \texttt{PathT}) and (propositional) paths defined earlier is the
@@ -379,7 +386,7 @@ the iterated margin function stabilises at the $n$-th iteration
 nodes don't contribute to maximising the strength of a path. This
 proof loosely follows the evident pen-and-paper proof given for
 example in
-\cite{Carre:1971:ANR} that is based on cutting out segments of paths
+\citep{Carre:1971:ANR} that is based on cutting out segments of paths
 between repeated nodes and so reaches a fixed point.
 
 \begin{verbatim}
@@ -527,7 +534,7 @@ profile (set) of ballots.  Our formalisation describes an individual
 \emph{count} as a type with the interpretation that all inhabitants
 of this type are correct executions of the vote counting algorithm.
 In the original paper describing the
-Schulze method \cite{Schulze:2011:NMC}, a ballot is a linear
+Schulze method \citep{Schulze:2011:NMC}, a ballot is a linear
 preorder over the set of candidates.
 
 \begin{wrapfigure}{r}[0cm]{0.4\textwidth}
@@ -768,7 +775,7 @@ that was employed to obtain the election result, as the generated
 certificate can be verified independently. In the literature on
 electronic voting, this is known as \emph{verifiability} and has
 been recognised as one of the cornerstones for building trust in
-election outcomes \cite{Chaum:2004:SBR}, and is the only answer to
+election outcomes \citep{Chaum:2004:SBR}, and is the only answer to
 key questions such as the possibility of hardware malfunctions, or
 indeed running the very software that has been claimed to count
 votes correctly.
@@ -802,7 +809,7 @@ we uses a coinductive approach. As existence of a path with a given
 strength between two candidates can be easily phrased as an
 inductive definition, the \emph{complement} of this predicate arises
 as a greatest fixpoint, or equivalently as a coinductively defined
-predicate (see e.g. \cite{Kozen:2016:PC}). This allows us to witness
+predicate (see e.g. \citep{Kozen:2016:PC}). This allows us to witness
 the non-existence of paths by exhibiting co-closed sets.
   
 
@@ -956,7 +963,7 @@ The most performance critical aspect of our code was the computation of  margin
 function. Recall that the margin function is of type
 \texttt{cand -> cand -> Z}
 and that it depends on the \emph{entire} set of ballots. Internally, it is
-represented by a closure \cite{Landin:1964:MEE} so that margins are
+represented by a closure \citep{Landin:1964:MEE} so that margins are
 re-computed with every call. The single largest efficiency
 improvement in our code was achieved by memoization, i.e.
 representing the margin function (in Coq) via list lookup. With
@@ -1140,5 +1147,5 @@ programming language itself is a non-verified process which could
 still introduce errors in our code. The most promising way to
 alleviate this is to independently implement (and verify) a
 certificate verifier, possibly in a language such as CakeML
-\cite{Kumar:2014:CVI} that is guaranteed to
+\citep{Kumar:2014:CVI} that is guaranteed to
 be correct to the machine level. 
