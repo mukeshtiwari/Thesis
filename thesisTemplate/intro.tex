@@ -116,7 +116,7 @@
     electronic voting lacks violates the  fundamental principals of any democratic election, i.e.
     correctness, privacy, and verifiability. These problems are well recognized in electronic voting 
     community, 
-   and Some commonly sought 
+   and some commonly sought 
    properties which a electronic voting protocol must have are 
     \citep{5958051}, 
    \citep{Benaloh:1994:RSE:195058.195407},  \citep{Delaune:2010:VPT}, \citep{Bernhard:2017:PES}:
@@ -168,8 +168,8 @@ The questions we asked ourself was:
   \end{enumerate}
 
 \noindent
-We answer these question by taking the \cite{Schulze:2011:NMC} 
-method as an example and Coq \citep{Bertot:2004:ITP}
+We answer these question by taking the Schulze method \citep{Schulze:2011:NMC} 
+as an example and Coq \citep{Bertot:2004:ITP}
 theorem prover  for implementing and proving the correctness of  Schulze method.
 Even though Schulze method is not used in any democratic election to public office, the reason 
  we went ahead with it because it has many interesting properties and, 
@@ -178,7 +178,7 @@ preferential votes.  Arrow's impossibility theorem \citep{Arrow:1950:DCS} states
  that no preferential voting 
 scheme can have all the desired properties established by  social choice theorist,
 the Schulze's method offers a good balance. We will discuss more about the Schulze method in 
-chapter \ref{cha:schulze_method}, and about its properties in chapter \ref{cha:machine_checked}. 
+chapter \ref{cha:schulze_method}, and its properties in chapter \ref{cha:machine_checked}. 
 The reason for choosing Coq is that it supports an expressive logic and dependent 
 inductive types which is very crucial for us. We will discuss more about the Coq in 
 chapter \ref{cha:theorem_crypto}.
@@ -203,10 +203,11 @@ We demonstrate the:
 In addition to this, we have also developed a formally verified certificate checker to ease the 
 auditing of election conducted on encrypted ballot.  Given that our certificate is very complex 
 and formalizing all primitives involved would be fairly time consuming, we have developed a 
-proof of concept for IACR 2018 election, relatively simple than ours, scrutiny sheet
-chapter \ref{cha:software_independence}. 
+formally verified certificate checker for IACR 2018 (International Association of Cryptographic Research) election, 
+relatively simple than ours, scrutiny sheet
+(chapter \ref{cha:software_independence}). 
 Also, we have proved couple of properties, Condercet winner, and Reversal symmetry property 
-of the Schulze method inside Coq theorem prover chapter \ref{cha:machine_checked}. 
+of the Schulze method inside Coq theorem prover (chapter \ref{cha:machine_checked}). 
 
 \section{Cryptographic Blackbox}
 The goal of this thesis is not to verify the cryptographic primitives, but use them as a 

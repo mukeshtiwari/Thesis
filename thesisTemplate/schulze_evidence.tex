@@ -3,6 +3,10 @@
 %Same as the last chapter, introduce the motivation and the high-level picture to
 %readers, and introduce the sections in this chapter.
 
+\epigraph{The negligence of a few could easily send a ship to the bottom, but if it has the wholehearted 
+co-operation of all on board it can be safely brought to part.} 
+{\textit{Sardar Vallabhbhai Patel}} 
+
  The correctness of vote counting in electronic voting is one of 
  the main pillars that engenders trust in electronic voting. Even 
  though, assuming  that election results are verifiable, a bug in 
@@ -13,25 +17,41 @@
  jurisdictions publish the source code of vote counting for 
  public scrutiny, others treat the code as commercial in confidence. 
  None of the systems used today in real world elections are 
- formally verified. In this chapter, we formally specify the 
- Schulze method, and the corner stone of our formalization is 
+ formally verified.
+ 
+ \textbf{Chapter overview:} In this chapter, we explain the Schulze method in section \ref{sec:schulze_algorithm}, 
+ and its formal specification in the section \ref{sec:spec}. The  corner stone of our formalization is 
  a correct by construction dependent inductive data type 
- that represents all correct executions. Every inhabitant of 
- this type not only produces a final result, but also 
- all the intermediate steps that lead to result. Using these 
- intermediate steps, any external verifier can verify the 
- final result. As a consequence, we do not even need trust the
-  execution of the (verified) algorithm: the correctness of 
-  a particular run of the vote counting code can be verified on
-  the basis of the evidence for correctness that is produced
-  along with determination of election winners.
-  
-  \textbf{Chapter overview:} In this chapter, we explain the Schulze algorithm,
-   followed by formal specification and 
+ that represents all correct executions (\ref{sec:inductive_type}) with the formal proof of
+ that every Schulze election have winners (\ref{sec:all_winners}).  Every inhabitant of 
+ this dependent inductive data type not only produces a final result, but also all the 
+ intermediate steps which lead to the notion of evidence or scrutiny sheet (section 
+  \ref{sec:scrunity_sheet}).  In the section \ref{sec:count_million}, we discuss the techniques
+   to overcome the deficiencies and scale it to count real life election involving millions of 
+   ballots.  Finally, we conclude the chapter in the section \ref{sec:discussion} with 
+   the achievements and drawbacks of our work on the scale of \textit{Correctness},
+   \textit{Privacy}, and \textit{Verifiability}.
+ 
+% In this chapter, we formally specify the 
+% Schulze method in \ref{sec:schulze_algorithm}, and the corner stone of our formalization is 
+% a correct by construction dependent inductive data type 
+% that represents all correct executions. Every inhabitant of 
+% this type not only produces a final result, but also 
+% all the intermediate steps that lead to result. Using these 
+% intermediate steps, any external verifier can verify the 
+% final result. As a consequence, we do not even need trust the
+%  execution of the (verified) algorithm: the correctness of 
+%  a particular run of the vote counting code can be verified on
+%  the basis of the evidence for correctness that is produced
+%  along with determination of election winners.
+%  
+%  \textbf{Chapter overview:} In this chapter, we explain the Schulze algorithm,
+%   followed by formal specification and 
 
 
 \section{Schulze Algorithm}
-The Schulze Method \cite{Schulze:2011:NMC} is a vote counting scheme
+\label{sec:schulze_algorithm}
+The Schulze Method \citep{Schulze:2011:NMC} is a vote counting scheme
 that elects a single winner, based on preferential votes. 
 The method itself rests on the relative 
 \emph{margins} between two candidates, i.e. the number of
@@ -499,7 +519,7 @@ slightly harder.
 
 
 \subsection{Vote Counting as Inductive Type}
-  
+\label{sec:inductive_type}
 Up to now, we have described the specification of Schulze voting
 relative to a given margin function. We now describe the
 specification (and computation) of the margin function given a
@@ -638,7 +658,7 @@ independent verification.
 
 
 \subsection{All Schulze Election Have Winners}
-
+\label{sec:all_winners}
 The main theorem, the proof of which we describe in this section, is
 that all elections according to the Schulze method engender a
 boolean-valued function \texttt{w: cand -> bool}
@@ -720,6 +740,7 @@ using  the function (or proposition)
 
 
 \section{Scrutiny Sheet and Experimental Result}
+\label{sec:scrunity_sheet}
 	The crucial aspect of our formalisation is that the vote counting
 protocol itself is represented as a dependent inductive type
 that represents all (correct) partial executions of
@@ -929,6 +950,7 @@ using a logarithmic scale.
 %\end{figure}
   
  \section{Scaling it count millions of Ballots}
+ \label{sec:count_million}
  We investigated the extracted Haskell code  from Coq code.
 The most performance critical aspect of our code was the computation of  margin
 function. Recall that the margin function is of type
@@ -990,9 +1012,10 @@ million ballot papers) on a standard, commodity desktop computer with
 16 GB of main memory. 
 
   
- \section{Discussion} \label{sec:discussion}
+\section{Discussion} \label{sec:discussion}
 
-In this chapter,  we emphasize on correctness, and we take the approach that 
+In this chapter,  we emphasize on correctness, 
+and we take the approach that 
 computation of winners in
 electronic voting (and in situations where correctness is key in
 general) should not only produce an end result, but an end result,
@@ -1058,7 +1081,7 @@ extraction mechanism then allows us to extract a Haskell program
 that produces election winners, together with verifiable
 certificates. 
 
-\section{Summary}
+%\section{Summary}
 
 %In this formalization, we have presented a formalisation of 
 %the Schulze method for
@@ -1079,7 +1102,7 @@ certificates.
 %relatively large number of ballots already.
 
 Our formalization achieves \textit{Correctness}, \textit{Practicality}, and 
-(universal) \textit{Verifiability}. The major wrinkle in this formalization is \textit{Privacy}.  
+(tallied-as-cast) \textit{Verifiability}. The major wrinkle in this formalization is \textit{Privacy}.  
 Our ballots are in plaintext and could easily be identified
 if the number of candidates participating in election in 
 are large (Italian attack) \citep{Otten}.
@@ -1094,9 +1117,8 @@ In nutshell, the pros and cons of this formalization:
 \item Practicality: The extracted code can count millions of ballots. Therefore, we can use it 
           in any real life election.
 \item Verifiability: The outcome of any election can be verified by any third party because 
-          of the generated certificates.
-\item Verifiability:  Certificates generated for plaintext ballot 
-		 during the election 
+          of the generated certificates. Certificates generated for plaintext ballot 
+		  during the election 
           are very simple.  It requires basic math literacy to audit the certificate which would 
           lead to increase in number of scrutineers. 
 
@@ -1108,7 +1130,7 @@ In nutshell, the pros and cons of this formalization:
 \end{itemize}
 \end{itemize}
 
- In the next chapter, we will try to solve privacy problem , possibly coercion, using encryption, and to keep 
+ In the next chapter, we will try to solve privacy problem, possibly coercion, using encryption, and to keep 
  it verifiable, we will use zero-knowledge-proof. However, solution for privacy comes with other cost, e.g. 
  loss in pool of scrutineers because auditing a certificate generated by counting encrypted ballot 
  would requires intricate knowledge of cryptography.  
