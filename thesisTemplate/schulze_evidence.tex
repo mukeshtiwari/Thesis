@@ -367,10 +367,16 @@ The different nature of the two propositions does not allow
 us to claim an equivalence between both notions, as Coq defines
 biimplication only on propositions.
 
-The proof of the first statement is completely straight forward, as
-the type carries all the information needed to establish the
-propositional winning condition. For the second statement above, we
-introduce an intermediate lemma based on the \emph{iterated margin
+The proof of the first statement, $wins\_type\_prop$, is completely straight forward, as
+the type, $win\_type$, carries all the information needed to establish the
+propositional winning, $wins\_prop$. However, for the second statement 
+$wins\_prop\_type$, Coq does not allow the 
+case analysis or induct on a term of sort \texttt{Prop} when the sort of goal 
+is not in \texttt{Prop}. This is necessary to ensure that the extraction is 
+safe process (recall that every term in sort \texttt{Prop} is erased during the extraction). 
+We followed a very similar technique described in \citep{Bertot:2004:ITP} 
+\citep{ConstructiveEpsilon}.  To prove the second statement, we first introduced an 
+intermediate lemma based on the \emph{iterated margin
 function}
 $M_k: C \times C \to Z$. Intuitively, $M_k (c, d)$ is the
 strength of the strongest path between $c$ and $d$ of length $\leq
@@ -378,8 +384,7 @@ k+1$. Formally,
 $M_0 (c, d) = m(c, d)$ and
 \[ M_{i+1}(c, d) = \max \lbrace M_i(c, d), \max \lbrace  \min
 \lbrace m(c, e), M_i(e, d) \mid e \in C \rbrace \rbrace \rbrace
-\] for $i \geq 0$.
-%
+\] for $i \geq 0$. 
 It is intuitively clear (and we establish this fact formally) that
 the iterated margin function stabilises at the $n$-th iteration
 (where $n$ is the number of candidates), as paths with repeated
@@ -394,6 +399,37 @@ between repeated nodes and so reaches a fixed point.
       M n c d <= M (length cand_all) c d.
 \end{verbatim}
 
+
+
+
+
+%The proof of the first statement is completely straight forward, as
+%the type carries all the information needed to establish the
+%propositional winning condition. For the second statement above, we
+%introduce an intermediate lemma based on the \emph{iterated margin
+%function}
+%$M_k: C \times C \to Z$. Intuitively, $M_k (c, d)$ is the
+%strength of the strongest path between $c$ and $d$ of length $\leq
+%k+1$. Formally,
+%$M_0 (c, d) = m(c, d)$ and
+%\[ M_{i+1}(c, d) = \max \lbrace M_i(c, d), \max \lbrace  \min
+%\lbrace m(c, e), M_i(e, d) \mid e \in C \rbrace \rbrace \rbrace
+%\] for $i \geq 0$.
+%%
+%It is intuitively clear (and we establish this fact formally) that
+%the iterated margin function stabilises at the $n$-th iteration
+%(where $n$ is the number of candidates), as paths with repeated
+%nodes don't contribute to maximising the strength of a path. This
+%proof loosely follows the evident pen-and-paper proof given for
+%example in
+%\citep{Carre:1971:ANR} that is based on cutting out segments of paths
+%between repeated nodes and so reaches a fixed point.
+%
+%\begin{verbatim}
+% Lemma iterated_marg_fp: forall (c d : cand) (n : nat),
+%      M n c d <= M (length cand_all) c d.
+%\end{verbatim}
+
 \noindent
 That is, the \emph{generalised margin}, i.e. the strength of the strongest (possibly infinite) path
 between two candidates is
@@ -406,7 +442,7 @@ other candidate $d$ is at least as large as the generalised margin between $d$
 and $c$.
 
 \begin{verbatim}
-    Lemma wins_prop_iterated_marg (c : cand) : wins_prop c ->
+  Lemma wins_prop_iterated_marg (c : cand) : wins_prop c ->
       forall d, M (length cand_all) d c <= M (length cand_all) c d.
 \end{verbatim}
 
@@ -436,21 +472,32 @@ type level losing condition.
       -> loses_type c.
 \end{verbatim}
 
-\textbf{Todo : Write a notation Chapter. What does it mean to be exists, and existsT}
+%\textbf{Todo : Write a notation Chapter. What does it mean to be exists, and existsT}
 
 The proof of lemma  $iterated\_marg\_loses\_type$ is not straight forward because
-Coq does not allow the case analysis on \texttt{Prop} when the goal in not in \texttt{Prop}, 
-hence,  we can not eliminate \texttt{exists n, P n} in order to show \texttt{existsT n, P n}. 
-The idea is basically turning proposition level existence, \emph{exists}, 
-to type level existence, \emph{existsT}. 
-We can do  a linear search on list of candidates  to find the witness constructively, and since, 
+we are in a similar situation  as we were in $wins\_prop\_type$. 
+We can not eliminate \texttt{exists n, P n} in order to show \texttt{existsT n, P n},
+because Coq would not allows to do case analysis on \texttt{exists n, P n} (a term of 
+type \texttt{Prop}) since the goal, \texttt{existsT n, P n} (a term of type \texttt{Type}), is not in
+\texttt{Prop}. We again follow the technique described in \citep{Bertot:2004:ITP} 
+\citep{ConstructiveEpsilon}. 
+We do  a linear search on list of candidates  to find the witness constructively, and since, 
 the list of candidates is  finite we would eventually terminate and find one.  
 This completes our loop of prop level loser to type level loser. 
 
+
+%Coq does not allow the case analysis on \texttt{Prop} when the goal in not in \texttt{Prop}, 
+%hence,  we can not eliminate \texttt{exists n, P n} in order to show \texttt{existsT n, P n}. 
+%The idea is basically turning proposition level existence, \emph{exists}, 
+%to type level existence, \emph{existsT}. 
+%We can do  a linear search on list of candidates  to find the witness constructively, and since, 
+%the list of candidates is  finite we would eventually terminate and find one.  
+%This completes our loop of prop level loser to type level loser. 
+
 \begin{verbatim}
 Corollary reify_opponent (c: cand):
-      (exists  d, M  (length cand_all) c d < M (length cand_all) d c) ->
-      (existsT d, M  (length cand_all) c d < M (length cand_all) d c).
+  exists  d, M  (length cand_all) c d < M (length cand_all) d c ->
+  existsT d, M  (length cand_all) c d < M (length cand_all) d c.
 \end{verbatim}
 
 
