@@ -1,70 +1,137 @@
 \chapter{Theorem Prover and Cryptography}
 \label{cha:theorem_crypto}
  
- \fix{Can I introduce Write Hilbert's idea of mathematical formalism/Frege}
 
-A proof assistant is a computer program which assists users in development of mathematical proofs. The idea of 
+A proof assistant or theorem prover is a computer program which assists users in development 
+of mathematical proofs. The idea of 
 developing mathematical proofs using computer goes back to Automath (automating mathematics)
-[cite Automath] and LCF [cite Logic for computation] project. The 
-Automath project (1967 until the early 80's)  was initiative of De Bruijn, and the aim of the project was to develop
-a language for expressing mathematical theories which can be verified by aid of computer.  Automath was first 
-practical project to exploit the Curry-Howard isomorphism (proofs-as-programs and formulas-as-types)
- [reference here]. DeBruijn  was likely unaware of this correspondence, and he almost re-invented it 
- ([Wiki entry on Curry-Howard]). Many researchers refers Curry-Howard isomorphism as 
- Curry-Howard-DeBruijn isomorphism. Automath project can be seen as the precursor of
- proof assistants NuPrl [cite here] and Coq [cite coq].   Some other notable  proof assistants are 
- LCF (Logic for Computable Functions)  [cite Milner?], Mizar [cite], Nqthm/ACl2 [cite], PVS [cite], 
- HOL (a family of tools derived from LCF theorem prover), Agda [cite], and Lean [cite].
+\citep{deBruijn1983} and LCF \citep{Milner:1972:IAS:942578.807067}. The 
+Automath project (1967 until the early 80's)  was initiative of De Bruijn, and the aim of the project was to 
+develop a language for expressing mathematical theories which can be verified by aid of computer.  
+Automath was first 
+practical project to exploit the Curry-Howard isomorphism (proofs-as-programs and formulas-as-types). 
+DeBruijn  was likely unaware of this correspondence, and he almost re-invented it.
+Automath project can be seen as the precursor of
+ proof assistants NuPrl \citep{Constable:1986:IMN:10510} and Coq \citep{Bertot:2004:ITP}.  
+ Some other notable  proof assistants are 
+ Nqthm/ACl2 \citep{507872}, PVS \citep{Owre:1992:PPV:648230.752639},
+ HOL (a family of tools derived from LCF theorem prover) \citep{Slind:2008:BOH:1459784.1459792}
+ \citep{Harrison:1996:HLT:646184.682934} \citep{Nipkow:2002:IHP},
+ Agda \citep{Norell:2008:DTP:1813347.1813352}, and Lean \citep{10.1007/978-3-319-21401-6_26}.
 
 
-In this chapter, I will give a overview of theoretical foundation of 
-Coq thorem prover i.e. Calculus of Construction and  
-Calculus of Inductive Construction, followed by Dependent type 
-and how it leads to 
-correct by construction (paradigm?) with a example of dependent 
-typed lambda calculus. I will also discuss distinction between Type and Prop 
-and how it affects the code extraction, a feature for extracting 
-certified functional programs from specification proofs, and the 
-specification language Gallina. Finally, I would 
-argue that why should we trust the Coq proofs even though it does not 
-match or look like a mathematical proof.
+\textbf{Chapter overview:}
+ This chapter is overview of Coq theorem prover and Cryptographic primitives. 
+ In the section \ref{sec:problemstatement}, I will give a brief overview of 
+ theoretical foundation, calculus of construction (\ref{sec:cc}) and calculus of inductive 
+ construction (\ref{sec:cic}), of Coq. In the section \ref{sec:deplambda}, I will focus 
+ on dependent types and  how it leads to correct by construction paradigm
+ by giving a well typed interpretor for simple typed lambda calculus. 
+ In the section \ref{sec:typeprop}, I will discuss about \texttt{Type} and \texttt{Prop}
+ which is very crucial from program extraction point of view.  Our goal during 
+ this course of formalization was not only proving the correctness of 
+ Schulze method, but extracting a executable OCaml/Haskell code to count 
+ ballots. Section \ref{sec:gallina} focuses on Coq specification language 
+ \texttt{Gallina} with a example showing that why writing proofs using  
+ \texttt{Gallina} is difficult and cumbersome, and how it can be eased by 
+ using tactics. Finally, in the section  \ref{sec:coqproof}, we will take 
+ philosophical route to justify that why should we trust in Coq proofs 
+ even though they do not appear anywhere near to a proof written by 
+ a human. 
 
 
-
-
-\section{Coq: Interactive Theorem prover}
+\section{Coq: Interactive Proof Assistant}
 \label{sec:problemstatement}
-\fix{explain here a about Coq. What is Coq ?}
-The Coq proof assistant  is an interactive theorem prover based on
-underlying theory of Calculus of 
-Inductive Construction [Cite Pualine Mohring]  which itself is an 
+Coq  is an interactive proof assistant (theorem prover) based on
+theory of Calculus of 
+Inductive Construction \citep{Paulin-Mohring:1993:IDS:645891.671440} which itself is an 
 augmentation of Calculus of Construction 
-[cite Huet and Coquand] with inductive data-type.  
+\citep{Coquand:1988:CC:47724.47725} with inductive data-type.  
  
 
 \subsection{Calculus of Construction}
+\label{sec:cc}
 \subsection{Calculus of Inductive Construction}
+\label{sec:cic}
 \fix{Flesh out the details of 
  Calculus of construction and Inductive construction}
  \fix{Write here about syntax and semantics of CIC}
  
  
 
- 
-\subsection{Dependent Types}
-    Type system is a wide spectrum ranging from Scheme where 
-    type is runtime concept to Haskell to Coq 
     
-    \subsubsection{Example : Dependent Type Lambda Calculus}
+ \subsection{Correct by Construction: Type Safe Printf}
+ \label{sec:deplambda}
+  One of the highly sought feature of Coq is dependent type. 
+  Dependent 
+  type makes  it natural to express specifications (proofs) 
+  at type level. These specifications enables larger set of 
+  logical errors to eliminated at compile time. 
+  
+  
+  \begin{verbatim}
+  
+  
+Require Import Coq.Strings.Ascii.
+Require Import Coq.Strings.String.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.Strings.BinaryString.
+Open Scope Z.
+
+Inductive format :=
+| Fend : format
+| Fint : format -> format
+| Fstring : format -> format
+| Fother : ascii -> format -> format.
+
+
+Fixpoint format_string (inp : string) : format :=
+  match inp with
+  | EmptyString => Fend
+  | String ("%"%char) (String ("d"%char) rest) => Fint (format_string rest)
+  | String ("%"%char) (String ("s"%char) rest) => Fstring (format_string rest)
+  | String c rest => Fother c (format_string rest)
+  end.
+
+Eval compute in format_string "%d%d%s".
+
+Fixpoint interp_format (f : format) : Type :=
+  match f with
+  | Fint f => Z  -> interp_format f
+  | Fstring f => string -> interp_format f
+  | Fother c f => interp_format f
+  | Fend => string
+  end.
+
+Eval compute in interp_format (format_string "%d%s%s").
+
+Eval compute in interp_format (format_string "A number: %d, and a string: %s").
+
+Fixpoint value_function (f : format) (s : string) : interp_format f :=
+  match f with
+  | Fint f' => fun i => value_function f' (s ++ of_Z i)
+  | Fstring f' => fun i => value_function f' (s ++ i)
+  | Fother c f' => value_function f' (s ++ String c EmptyString)
+  | Fend => s
+  end.
+
+
+Definition printf s := value_function (format_string s) "".
+
+Eval compute in printf "%s %s %d" "hi"%string "there"%string 123%Z.
+                                        
+\end{verbatim}
+  
+  
+  
      Lambda Calculus encoded in Coq using Inductive data type. 
-     
- \subsubsection{Correct by Construction}
  \fix{Combing program with proofs leads to one stop solution, mainly 
      correct by construction}
   Well typed program can't go wrong. 
   Give a example of dependent type lambda calculus(Dirk's white board)
   Hello World is dependent type Vector 
- \subsubsection{Type vs. Prop : Code Extraction}
+\subsection{Type vs. Prop: Code Extraction}
+\label{sec:typeprop}
  \fix{explain here the difference between Prop and Types. How it affects 
   the code extraction }
   It's good starting point to tell the reader that we have two definitions, 
@@ -73,7 +140,8 @@ augmentation of Calculus of Construction
   but it's very intuitive for human inspection. We have connected that 
   the definition expressed in Type is equivalent to Prop definition. 
  
- \subsubsection{Gallina : The Specification Language}
+ \subsection{Gallina : The Specification Language}
+ \label{sec:gallina}
   The example, dependent type lambda calculus, I gave in previous 
   section was encoded in Coq's specification language Gallina. 
   Gallina is a highly expressive specification 
@@ -90,10 +158,9 @@ augmentation of Calculus of Construction
      tactics}
   
  
-  
 
- 
  \subsection{Trusting Coq proofs}
+ \label{sec:coqproof}
   The fundamental question for trusting the Coq proofs is two fold: 
   i) is the logic (CIC) sound ?, ii) is the implementation correct ?. 
   The logic has already been reviewed by many peers and proved correct 
