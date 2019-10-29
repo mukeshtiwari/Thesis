@@ -26,7 +26,7 @@ Automath project can be seen as the precursor of
  theoretical foundation, calculus of construction (\ref{sec:cc}) and calculus of inductive 
  construction (\ref{sec:cic}), of Coq. In the section \ref{sec:deplambda}, I will focus 
  on dependent types and  how it leads to correct by construction paradigm
- by giving a well typed interpretor for simple typed lambda calculus. 
+ by designing a  type safe printf function. 
  In the section \ref{sec:typeprop}, I will discuss about \texttt{Type} and \texttt{Prop}
  which is very crucial from program extraction point of view.  Our goal during 
  this course of formalization was not only proving the correctness of 
@@ -53,38 +53,54 @@ augmentation of Calculus of Construction
 \label{sec:cc}
 \subsection{Calculus of Inductive Construction}
 \label{sec:cic}
-\fix{Flesh out the details of 
- Calculus of construction and Inductive construction}
- \fix{Write here about syntax and semantics of CIC}
+%\fix{Flesh out the details of 
+% Calculus of construction and Inductive construction}
+% \fix{Write here about syntax and semantics of CIC}
  
  
 
     
  \subsection{Correct by Construction: Type Safe Printf}
  \label{sec:deplambda}
-  One of the highly sought feature of Coq is dependent type. 
-  Dependent 
-  type makes  it natural to express specifications (proofs) 
-  at type level. These specifications enables larger set of 
-  logical errors to eliminated at compile time. 
+  One of the highly sought feature of Coq is dependent type, 
+  a type which is parametrised by value.  
+  The expressiveness of dependent type make it possible
+  to express specification at type level. These specifications enables larger 
+  set of  logical errors to eliminated at compile time. 
   
-  
-  \begin{verbatim}
-  
-  
-Require Import Coq.Strings.Ascii.
-Require Import Coq.Strings.String.
-Require Import Coq.ZArith.ZArith.
-Require Import Coq.Strings.BinaryString.
-Open Scope Z.
+ 
+ Using the expressiveness of dependent type, we construct a type safe version of 
+ printf. Our goal is to generate compiler error when the given format string and the type of 
+ corresponding input values  
+ do not match, e.g. printf "\%d \%s" "hello Coq" 42 should be compiler error, otherwise
+ print the string if it type checks, e.g.
+ printf "\%s \%d" "hello Coq" 42 should print the string "hello Coq  42".
+ The high level idea is to split the printf arguments into two parts: i) format string, 
+ and ii) values to be printed, e.g. printf "\%s \%d" "hello Coq" 42 would be split into "\%s \%d", and 
+ "hello Coq" 42.  Based on the format string, we design two functions: i) a type level function 
+ which takes format string and returns a variadic function type, e.g. 
+ on format string "\%s \%d", it would return a function type with 
+ signature \texttt{string -> Z  -> string}, and ii) a value level function whose type signature 
+ is constructed by the type level function and takes the values to printed as input. If the 
+ type of values to be printed matches with type constructed by type level function then 
+ we proceed to print the string, otherwise we generate compiler error.  
+ 
 
+
+First, we defined a abstract syntax tree, \textit{format}, to make it explicit the characters we 
+are interested in format string. The \textit{format\_string} function takes the format string 
+and returns the abstract syntax tree. The type level, \textit{interp\_format}, takes the 
+abstract syntax tree and returns the function type corresponding to format string.
+
+\begin{verbatim}
+(* abstract syntax tree *)
 Inductive format :=
 | Fend : format
 | Fint : format -> format
 | Fstring : format -> format
 | Fother : ascii -> format -> format.
 
-
+(* turn the format string into abstract syntax tree *)
 Fixpoint format_string (inp : string) : format :=
   match inp with
   | EmptyString => Fend
@@ -93,8 +109,8 @@ Fixpoint format_string (inp : string) : format :=
   | String c rest => Fother c (format_string rest)
   end.
 
-Eval compute in format_string "%d%d%s".
 
+(* construct the type level function from abstract syntax tree *)
 Fixpoint interp_format (f : format) : Type :=
   match f with
   | Fint f => Z  -> interp_format f
@@ -102,34 +118,59 @@ Fixpoint interp_format (f : format) : Type :=
   | Fother c f => interp_format f
   | Fend => string
   end.
-
-Eval compute in interp_format (format_string "%d%s%s").
-
-Eval compute in interp_format (format_string "A number: %d, and a string: %s").
-
-Fixpoint value_function (f : format) (s : string) : interp_format f :=
-  match f with
-  | Fint f' => fun i => value_function f' (s ++ of_Z i)
-  | Fstring f' => fun i => value_function f' (s ++ i)
-  | Fother c f' => value_function f' (s ++ String c EmptyString)
-  | Fend => s
-  end.
-
-
-Definition printf s := value_function (format_string s) "".
-
-Eval compute in printf "%s %s %d" "hi"%string "there"%string 123%Z.
-                                        
 \end{verbatim}
+
+
+\noindent
+The \textit{interp\_format} function returns a function type 
+(\texttt{Z -> string -> string -> string})  on the (abstract syntax tree of) 
+format string "\%d \%s \%s" 
+
+\begin{verbatim}
+Eval compute in interp_format (format_string "%d %s %s").
+(* = Z -> string -> string -> string
+     : Type *)
+\end{verbatim}
+
+Now, we construct a value level function, \textit{interp\_value}, whose type 
+is constructed by type level function, and it will take the values to be printed as input.
+The type of values to print should match the type constructed by type level 
+function for successful type checking otherwise it will be type error. 
+
+\begin{verbatim}
+(* value level function whose type is constructed on fly by interp_format 
+    function *)
+Fixpoint interp_value (f : format) (acc : string) : interp_format f :=
+  match f with
+  | Fint f' => fun i => interp_value f' (acc ++ of_Z i)
+  | Fstring f' => fun i => interp_value f' (acc ++ i)
+  | Fother c f' => interp_value f' (acc ++ String c EmptyString)
+  | Fend => acc
+  end.
+\end{verbatim}
+
+\noindent
+Finally, we define the printf function, and evaluate it on two inputs: 
+i)  printf "\%d \%s" "hello Coq" 42, and ii)  printf "\%d \%s" 42 "hello Coq".
+
+\begin{verbatim}
+Definition printf s := interp_value (format_string s) "".           
+
+Eval compute in  printf "\%d \%s" "hello Coq"%string 42.
+(* Error: The term ""hello Coq"%string" has type "string" 
+while it is expected to have type "Z". *)
+
+Eval compute in  printf "\%d \%s" 42 "hello Coq"%string. 
+(*  "\0b101010 \hello Coq"%string. The number 
+42 is printed in binary *)                            
+\end{verbatim}
+The first input, printf "\%d \%s" "hello Coq" 42, is type error because 
+printf "\%d \%s" returns a value level function whose  type is Z -> string -> string, but 
+the type of first argument, "hello Coq", is string which does not unifies with Z,
+while second one is successfully printed as string. 
+
   
   
-  
-     Lambda Calculus encoded in Coq using Inductive data type. 
- \fix{Combing program with proofs leads to one stop solution, mainly 
-     correct by construction}
-  Well typed program can't go wrong. 
-  Give a example of dependent type lambda calculus(Dirk's white board)
-  Hello World is dependent type Vector 
 \subsection{Type vs. Prop: Code Extraction}
 \label{sec:typeprop}
  \fix{explain here the difference between Prop and Types. How it affects 
@@ -140,9 +181,9 @@ Eval compute in printf "%s %s %d" "hi"%string "there"%string 123%Z.
   but it's very intuitive for human inspection. We have connected that 
   the definition expressed in Type is equivalent to Prop definition. 
  
- \subsection{Gallina : The Specification Language}
+ \subsection{Gallina: The Specification Language}
  \label{sec:gallina}
-  The example, dependent type lambda calculus, I gave in previous 
+  The example, type safe printf function, I gave in previous 
   section was encoded in Coq's specification language Gallina. 
   Gallina is a highly expressive specification 
   language for development of mathematical theories and proving the    
@@ -153,11 +194,35 @@ Eval compute in printf "%s %s %d" "hi"%string "there"%string 123%Z.
   tactics to build the  Gallina term  which otherwise would  
   be very laborious.
   
-  \fix{Can I give a simple example to demonstrate the difference 
-     between proof build directly in Gallina and proof build using 
-     tactics}
-  
- 
+ We have written two proofs that addition on natural number is commutative. 
+ First proof, \textit{addition\_commutative\_gallina}, is written using 
+ Gallina, while second proof, \textit{addition\_commutative\_tactics}, is written 
+ using the tactics.  In general, we write programs directly in Gallina and use tactics 
+ to prove properties about the programs, but there is no fixed rule and tactics 
+ can be used to write functions with dependent types.
+\begin{verbatim}
+(* proof written using Gallina *)
+Lemma addition_commutative_gallina : forall (n m : nat), n + m = m + n.
+refine
+      (fix Fn (n : nat) : forall m : nat, n + m = m + n :=
+        match n as n0 return (forall m : nat, n0 + m = m + n0) with
+        | 0 => fun m : nat => 
+           eq_ind_r (fun n0 : nat => m = n0) eq_refl (Nat.add_0_r m)
+        | S n' =>
+          fun m : nat =>
+            eq_ind_r (fun n0 : nat => S n0 = m + S n')
+                     (eq_ind_r (fun n0 : nat => S (m + n') = n0) 
+                     eq_refl (Nat.add_succ_r m n')) (Fn n' m)
+        end).
+Qed.
+
+(* proof written using tactics *)
+Lemma addition_commutative_tactics : forall (n m : nat), n + m = m + n.
+  induction n; intro m; simpl; try omega.
+Qed.
+\end{verbatim}
+
+
 
  \subsection{Trusting Coq proofs}
  \label{sec:coqproof}
