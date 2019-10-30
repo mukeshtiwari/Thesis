@@ -226,18 +226,32 @@ Qed.
 
  \subsection{Trusting Coq proofs}
  \label{sec:coqproof}
-  The fundamental question for trusting the Coq proofs is two fold: 
-  i) is the logic (CIC) sound ?, ii) is the implementation correct ?. 
+  In general, Coq proofs are nowhere similar to a mathematical 
+  proof written by trained mathematician. Also, these proofs 
+  are verbose and fairly long, so a 
+  very fundamental question is that why should we 
+  accept or believe in a proof written in Coq \citep{pollack1998believe}?  The answer of 
+	accepting or trusting Coq proos is two fold:
+  i) is the logic (CIC) sound?, and ii) is the implementation correct?
   The logic has already been reviewed by many peers and proved correct 
-  using some meta-logic. The 
-  Coq implementation itself can be partitioned into two parts: 
-  i) Validity Checker (Small kernel), 
-  ii) Tactic language to build the proofs.
-  We lay our trust in validity checker, because it's small kernel. If there
-  is bug in tactic language which often is the case then build proof would 
-  not pass the validity checker.  
+  using some meta-logic, so the answer of our question about trusting Coq proof 
+  hinges on the implementation. 
+  Coq implementation (written in OCaml) itself can be partitioned into two parts: 
+  i) type checker (small kernel), 
+  and ii) tactic language to build the proofs.
+  We lay our trust in type checker, because it's small kernel and can be 
+  manually inspected. If there
+  is bug in tactic language, which often is the case, then build proof would 
+  not pass the type checker.  Also, we can use the publicly available proof 
+  checkers written by experts and inspected by many others. To increase the 
+  confidence, there have been 
+  efforts to certify type checker \citep{Appel2003}
+  \citep{barras1996coq}, verifying meta theory of one proof system 
+  in other \citep{10.1007/978-3-319-08970-6_3}, self certificate of 
+  theorem prover \citep{10.1007/11814771_17}. However, no system can 
+  prove its own consistency (G{\"o}del's second incompleteness theorem), so
+  trusing human judgement is inevitable. 
   
-  Try to write here how Fuzzer failed to find bugs in Compcert. 
   
 \section{Summary} 
   Paves the path to Cryptography. 
