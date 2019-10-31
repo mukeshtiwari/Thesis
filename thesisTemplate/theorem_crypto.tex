@@ -24,14 +24,15 @@ Automath project can be seen as the precursor of
  This chapter is overview of Coq theorem prover and Cryptographic primitives. 
  In the section \ref{sec:problemstatement}, I will give a brief overview of 
  theoretical foundation, calculus of construction (\ref{sec:cc}) and calculus of inductive 
- construction (\ref{sec:cic}), of Coq. In the section \ref{sec:deplambda}, I will focus 
- on dependent types and  how it leads to correct by construction paradigm
- by designing a  type safe printf function. 
- In the section \ref{sec:typeprop}, I will discuss about \texttt{Type} and \texttt{Prop}
+ construction (\ref{sec:cic}), of Coq.  In the section \ref{sec:typeprop}, I will discuss about 
+ \texttt{Type} and \texttt{Prop}
  which is very crucial from program extraction point of view.  Our goal during 
  this course of formalization was not only proving the correctness of 
  Schulze method, but extracting a executable OCaml/Haskell code to count 
- ballots. Section \ref{sec:gallina} focuses on Coq specification language 
+ ballots.  In the section \ref{sec:deplambda}, I will focus 
+ on dependent types and  how it leads to correct by construction paradigm
+ by designing a  type safe printf function. 
+ Section \ref{sec:gallina} focuses on Coq specification language 
  \texttt{Gallina} with a example showing that why writing proofs using  
  \texttt{Gallina} is difficult and cumbersome, and how it can be eased by 
  using tactics. Finally, in the section  \ref{sec:coqproof}, we will take 
@@ -58,7 +59,18 @@ augmentation of Calculus of Construction
 % \fix{Write here about syntax and semantics of CIC}
  
  
-
+\subsection{Type vs. Prop: Code Extraction}
+\label{sec:typeprop}
+ \fix{explain here the difference between Prop and Types. How it affects 
+  the code extraction }
+  It's good starting point to tell the reader that we have two definitions, 
+  one in type and other in prop. Why ? Because Type computes, but it's
+  not very intuitive for human inspection while Prop does not compute, 
+  but it's very intuitive for human inspection. We have connected that 
+  the definition expressed in Type is equivalent to Prop definition. 
+  
+  \subsubsection{Reification}
+  \label{sec:reification}
     
  \subsection{Correct by Construction: Type Safe Printf}
  \label{sec:deplambda}
@@ -171,15 +183,7 @@ while second one is successfully printed as string.
 
   
   
-\subsection{Type vs. Prop: Code Extraction}
-\label{sec:typeprop}
- \fix{explain here the difference between Prop and Types. How it affects 
-  the code extraction }
-  It's good starting point to tell the reader that we have two definitions, 
-  one in type and other in prop. Why ? Because Type computes, but it's
-  not very intuitive for human inspection while Prop does not compute, 
-  but it's very intuitive for human inspection. We have connected that 
-  the definition expressed in Type is equivalent to Prop definition. 
+
  
  \subsection{Gallina: The Specification Language}
  \label{sec:gallina}
@@ -241,7 +245,7 @@ Qed.
   and ii) tactic language to build the proofs.
   We lay our trust in type checker, because it's small kernel and can be 
   manually inspected. If there
-  is bug in tactic language, which often is the case, then build proof would 
+  is a bug in tactic language, which often is the case, then build proof would 
   not pass the type checker.  Also, we can use the publicly available proof 
   checkers written by experts and inspected by many others. To increase the 
   confidence, there have been 
@@ -250,7 +254,7 @@ Qed.
   in other \citep{10.1007/978-3-319-08970-6_3}, self certificate of 
   theorem prover \citep{10.1007/11814771_17}. However, no system can 
   prove its own consistency (G{\"o}del's second incompleteness theorem), so
-  trusing human judgement is inevitable. 
+  trusting human judgement is inevitable.
   
   
 \section{Summary} 

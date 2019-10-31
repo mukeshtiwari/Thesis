@@ -45,14 +45,16 @@
    \item How do we know the ballot we have cast according to our intent is successfully recorded 
    without any change by the software or hardware used in the process?
    \item How do we know that the software or hardware used to conduct the election is not 
-   behaving maliciously and not  changing my intent ? 
+   behaving maliciously and not  changing my intent? 
    \item How do we know that the software used in counting process has produced the correct result, and it
    is based on the ballots cast by eligible voters, and it has not added  some fake ballots to favour 
-   some candidate ?
+   some candidate?
    \item How do we know that software reading the ballot from ballot-storing-hardware 
-    is indeed the ballot we cast, and hardware has not changed it ? 
+    is indeed the ballot we cast, and hardware has not changed it? 
    \item How do we know that the software used in counting process has no bugs, or the hardware is 
-    not malfunctioning ? 
+    not malfunctioning? 
+    \item How do we know that the software used in ballot cast process is not linking my credentials 
+    against my ballot (choices)?
    \end{enumerate}
    
    \noindent
@@ -113,7 +115,7 @@
    
 	\noindent
 	In a  nutshell, 
-    electronic voting lacks violates the  fundamental principals of any democratic election, i.e.
+    electronic voting lacks basic principals of any democratic election, i.e.
     correctness, privacy, and verifiability. These problems are well recognized in electronic voting 
     community, 
    and some commonly sought 
@@ -156,15 +158,15 @@ The questions we asked ourself was:
  \begin{enumerate} 
   \item Can we implement a vote counting protocol with the  
     guaranteed correctness of its properties, and practical enough
-    to count the real life election involving millions of ballots (Correctness) ?
+    to count the real life election involving millions of ballots (Correctness)?
   \item Can we produce the result by counting encrypted ballot without revealing 
   its content, and at the same time, 
   assuring everyone that the result produced is only based on valid ballots, 
-  and invalid ones have been discarded  (Privacy) ?
+  and invalid ones have been discarded  (Privacy)?
  \item Can we decouple the verifiability from implementation, i.e. 
     generating enough evidence so that any independent auditor can 
     ascertain the outcome of election without trusting the implementation 
-    of software used to conduct the election (Verifiability) ?
+    of software used to conduct the election (Verifiability)?
   \end{enumerate}
 
 \noindent

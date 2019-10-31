@@ -7,17 +7,21 @@
 co-operation of all on board it can be safely brought to part.} 
 {\textit{Sardar Vallabhbhai Patel}} 
 
- The correctness of vote counting in electronic voting is one of 
- the main pillars that engenders trust in electronic voting. Even 
- though, assuming  that election results are verifiable, a bug in 
- counting software which can cause a incorrect result and only 
- caught later during verification phase would create a atmosphere of 
- distrust among voters about electronic voting. The present state of 
- art in vote counting leaves much to be desired: while some 
- jurisdictions publish the source code of vote counting for 
- public scrutiny, others treat the code as commercial in confidence. 
- None of the systems used today in real world elections are 
- formally verified.
+\section{Introduction}
+ In the chapter \ref{cha:background},  we have already discussed the 
+ high level picture of correctness, verifiability 
+
+% The correctness of vote counting in electronic voting is one of 
+% the main pillars that engenders trust in electronic voting. Even 
+% though, assuming  that election results are verifiable, a bug in 
+% counting software which can cause a incorrect result and only 
+% caught later during verification phase would create a atmosphere of 
+% distrust among voters about electronic voting. The present state of 
+% art in vote counting leaves much to be desired: while some 
+% jurisdictions publish the source code of vote counting for 
+% public scrutiny, others treat the code as commercial in confidence. 
+% None of the systems used today in real world elections are 
+% formally verified.
  
  \textbf{Chapter overview:} In this chapter, we explain the Schulze method in section \ref{sec:schulze_algorithm}, 
  and its formal specification in the section \ref{sec:spec}. The  corner stone of our formalization is 
@@ -165,7 +169,7 @@ variable:
 We formalise the notion of path and strength of a path by means of a
 single (but ternary) inductive proposition that asserts the
 existence of a path of strength $\geq k$ between two candidates, for
-$k \in Z$. The notion of winning candidate is that it beats every other candidates, i.e.  all the paths from 
+$k \in Z$. The notion of winning candidate is that it beats every other candidate, i.e.  all the paths from 
 the winner to other candidates are at least as strong as the reverse path. Dually, the notion of loser
  is that there is a candidate who beats the loser, i.e. the path from the candidate to the loser is 
  stronger than the reverse path. 
@@ -192,9 +196,8 @@ We reflect the fact that the above are \emph{propositions} in
 the name of the definitions, in anticipation of type-level
 definitions of these notions later. The reason for having a \textit{Prop} level definition is that 
  it is very easy for human to inspect the definitions, and ascertain the correctness of formalization.
-As we discussed in 
-\textbf{Type vs. Prop} section of first chapter [TODO: Remove this when you write the 
-chapter], the main reason 
+As we discussed in the
+\textbf{Type vs. Prop} (section \ref{sec:typeprop}), the main reason 
 for having equivalent
 type-level versions of the above is that purely propositional
 information is discarded during program extraction, unlike
@@ -326,16 +329,25 @@ formulate the notion of $k$-coclosed predicate.
  
 \end{verbatim}
 
-[TODO: I think I have mentioned it couple of times, so may be it is a good idea to remove
- this one]
+%[TODO: I think I have mentioned it couple of times, so may be it is a good idea to remove
+% this one]
+%\noindent
+%The only difference between type level paths (of type
+%\texttt{PathT}) and (propositional) paths defined earlier is the
+%fact that the former are proper types, not propositions, and are
+%therefore not erased during extraction. 
+%Given the above, we have the
+%following type-level definitions of winning (and dually,
+%non-winning) for Schulze counting:
 \noindent
-The only difference between type level paths (of type
-\texttt{PathT}) and (propositional) paths defined earlier is the
-fact that the former are proper types, not propositions, and are
-therefore not erased during extraction. 
-Given the above, we have the
-following type-level definitions of winning (and dually,
-non-winning) for Schulze counting:
+Now, we have following type-level definition of winning (and dually, 
+no-winning) for Schulze counting. As we see that these definition not only produces 
+the result, but they also produce witness, e.g. the \texttt{wins\_type} definition 
+states that if a candidate, say $c$, is the winner,  
+then for each individual candidates participating in election, it produces two witness:
+(i) a path from itself to the beating candidate of certain strength, say $k$, and 
+(ii) a $k$+1 co-closed set.  These witness are basic building blocks of the 
+scrutiny sheet we produce after election. 
 
 \begin{verbatim}
   Definition wins_type c := forall d : cand, existsT (k : Z),
@@ -348,9 +360,11 @@ non-winning) for Schulze counting:
 \end{verbatim}
 
 \noindent
-The main result of this section is that type level and propositional
-evidence for winning (and dually, not winning) a Schulze election
-are in fact equivalent.
+We have two definitions of winning, \texttt{wins\_prop} which is easier for a human to inspect, 
+but useless for machine because it is in \texttt{Prop}; on the other hand, 
+\texttt{wins\_type} which is useful for the machine because it is in \texttt{Type}, but 
+not so useful for human. We formally establish that type level winning and prop level winning 
+(dually, not winning) are in fact equivalent. 
 
 \begin{verbatim}
  Lemma wins_type_prop : forall c, wins_type c -> wins_prop c.
@@ -372,10 +386,15 @@ the type, $win\_type$, carries all the information needed to establish the
 propositional winning, $wins\_prop$. However, for the second statement 
 $wins\_prop\_type$, Coq does not allow the 
 case analysis or induct on a term of sort \texttt{Prop} when the sort of goal 
-is not in \texttt{Prop}. This is necessary to ensure that the extraction is 
-safe process (recall that every term in sort \texttt{Prop} is erased during the extraction). 
-We followed a very similar technique described in \citep{Bertot:2004:ITP} 
-\citep{ConstructiveEpsilon}.  To prove the second statement, we first introduced an 
+is not in \texttt{Prop}. We follow the techniques that we have described in 
+\texttt{Type vs Prop} section (\ref{sec:reification}).
+%
+%This is necessary to ensure that the extraction is 
+%safe process (recall that every term in sort \texttt{Prop} is erased during the extraction). 
+%We followed a very similar technique described in \citep{Bertot:2004:ITP} 
+%\citep{ConstructiveEpsilon}. 
+\noindent
+To prove the second statement, we first introduced an 
 intermediate lemma based on the \emph{iterated margin
 function}
 $M_k: C \times C \to Z$. Intuitively, $M_k (c, d)$ is the
@@ -479,8 +498,8 @@ we are in a similar situation  as we were in $wins\_prop\_type$.
 We can not eliminate \texttt{exists n, P n} in order to show \texttt{existsT n, P n},
 because Coq would not allows to do case analysis on \texttt{exists n, P n} (a term of 
 type \texttt{Prop}) since the goal, \texttt{existsT n, P n} (a term of type \texttt{Type}), is not in
-\texttt{Prop}. We again follow the technique described in \citep{Bertot:2004:ITP} 
-\citep{ConstructiveEpsilon}. 
+\texttt{Prop}. We again follow the technique described in 
+\texttt{Type vs Prop} section (\ref{sec:reification}).
 We do  a linear search on list of candidates  to find the witness constructively, and since, 
 the list of candidates is  finite we would eventually terminate and find one.  
 This completes our loop of prop level loser to type level loser. 
@@ -542,11 +561,11 @@ exists in the opposite direction.
 \end{itemize}
 
 \noindent
-It is precisely this additional data (on top of merely declaring a set of
+It is precisely this additional data or scrutiny sheet  (on top of merely declaring a set of
 election winners) that allows for scrutiny of the process, as it
 provides an orthogonal approach to verifying the correctness of the
 computation: both checking that the given path has a certain
-strength, and that a set is indeed coclosed, is easy to verify.
+strength, and that a set is indeed co-closed, is easy to verify.
 We reflect more on this in Section
 \ref{sec:discussion}, and present an example of a full scrutiny
 sheet in the next section, when we join the type-level winning
@@ -686,19 +705,19 @@ and removes the ballot from the list of uncounted ballots. The
 constructor \texttt{cinvalid} moves an invalid ballot to the list of
 invalid ballots, and the last constructor \texttt{fin} applies only
 if the margin function is completely constructed (no more uncounted
-ballots). In its arguments, \texttt{w: cand -> bool} is the function
+ballots). In its arguments, \texttt{w : cand -> bool} is the function
 that determines election winners, and \texttt{d} is a function that
 delivers, for every candidate, type-level evidence of winning or
 losing, consistent with \texttt{w}. Given this, we can conclude the
 count and declare \texttt{w} to be the set of winners (or more
 precisely, those candidates for which \texttt{w} evaluates to
-\texttt{true}). 
+\texttt{true}).
 
 Together with the equivalence of the propositional notions of
 winning or losing a Schulze count with their type-level
 counterparts, every inhabitant of the type \texttt{Count b (winners
 w)} then represents a correct count of ballots \texttt{b} leading to
-the boolean predicate \texttt{w: cand -> bool} that determines the
+the boolean predicate \texttt{w : cand -> bool} that determines the
 winners of the election with initial set \texttt{b} of ballots.
 
 The crucial aspect of our formalisation of executions of Schulze
@@ -715,7 +734,7 @@ independent verification.
 \label{sec:all_winners}
 The main theorem, the proof of which we describe in this section, is
 that all elections according to the Schulze method engender a
-boolean-valued function \texttt{w: cand -> bool}
+boolean-valued function \texttt{w : cand -> bool}
 that determines
 precisely which candidates are winners of the election, together
 with type-level evidence of this.
@@ -726,60 +745,28 @@ The theorem that we establish (and later extract as a program)
 simply states that for every incoming set of ballots, there is a
 boolean function that determines the election winners, together with
 an inhabitant of the type \texttt{Count} that witnesses the
-correctness of the execution of the count. In Coq, we use a
-type-level existential quantifier \texttt{existsT} where
-\texttt{existsT (x:A), P} stands for $\Sigma_{\mathtt{x:A}}
-\texttt{P}$.
+correctness of the execution of the count. 
 
 \begin{verbatim}
   Theorem schulze_winners: forall (bs : list ballot),
-    existsT (f : cand -> bool) (p : Count bs (winners f)), True.
+    existsT (w: cand -> bool) (p : Count bs (winners w)), True.
 \end{verbatim}
 
 
 \noindent
 The first step in the proof is elementary: We show that for any
-given
-list of ballots we can reach a state of the count where there are
+given list of ballots we can reach a state of the count where there are
 no more uncounted ballots, i.e. the margin function has been
 fully constructed.
 
 
 \begin{verbatim}
 
-Lemma all_ballots_counted: forall (bs : list ballot), 
-        existsT i m, (Count bs (partial ([], i) m)).
+  Lemma all_ballots_counted: forall (bs : list ballot), 
+     existsT i m, (Count bs (partial ([], i) m)).
         
 \end{verbatim}
     
-
-\iffalse
-The second step is more involved: given the margin function, we
-construct an integer-valued matrix \texttt{M: cand -> cand -> Z}
-with the property that \texttt{M c d} is the strength of the
-strongest path between \texttt{c} and \texttt{d}. It is intuitively
-clear that in this construction, we only need to consider paths
-without repeated nodes, i.e. paths that are of length at most $n$,
-where $n$ is the number of candidates. Technically, we define an
-iterated margin function $M_i: C \times C \to Z$ by putting
-$M_0 (c, d) = m(c, d)$ and
-\[ M_{i+1}(c, d) = \max \lbrace M_i(c, d), \max \lbrace  \min
-\lbrace m(c, e), M_i(e, d) \mid e \in C \rbrace \rbrace \rbrace
-\] for $i \geq 0$.
-The intuition is that $M_i(c, d)$ is the strength of the strongest
-path of length $< i$ that connects $c$ with $d$. The key lemma is
-the following:
-
-The following are equivalent for candidates $c$, $d$,
-$k \in Nat$ and $s \in Z$:
-\begin{enumerate}
-\item $M_k(c, d) \geq s$
-\item there is $j \leq k$ and a list $(c_1, \dots,
-c_j)$ so that the strength of $(c, c_1, \dots, c_j, d)$ is
-$\geq s$.
-\end{enumerate}
-
-\fi
    
    
 The second step relies on the iterated margin function already
@@ -793,19 +780,19 @@ using  the function (or proposition)
 \texttt{iterated\_marg\_wins\_type} described earlier. 
 
 
-\section{Scrutiny Sheet and Experimental Result}
+\section{Scrutiny Sheet and Experimental Results}
 \label{sec:scrunity_sheet}
 	The crucial aspect of our formalisation is that the vote counting
 protocol itself is represented as a dependent inductive type
 that represents all (correct) partial executions of
 the protocol.  A complete execution is can then be understood as a
 state of vote counting where election winners have been determined.
-Our main theorem then asserts that an inhabitant of this type
+Our main theorem, \texttt{schulze\_winners}, then asserts that an 
+inhabitant of this type
 exists, for all possible sets of incoming ballots. 
 Crucially, every such inhabitant contains enough information
 to (independently) verify the correctness of the election result,
 and can be thought of as a \emph{certificate} for the count.
-
 From a computational perspective, we view tallying not merely as a
 function that delivers a result, but instead as a function that
 delivers a result, \emph{together} with evidence that allows us to
@@ -813,54 +800,63 @@ verify correctness. In other words, we augment verified correctness
 of an algorithm with the means to verify each particular
 \emph{execution}.
 
-Todo : This already introduces software independence. Try 
-to refer to that section. Universal verifiability.
 
 From the perspective of electronic voting, this means that
-we no longer need to trust the hardware and software
+we no longer need to trust the hardware and software (assuming the 
+cast-as-intended and collected-as-cast verifiability)
 that was employed to obtain the election result, as the generated
 certificate can be verified independently. In the literature on
-electronic voting, this is known as \emph{verifiability} and has
+electronic voting, this is known as (tallied-as-cast) \emph{verifiability} and has
 been recognised as one of the cornerstones for building trust in
-election outcomes \citep{Chaum:2004:SBR}, and is the only answer to
-key questions such as the possibility of hardware malfunctions, or
-indeed running the very software that has been claimed to count
-votes correctly.
+election outcomes by electronic voting research community \citep{Chaum:2004:SBR}
+ \citep{5958051}, 
+   \citep{Benaloh:1994:RSE:195058.195407},  \citep{Delaune:2010:VPT}, \citep{Bernhard:2017:PES}.
+%and is the only answer to
+%key questions such as the possibility of hardware malfunctions, or
+%indeed running the very software that has been claimed to count
+%votes correctly.
+%
+%The certificate that is produced by each run of our extracted Schulze vote
+%tallying algorithm  consists of two parts. The first part details
+%the individual steps of constructing the margin function, based on
+%the set of all ballots cast. The second part presents evidence for
+%the determination of winners, based on generalised margins. For the
+%construction of the margin function, every ballot is processed
+%in turn, with the margin between each pair of votes updated
+%accordingly.  The heart of our work lies in this second part of the
+%certificate. To demonstrate that candidate $c$ is an election
+%winner, we have to demonstrate that the generalised margin between
+%$c$ and every other candidate $d$ is at least as large than the
+%generalised margin  between $d$ and $c$. 
+%
+%Given that the generalised margin
+%between two candidates $c$ and $d$ is determined in terms of
+%paths $c, c_1, \dots, c_n, d$ that join $c$
+%and $d$, we need to exhibit
+%\begin{itemize}
+%\item evidence for the existence of a path $p$ from $c$ to $d$
+%\item evidence for the fact that \emph{no} path $q$ from $d$ to $c$
+%is stronger than $p$
+%\end{itemize}
+%where the strength of a path $p = (c_0, \dots, c_{n+1})$ is the
+%minimum $\min \lbrace m(c_i, c_{i+1}) \mid 0 \leq i \leq n \rbrace$
+%of the margins between adjacent nodes. 
 
-The certificate that is produced by each run of our extracted Schulze vote
-tallying algorithm  consists of two parts. The first part details
-the individual steps of constructing the margin function, based on
-the set of all ballots cast. The second part presents evidence for
-the determination of winners, based on generalised margins. For the
-construction of the margin function, every ballot is processed
-in turn, with the margin between each pair of votes updated
-accordingly.  The heart of our work lies in this second part of the
-certificate. To demonstrate that candidate $c$ is an election
-winner, we have to demonstrate that the generalised margin between
-$c$ and every other candidate $d$ is at least as large than the
-generalised margin  between $d$ and $c$. Given that the generalised margin
-between two candidates $c$ and $d$ is determined in terms of
-paths $c, c_1, \dots, c_n, d$ that join $c$
-and $d$, we need to exhibit
-\begin{itemize}
-\item evidence for the existence of a path $p$ from $c$ to $d$
-\item evidence for the fact that \emph{no} path $q$ from $d$ to $c$
-is stronger than $p$
-\end{itemize}
-where the strength of a path $p = (c_0, \dots, c_{n+1})$ is the
-minimum $\min \lbrace m(c_i, c_{i+1}) \mid 0 \leq i \leq n \rbrace$
-of the margins between adjacent nodes.  While evidently a path
-itself is evidence for its existence, the \emph{non-existence} of
-paths with certain properties is more difficult to establish. For this,
-we uses a coinductive approach. As existence of a path with a given
-strength between two candidates can be easily phrased as an
-inductive definition, the \emph{complement} of this predicate arises
-as a greatest fixpoint, or equivalently as a coinductively defined
-predicate (see e.g. \citep{Kozen:2016:PC}). This allows us to witness
-the non-existence of paths by exhibiting co-closed sets.
+%While evidently a path
+%itself is evidence for its existence, the \emph{non-existence} of
+%paths with certain properties is more difficult to establish. For this,
+%we uses a coinductive approach. As existence of a path with a given
+%strength between two candidates can be easily phrased as an
+%inductive definition, the \emph{complement} of this predicate arises
+%as a greatest fixpoint, or equivalently as a coinductively defined
+%predicate (see e.g. \citep{Kozen:2016:PC}). This allows us to witness
+%the non-existence of paths by exhibiting co-closed sets.
   
 
-Coq's extraction mechanism then allows us to turn this into a
+
+Coq's extraction mechanism then allows us to turn our main theorem, 
+\linebreak
+\texttt{schulze\_winners}, into a
 provably correct program. When extracting, all purely propositional
 information is erased and given a set of incoming ballots, the ensuing program produces an inhabitant
 of the (extracted) type \texttt{Count} that records the construction
@@ -951,7 +947,7 @@ election result.
 We have evaluated our approach by extracting the entire Coq
 development into Haskell, with all types defined by Coq extracted as
 is, i.e. in particular using Coq's unary representation of natural
-numbers. The results are displayed in Figure \ref{fig:straight}
+numbers. The results are displayed in Figure \ref{fig:straightslow}
 using a logarithmic scale. 
 
 
@@ -976,9 +972,9 @@ using a logarithmic scale.
 
 \begin{figure}
 \centering     %%% not \center
-\subfigure[Direct Extraction]{\label{fig:straight}\includegraphics[width=60mm]{1.png}}
-\subfigure[Extraction using Haskell Integers]{\label{fig:native}\includegraphics[width=60mm]{2.png}}
-\caption{Experimental Results}
+\subfigure[Direct Extraction]{\label{fig:straightslow}\includegraphics[width=60mm]{1.png}}
+\subfigure[Extraction using Haskell Integers]{\label{fig:nativeslow}\includegraphics[width=60mm]{2.png}}
+\caption{Experimental Results (Slow)}
 \label{fig:test}
 \end{figure}
 
@@ -1020,12 +1016,12 @@ based on randomly generated ballots while keeping number of candidates
 constant i.e. 4. 
 
 
-\begin{figure}
+\begin{figure}[htb]
 \centering     %%% not \center
-\subfigure[Computation of Winners]{\label{fig:straight}\includegraphics[width=60mm]{without-cert.png}}
-\subfigure[Computation of Winners and Certificate]{\label{fig:native}\includegraphics[width=60mm]{with-cert.png}}
-\caption{Experimental Results}
-\label{fig:test}
+\subfigure[Computation of Winners]{\label{fig:straightfast}\includegraphics[width=60mm]{without-cert.png}}
+\subfigure[Computation of Winners and Certificate]{\label{fig:nativefast}\includegraphics[width=60mm]{with-cert.png}}
+\caption{Experimental Results (Fast)}
+\label{fig:fast}
 \end{figure}
 
 
