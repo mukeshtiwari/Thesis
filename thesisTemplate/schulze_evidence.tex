@@ -195,7 +195,7 @@ the winner to other candidates are at least as strong as the reverse path. Duall
 We reflect the fact that the above are \emph{propositions} in
 the name of the definitions, in anticipation of type-level
 definitions of these notions later. The reason for having a \textit{Prop} level definition is that 
- it is very easy for human to inspect the definitions, and ascertain the correctness of formalization.
+ it is very easy  and intuitive for human to inspect the definitions, and ascertain the correctness of formalization.
 As we discussed in the
 \textbf{Type vs. Prop} (section \ref{sec:typeprop}), the main reason 
 for having equivalent
@@ -360,10 +360,9 @@ scrutiny sheet we produce after election.
 \end{verbatim}
 
 \noindent
-We have two definitions of winning, \texttt{wins\_prop} which is easier for a human to inspect, 
-but useless for machine because it is in \texttt{Prop}; on the other hand, 
-\texttt{wins\_type} which is useful for the machine because it is in \texttt{Type}, but 
-not so useful for human. We formally establish that type level winning and prop level winning 
+We have two definitions of winning, \texttt{wins\_prop} which is easier for a human to inspect; 
+on the other hand, \texttt{wins\_type} which is useful for the machine. 
+We close the gap by formally establishing that type level winning and prop level winning 
 (dually, not winning) are in fact equivalent. 
 
 \begin{verbatim}
@@ -379,7 +378,7 @@ not so useful for human. We formally establish that type level winning and prop 
 \noindent
 The different nature of the two propositions does not allow
 us to claim an equivalence between both notions, as Coq defines
-biimplication only on propositions.
+bi-implication only on propositions.
 
 The proof of the first statement, $wins\_type\_prop$, is completely straight forward, as
 the type, $win\_type$, carries all the information needed to establish the
@@ -451,8 +450,7 @@ between repeated nodes and so reaches a fixed point.
 
 \noindent
 That is, the \emph{generalised margin}, i.e. the strength of the strongest (possibly infinite) path
-between two candidates is
-effectively computable.
+between two candidates is effectively computable.
 
 This allows us to relate the propositional winning conditions to the
 iterated margin function and showing that a candidate $c$ is winning
@@ -561,7 +559,8 @@ exists in the opposite direction.
 \end{itemize}
 
 \noindent
-It is precisely this additional data or scrutiny sheet  (on top of merely declaring a set of
+It is precisely this additional data, which we call scrutiny sheet,
+(on top of merely declaring a set of
 election winners) that allows for scrutiny of the process, as it
 provides an orthogonal approach to verifying the correctness of the
 computation: both checking that the given path has a certain
@@ -809,8 +808,7 @@ certificate can be verified independently. In the literature on
 electronic voting, this is known as (tallied-as-cast) \emph{verifiability} and has
 been recognised as one of the cornerstones for building trust in
 election outcomes by electronic voting research community \citep{Chaum:2004:SBR}
- \citep{5958051}, 
-   \citep{Benaloh:1994:RSE:195058.195407},  \citep{Delaune:2010:VPT}, \citep{Bernhard:2017:PES}.
+ \citep{5958051}, \citep{Benaloh:1994:RSE:195058.195407},  \citep{Delaune:2010:VPT}, \citep{Bernhard:2017:PES}.
 %and is the only answer to
 %key questions such as the possibility of hardware malfunctions, or
 %indeed running the very software that has been claimed to count
@@ -870,7 +868,7 @@ the transcript of a Schulze election where we have added wrappers
 to pretty-print the information content. This is the (full) scrutiny
 sheet promised in Section \ref{sec:prop-type}.
 %
-%\newpage
+\newpage
 \begin{footnotesize}
 \begin{verbatim}
 V: [A3 B1 C2 D4,..], I: [], M: [AB:0 AC:0 AD:0 BC:0 BD:0 CD:0]
@@ -947,7 +945,7 @@ election result.
 We have evaluated our approach by extracting the entire Coq
 development into Haskell, with all types defined by Coq extracted as
 is, i.e. in particular using Coq's unary representation of natural
-numbers. The results are displayed in Figure \ref{fig:straightslow}
+numbers. The results are displayed in Figure \ref{fig:test}
 using a logarithmic scale. 
 
 
@@ -1001,7 +999,9 @@ using a logarithmic scale.
   
  \section{Scaling it count millions of Ballots}
  \label{sec:count_million}
- We investigated the extracted Haskell code  from Coq code.
+ The previous extracted Haskell code was very slow  and was not 
+ practical for real life election involving millions of ballots. To scale it to real life election,
+ we investigated the extracted Haskell code  from Coq code.
 The most performance critical aspect of our code was the computation of  margin
 function. Recall that the margin function is of type
 \texttt{cand -> cand -> Z}
@@ -1011,7 +1011,12 @@ re-computed with every call. The single largest efficiency
 improvement in our code was achieved by memoization, i.e.
 representing the margin function (in Coq) via list lookup. With
 this (and several smaller) optimisation, we can count millions of
-votes using verified code. Below, we include our timing graphs,
+votes using verified code. However, this efficiency did not come for 
+free, and we had to pay the cost in terms of (almost all) broken proofs. 
+We had to redo all the proofs all over again\footnote{Redoing these proofs were trivial,
+ but time consuming. I wished if there was a 
+tool to automate this process}}.
+Below (Figure \ref{fig:fast}), we include our timing graphs,
 based on randomly generated ballots while keeping number of candidates
 constant i.e. 4. 
 
@@ -1065,17 +1070,17 @@ million ballot papers) on a standard, commodity desktop computer with
 \section{Discussion} \label{sec:discussion}
 
 In this chapter,  we emphasize on correctness, 
-and we take the approach that 
-computation of winners in
+and we take the approach that computation of winners in
 electronic voting (and in situations where correctness is key in
 general) should not only produce an end result, but an end result,
 \emph{together} with a verifiable justification of the correctness
-of the computed result. In this paper, we have exemplified this
+of the computed result. We have exemplified this
 approach by providing a provably correct, and evidence-producing
 implementation of vote counting according to the Schulze method. 
 
 While the Schulze method is not difficult to implement, and indeed
-there are many freely available implementations, comparing the
+there are many freely available implementations on the Internet, 
+comparing the
 results between different implementations can give some level of
 assurance for correctness only in case the results agree.  If there
 is a discrepancy, a certificate for the correctness of the count
@@ -1088,7 +1093,6 @@ transcript for correctness is of the same complexity as computing
 the set of winners, as our certificates are cubic in size, so that
 certificate checking is not less complex than the actual
 computation. 
-
 However, publishing an independently verifiable certificate that
 attests the individual steps of the computation helps to increase
 \emph{trust} in the computed election outcome. Typically, the use of technology in
@@ -1114,6 +1118,7 @@ class of people that can scrutinise the correctness of the count,
 and so helps to establish a trust basis that is much wider as no
 trust in election officials and software artefacts is required.
 
+
 Technically, we do not \emph{implement} an algorithm that counts
 votes according to the Schulze method. Instead, we give a
 specification of the Schulze winning conditions 
@@ -1131,7 +1136,7 @@ extraction mechanism then allows us to extract a Haskell program
 that produces election winners, together with verifiable
 certificates. 
 
-%\section{Summary}
+\section{Summary}
 
 %In this formalization, we have presented a formalisation of 
 %the Schulze method for
@@ -1152,7 +1157,7 @@ certificates.
 %relatively large number of ballots already.
 
 Our formalization achieves \textit{Correctness}, \textit{Practicality}, and 
-(tallied-as-cast) \textit{Verifiability}. The major wrinkle in this formalization is \textit{Privacy}.  
+(tallied-as-cast) \textit{Verifiability}. The major problem in this formalization is \textit{Privacy}.  
 Our ballots are in plaintext and could easily be identified
 if the number of candidates participating in election in 
 are large (Italian attack) \citep{Otten}.
@@ -1160,23 +1165,23 @@ are large (Italian attack) \citep{Otten}.
 In nutshell, the pros and cons of this formalization:
 
 \begin{itemize}
-\item Pros 
+\item Achieved 
 \begin{itemize}
 \item Correctness: The implementation is formalized in Coq with emphasis on generating 
          evidence to convince everyone about the outcome of election.
 \item Practicality: The extracted code can count millions of ballots. Therefore, we can use it 
           in any real life election.
-\item Verifiability: The outcome of any election can be verified by any third party because 
-          of the generated certificates. Certificates generated for plaintext ballot 
+\item Verifiability: The outcome of any election can be verified by any third party using 
+		  the generated certificates. Certificates generated for plaintext ballot 
 		  during the election 
           are very simple.  It requires basic math literacy to audit the certificate which would 
           lead to increase in number of scrutineers. 
 
 \end{itemize}
-\item Cons
+\item Missed
 \begin{itemize}
-\item Privacy : There is no privacy, and possibly susceptible to coercion, because the ballots involved 
-         are simply plaintext. 
+\item Privacy : There is no privacy  because the ballots involved 
+         are simply plaintext, and potentially, it could lead coercion and vote-selling.
 \end{itemize}
 \end{itemize}
 
@@ -1189,8 +1194,8 @@ certificate verifier, possibly in a language such as CakeML
 be correct to the machine level. 
 
  In the next chapter, we will try to solve privacy problem, possibly coercion, using encryption, and to keep 
- it verifiable, we will use zero-knowledge-proof. However, solution for privacy comes with other cost, e.g. 
- loss in pool of scrutineers because auditing a certificate generated by counting encrypted ballot 
+ it verifiable, we will use zero-knowledge-proof. However, solution for privacy comes at cost, e.g. 
+ a loss in the pool of scrutineers because auditing a certificate generated by counting encrypted ballot 
  would requires intricate knowledge of cryptography.  
  
 
