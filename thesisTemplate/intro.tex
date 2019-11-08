@@ -5,19 +5,8 @@
 {\textit{Niels Bohr}} 
 
 \section{Problem Statement}
-   Electronic voting is a nightmare and chance because the minuscule possibility of 
-   a bug in software used in voting could lead to a disaster, possibly 
-   inverting the results \citep{TSwiss}
-   \citep{Wolchok:2010:SAI:1866307.1866309},
-   \citep{10.1007/978-3-319-22270-7_3}, \citep{ARANHA2019335},
-   \citep{Feldman:2007:SAD:1323111.1323113}.
-   Given that the risk of  electronic voting is 
-   so high, we should totally refrain from it. However,
-   electronic voting is getting popular in many countries
-   despite the fact that 
-   electronic voting has many undesirable problems.  The reason that 
-   electronic voting is getting popularity in many countries is cost-effective, 
-   increase in voter turnout  and faster result.  India has 900 million eligible voter, 
+	Electronic voting is getting popular in many countries, and the reason for popularity is 
+	cost-effectiveness, faster results, and high voter turnouts. India has 900 million eligible voter, 
    and with 67 percent (roughly 600 million) voter turnout in 2019 general election, 
    the result was declared in 2 days. This was possible because India uses  electronic 
    voting machines (EVM) to conduct the election. Australia has 
@@ -27,21 +16,26 @@
    is praised for successfully implementing the Internet voting since 2005. The first country to
    adopt internet voting and showing confidence in technology. In 2019 elections, 
    as claimed on e-estonia \citep{Estonia},  the time saved was 11,000 working days. 
-  
    
-   Bases on the rapid adoption of electronic voting in Australia, India, and  Estonia, it seems that 
-   electronic voting has 
-   the potential to solve many problems, and we can safely 
-   ignore the problems posed by it.
-   Before we take any decision on ignoring the problems 
-   posed by electronic voting,  we need to understand the process of electronic voting to see 
-   the problems posed by it.  In electronic voting, we cast our (electronic) ballot with help 
-   of software and hardware used in the process. The process of casting a (electronic) ballot is roughly
-   equates to touching the screen of voting machine to choose the option and pressing some 
-   buttons on the screen to cast the vote. Once we have cast the ballot, it might show some 
-   message that your ballot has been successfully recorded.  Let us be a
-   responsible citizen and ask the few questions to ourselves about the whole process:
-   \begin{enumerate}
+   Despite all these benefits, electronic voting is nightmare because the minuscule possibility of 
+   a bug in software used in voting could lead to a disaster, possibly 
+   inverting the results \citep{TSwiss},
+   \citep{10.1007/978-3-319-22270-7_3}, \citep{ARANHA2019335},
+   \citep{Feldman:2007:SAD:1323111.1323113}. 
+   By its inherent nature electronic voting has many 
+   problems, which are not present in paper ballot elections that makes it perfectly susceptible 
+   to delivering wrong and unverifiable result  \citep{Wolchok:2010:SAI:1866307.1866309}.
+   The software and hardware used in the electronic voting process  
+	are treated as a black-box and commercial in confidence \citep{AEC:2013:LMM} which  
+	violates the fundamental property of  public examinability of any democratic election. 
+	More often than not, these software programs are configured incorrectly \citep{1301313} and 
+	run at top of (untrusted) operating system and hardware.  Operating systems have
+	millions of lines of code (Linux has 15 million code) which exposes a large attack surface 
+	and could be  exploited for illegal gain in election, possibly by 
+	current government or foreign country.  As a consequence,  from casting ballot electronically to declaring 
+	results based on electronic data (ballot) may raise several questions:
+	
+	\begin{enumerate}
    \item How do we know the ballot we have cast according to our intent is successfully recorded 
    without any change by the software or hardware used in the process?
    \item How do we know that the software or hardware used to conduct the election is not 
@@ -57,67 +51,10 @@
     against my ballot (choices)?
    \end{enumerate}
    
-   \noindent
-   The possibility of these question are endless, but we get the idea.  
-   By its inherent nature electronic voting has many 
-   problems, which are not present in paper ballot election, that makes it perfectly susceptible 
-   to delivering wrong and unverifiable result.
-   The software and hardware used in the electronic voting process  
-	are treated as a black-box which  violates the 
-	fundamental property of  public examinability. Also, they 
-	expose a attack surface
-	which  could potentially be exploited for illegal gain in election, possibly by 
-	current government or foreign country. As a result, a person who has 
-	not legitimately received a majority or quota would be  put in charge of public office. 
-    Because of the complex software
-    \footnote{Unix operating system has 15 million code which can not trusted at all}
-    and hardware stack
- \footnote{Intel has many undocumented instructions in its x86 
- processor. https://github.com/xoreaxeaxeax/sandsifter}, 
-   electronic voting lacks:  
-   \begin{enumerate}
-   \item correctness, i.e. produced results are correct and convincing to everyone leaving 
-   no ground for suspicion.
-   \item privacy,  i.e.  protecting the identity of the voter of a cast ballot
-   and the choices on the cast ballot.
-   \item verification, i.e. any independent observer  can establish/verify
-    the produced results are correct based on cast ballots.
-   \end{enumerate}
-  
    
-   
-   
-%   
-%      
-%   Bases on the success stories of Australia, India, and  Estonia, it seems that electronic voting is 
-%   a solution to many problems, and 
-%   we can safely ignore the problems posed by it.   It is a worthwhile discussion that 
-%   what a democracy want? A faster, but wrong and unverifiable result, or a slower, but
-%   correct and verifiable result.  By its inherent nature, electronic voting has many 
-%   problems, which are not present in paper ballot election, that makes it perfectly susceptible 
-%   to delivering wrong and unverifiable result.
-%   Because of the  untrusted and complex software
-%    \footnote{Unix operating system has 15 million code which can not trusted at all}
-%    and hardware stack
-% \footnote{Intel has many undocumented instructions in its x86 
-% processor. https://github.com/xoreaxeaxeax/sandsifter}, 
-%   electronic voting lacks:  
-%   \begin{enumerate}
-%   \item correctness, i.e. produced results are correct and convincing to everyone leaving 
-%   no ground for suspicion.
-%   \item privacy,  i.e.  protecting the identity of the voter of a cast ballot
-%   and the choices on the cast ballot.
-%   \item verification, i.e. any independent observer  can establish/verify
-%    the produced results are correct based on cast ballots. 
-%   
-%   
-%   \end{enumerate}
-   
-	\noindent
-	In a  nutshell, 
-    electronic voting lacks basic principals of any democratic election, i.e.
-    correctness, privacy, and verifiability. These problems are well recognized in electronic voting 
-    community, 
+   Elections conducted  electronically, electronic voting, lacks basic assumption of any democratic 
+	election, i.e. correctness, privacy, and verifiability.
+	These problems are well recognized in electronic voting community, 
    and some commonly sought 
    properties which a electronic voting protocol must have are 
     \citep{5958051}, 
@@ -144,8 +81,8 @@
   collected ballots.
 \end{itemize}
 \end{itemize}
- 	
-   
+	
+
 In this thesis, we focus on privacy, correctness, and tallied-as-cast, the third part of end-to-end verifiability.
 We assume the first two properties of end-to-end verifiability, cast-as-intended and collected as cast, hold
 for the ballots published on bulletin board. 
