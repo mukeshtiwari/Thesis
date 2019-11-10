@@ -4,6 +4,304 @@
 \epigraph{Somewhere inside of all of us is the power to change the world.} 
 {\textit{Roald Dahl }}
 
+
+This thesis builds on and contributes to work in the areas of electronic voting. 
+The original contribution of my thesis is achieving correctness, privacy and verifiability in 
+electronic voting. Although studies in electronic voting has examined verifiability and correctness, 
+there has not been privacy.   As such, this study provides additional insight into correctness with 
+emphasis on verifiability by generating a proof certificate (additional piece of data for auditing) . 
+This study is important to my discipline because it bridges the gap between electronic voting 
+and paper ballot election. 
+
+But what excites me the most about this study is making the democracy accessible to everyone
+and making there voice heard. 
+
+\begin{enumerate}
+\item Need for Scrutiny sheet (Electronic voting)
+\item General Structure of Scrutiny sheet
+\item How to verify it
+\item Extracting a OCaml code
+\item Why should we trust the extracted code
+\item Bits and pieces need to write scrutiny checker
+\item Coq formalization
+\item Explain little bit about Coq
+\item Why do we need scrutiny checker
+\item 
+\end{enumerate}
+
+
+
+This thesis could not have been possible without the support of my supervisor, Dirk Pattinson. I really admire
+ his ability to understand the problem, and his intuition to to make sure that I stay clear from many dead ends 
+ which I would have happily spent months. I wish I could incorporate more of his qualities, but, I believe, I have
+ less optimism about my chance. 
+ 
+ I wanted to dedicate this thesis to my first true friend in Australia, Turbo, my house dog who was patient enough to 
+ listing my proofs, conjectures and ideas about my PhD, but occasionally  bark if it was too much for him. 
+ 
+ Some of the great friends who made this journey possible are Caitlin, Milad, Mina, Jim, Ian and Ali, Ahmed. Although, 
+ their lunch jokes were too much for me to digest, but I enjoyed it whenever I could.  I learned many valuable things 
+ from Micheal during the thesis presentation which helped me shaping my personality and how to present it. 
+ 
+ I want to thank Thomas Haines for teaching me all the bits pieces of zero knowledge proofs and cryptography. I really 
+ enjoyed working with him. One of the best experience of this PhD was travelling to Princeton to participate in summer. 
+ Unfortunately, I could not attend Marktoberdorf because it was impossible for me to get the visa of Germany, but I hope
+ things would be more easier in the upcoming future. 
+
+Last, but not least, the good wine and beer of Australia could not go unmentioned in this PhD. 
+One of the biggest joy of this PhD was to meet my girlfriend, Mina, who came as a visitor to our logic group. 
+
+One of the major disadvantage, as we discusses in the last chapter, of introducing cryptography to make the elections 
+private and verifiable is that now the verification of scrutiny sheet requires specialized knowledge of cryptography
+to audit the election.  In this chapter, we propose that a default checker would increase the number of scrutineers 
+because it can be run by everyone, and the code needs to be inspected by a few. Furthermore, it would help the 
+electoral commission in establishing  the confidence in software system.  
+
+
+
+
+
+The key questions to ask: 
+Q. Why do we need scrutiny sheet
+Because it increases the number of scrutineers 
+
+
+Ballot validity: 
+One of major challenge during the design of homomorphic counting we faced was the suitable data structure for
+ballot representation. A ballot of form f : cand -> ciphertext would have easier to decide the validity; however, 
+we could not find the homomorphic comparision function to construct the margin matrix without leaking 
+any information. On the other hand, we found that matrix representation of form f : cand -> cand -> ciphertext 
+was very easy for computing the margin matrix, but it was very difficult to decide the validity of matrix because 
+a voter could inflate the ballot by any amount, could create a cycle which does not represent any linear 
+ordering. Our method to decide the validity of ballot, the first thing we needed is the notion of valid ballot. 
+A matrix ballot is valid if it can be represent as linear order (f : cand -> nat), otherwise it is not. The next 
+big challenge was how to convince the voter about this fact with revealing the content of ballot itself. 
+
+The very first thing we do is we (as electoral authority) generate a random permutation and create Pedersen's commitment. 
+We keep the random permutation secret and publish the commitment. Now, we take the ballot and permute the each row of 
+it by secrete permutation. We publish the row permuted ballot and zero-knowledge-proof of that  
+published matrix is indeed the row permutation of original matrix. 
+Permutation introduces re-encryption so it is not possible to link the row permuted matrix to 
+original matrix. We do the similar thing with row-permuted ballot and produce the similar evidence for 
+each step.  
+
+
+
+Informally, the counting starts with making sure that we have taken all the cast ballot under consideration, every entry 
+in initial encrypted margin is encryption of zero, decryption of the encrypted margin which shows that every entry is zero and 
+zero knowledge proof of this fact (constructor ecax).  Now, we take a ballot from the pile and check for its validity.  
+If the ballot under the consideration is valid, then we provide the proof of validity and multiply the ballot with 
+running margin matrix (pair wise multiplication), and this becomes our new running margin. If the ballot under consideration is 
+not valid, then we 
+give the proof about its invalidity, move it to list of invalid ballots and our running margin does not change. 
+Finally, we exhaust all the ballots and compute the final margin. We decrypt the final margin with evidence of 
+honest decryption. Based on this decrypted final margin, we computed Schulze winner \ref{previous work}. 
+
+More formally, the constructor of ECount has three piece of information:
+1. data related to counting 
+2. data related to various claims in terms of zero knowledge proof
+3. assertion statements 
+
+Ecax:
+counting data: list of uncounted ballots us, encrypted margin encm, decrypted margin decm 
+verification data: honest decryption zero knowledge proof
+assertions: every entry in decm is zero, and decm is honest decryption of encm
+
+Ecvalid: 
+Counting data: list of uncounted ballot us, the ballot we are counting u, its row permutation v, column permutation of 
+v, w, b that is decryption of w, nm and m
+verification data: zero knowledge proof, zkppermuv, zkppermvw, zkpdecw, cpi, zkpcpi, 
+assertion data: assertions that v is the row permutation of u by a (secret) permutation whose commitment is 
+cpi, w is column permutation of v by the same (secret) permutation which has been used to permute u to obtain v, 
+
+ECinvalid: 
+This is also very similar to ECvalid, except in this case, we don not update the margin
+
+ECDecrypt: 
+
+
+Our final lemma says that if we have a pile of plaintext ballot and the corresponding pile of encrypted 
+of ballots, then the winner produced by one plaintext ballot is same as the winner produced by 
+encrypted. The correspondence between two ballots are shown via a 
+
+
+In final lemma, we establish that if our ciphertext ballot and plaintext ballot are aligned, then will produce the 
+same winner. We prove this fact formally by using the previous chapter counting method, Count. Recall that 
+in previous chapter, our ballot was of form Cand -> nat, while, in this chapter, our encrypted ballot is 
+of form Cand -> Cand ->ciphertext and its decrypted form is Cand -> Cand -> plaintext. We establish 
+that if decrypting the ciphertext ballot and turning it into  linear order obtains the same ballot. If we have 
+the two similar isomorphic piles or related pile then we would produce the same winner. 
+
+
+(* This function connects ballot ot pballot *)
+    Definition map_ballot_pballot (b : ballot) (p : pballot) :=
+      ((exists c,  b c = 0)%nat /\ ~matrix_ballot_valid p) \/
+      (matrix_ballot_valid p /\ (forall c, b c > 0)%nat /\
+       (forall c d, (p c d = 1 <-> (b c < b d)%nat) /\
+               (p c d = 0 <-> (b c = b d)%nat) /\
+               (p c d = -1 <-> (b c > b d)%nat))).
+               
+ Our final lemma states that if we take pile of ciphertext ballot, decrypt the whole pile and turn each of 
+ them into linear order, then the winner produced by ciphertext would be the same as the winner produced 
+ by linear order ballot. It can be thought of other way round as well, but our assumption is that 
+ only decryption is deterministic so we did not say that take linear form ballot, turn it margin 
+ matrix and encrypt the margin matrix to obtain the ciphertext. This would require the assumption that 
+ encryption is deterministic which is not true for ElGamal Encryption (We geared towards ElGamal). 
+ Also, in general, encryption is not deterministic. 
+ 
+ 
+    
+Recall that in chapter 3, our ballot was of Cand -> nat, while the pballot is form Cand -> Cand -> Z. 
+The function map_ballot_pballot connects these notions. It says then whenever b is invalid then p invalid, 
+and b is valid then p is valid. The ballot p can be thought of margin computed from ballot b. 
+    
+    (* This reason I am going with this proof is that my proofs depends on this. 
+       But inductive type is more elegant *)
+    Fixpoint mapping_ballot_pballot (bs : list ballot) (pbs : list pballot) : Prop. 
+    Proof.
+      refine (match bs, pbs with
+              | [], [] => True
+              | [], h :: _ => False 
+              | h :: _, [] => False
+              | h1 :: t1, h2 :: t2 =>
+                map_ballot_pballot h1 h2 /\
+                 mapping_ballot_pballot t1 t2
+              end); inversion H.
+    Defined.
+    
+ 
+We show that the winner produced is same if the plaintext ballot and ciphertext ballot are related.  The meaning 
+of relatedness here is that every ballot in plaintext is decryption of ciphertext. More formally, a ciphertext ballot 
+eb is decrypted as plaintext ballot pb which, in turn, is reflected as a function f : cand -> nat. 
+
+The proof of the lemma hinges on the fact that margin created by both piles would be same.  Once we establish 
+the connection that margin is same then the proof onwards is same. Because the margins are same so they would produce the 
+same winner. 
+
+We have also proved this formally that by using the lemma 
+Lemma same_margin_enc :
+      forall bs inbs inbs0 encm encm0 s s0 (c0 : ECount grp bs s) (c1 :  ECount grp bs s0),  
+        s = epartial ([], inbs) encm ->
+        s0 = epartial ([], inbs0) encm0 ->
+        forall c d, decrypt_message grp privatekey (encm c d) =
+               decrypt_message grp privatekey (encm0 c d). 
+               
+          
+
+\section{Ecount explanation}
+The first constructor, ecax, bootstrap the counting process. It has two part, the data part and assertion on data to 
+ensure the correctness or integrity of process. Ecax consist of intial uncounted ballot, us, initial encrypted zero margin, 
+encm, decrypted zero margin, decm, and honest decryption zero knowledge proof deccZkp. The first constraint us = bs 
+establishes the fact that we started with all the ballots which were cast, the second line (forall c d, decm c d = 0) states 
+that every entry in decm is 0, and (forall c d, verify_decryption zero knowledge proof grp (decm c d) (encm c d) (zkpDec c d) = true) 
+emphasize that every entry in decm is indeed the honest decryption of corresponding entry in encm. 
+
+The second constructor ecvalid continues with counting if the ballot under consider was valid. 
+
+
+
+
+
+
+
+
+Why do we need scrutiny sheet? We need verifiability in electronic setting everyone treats 
+it as black box but wee need more
+W e need to make sure that our election is verifiable . For that reseaon we need scrutiny seet . Scrutniy sheet con
+tains enought information to audit the election . We ut information in the seet which needs to be checkerd by 
+scrutineers . Then we xtract code from it and verify the election based on sheet., 
+We need Group theory and constructive math (Coq) to make sure that we reach the goal . We need to scrutiny 
+the election . to make sure that it has establisthed the trust . We will formalized it Coq theorem rover a to make 
+sure that we have roverd all the properties of electrionic voitng method 
+
+Scrutiny sheets are needed for electronic voting because it attests the need for verification . It puts the confidence 
+in the system and published results. It may needed by the voters of democracy and third party auditors to 
+attests the outcome of election . What do we need in scrutiny sheet ? Enough information with the confidence
+that it has been produced correctly. Wee.ll. the whole point is audit the election so why do we need 
+confidence ? because we don't know if machine is behaving correctly, or the bulletin board is galloping
+the ballots ? Once we have made it sure that there won't be any fishy things then we can make sense if 
+elections. We need to inform the voter about the process and mathematics behind the cryptography 
+which off course is difficult but every democracy has some voter who can do this. Publishing the result 
+to make sure that it checks out is really great benefit for democracy. Once the user or voter knows that 
+end to end verifiability hold then he can ascertain the results are correct . In the scrutiny sheet  
+we have encrypted ballot , encrypted zero margin , and zero knowledge proof for the fact that 
+our maring is zero . Then we take a ballot and multiply it encrypted zero margin 
+
+
+
+A Scrutiny sheet (Theme) is an essential ingredient for verifying an election (Rheme) (Level 5). 
+(Rheme) Verification 
+is the process 
+of establishing the truth of fact, and (Theme) scrutiny sheet facilitates this process in a democratic election 
+(level 5). 
+The published (theme) scrutiny sheet make sure that the outcome is indeed the honest one, and 
+everyone can establish or ascertain the outcome of election based on data published in scrutiny
+sheet (level 4). Some politicians question the value of (Theme) scrutiny sheet, but
+more importantly, why should we put our trust in scrutiny sheet? (level 4) Scrutiny sheets have been put 
+forward by the electronic voting research community to achieve the  
+idea of end-to-end verifiability (level 4), i.e. we do not need to trust the 
+software/hardware in election process to trust the result (level 4). 
+Many communities over the Internet publish the scrutiny sheet of their 
+election \ref{ICAR}.  
+
+
+\section{Components of Scrutiny Sheet}
+Our scruntiny sheet contains data about various facts. These data connects the dots and 
+leave no gaps to make the process of verification robust. 
+\begin{itemize}
+\item In the beginning of scrutiny sheet, we have all the uncounted ballots, encrypted 
+zero margin, zero-knowledge-proof that the encrypted margin is indeed encryption of 
+zero
+\item In next line, we take a ballot and depending on its validity, we either update 
+the margin matrix which amounts to multiplying the ballot under consideration with 
+entries in margin matrix, or we discard the ballot and move it list of invalid ballots. 
+In this case, margin matrix remains unchanged
+\item This process is very complex and we need to make sure this step 
+is verifiable. In order to do so, we augment the scrutiny sheet with extra data 
+(zero-knowledge-proofs) so that it can be later verified.  
+\item How do we decide if a ballot is valid or invalid? A ballot is represented as 
+linear then it is valid, i.e. we can find a function which ranks the candidate 
+linearly, otherwise it is not valid.  In order to decide the validity of a ballot, 
+we generate a random permutation, and commit it using Pedersen's commitment, 
+and publish the commitment. 
+\item The advantage of this is that no one can break the Pedersen's commitment 
+given the polynomial time attacker and Diffie-Hellman assumption holds 
+
+\item We also can not open the it any other way than we committed to which forces 
+to have binding property
+
+\item Now that we hiding and binding property, we take the ballot and permute 
+each row of it by the permutation we committed. We publish the zero-knowledge-proof
+for this fact that the row permuted matrix is indeed the permutation of ballot by 
+some permutation whose commitment is published
+
+\item We take the previoulsy row permuted ballot and permuted each column of 
+it again by the same permutation with similar zero-knowledge-proof 
+
+\item In the end, we decrypted the column permuted ballot and publish the 
+it. Any one can see if this ballot is valid or not by making sure that 
+if it is linear function or not and connecting the dots backward. One key point 
+of this whole process is that we never reveal the permutation otherwise anyone 
+could  construct the origin ballot from decrypted permuted one. In order to be 
+verifiable, we publish the zero-knowledge-proof that the ballot is indeed permuted by 
+the same permutation whose commitment we have published
+
+\item One important point of this whole process is that we never reveal our permutation, 
+otherwise 
+\end{itemize}
+
+
+
+
+software independence(Rheme), i.e. we do not need to trust the software involved in 
+election process to trust the result. (Rheme) Software independence is a weaker notion of 
+end-to-end verifiability. End-to-end verifiability basically makes the whole process 
+independent of hardware and software involved in the process of election voting. We no longer 
+need to trust the 
+
+
+
+
 Getting everything right in electronic voting is very difficult, and assuming, for a moment,
 that everything is correct, convincing this fact to every stakeholder and  any independent third party 
 is almost next to impossible.  As we stated in earlier chapter [Give a link to the section] that 
@@ -67,19 +365,7 @@ to demonstrate the idea we have the taken the IACR 2018 election which we discus
 \item Flesh the details of permutation shuffle
 \end{enumerate}
 
-%Same as the last chapter, introduce the motivation and the high-level picture to
-%readers, and introduce the sections in this chapter. 
-%
-%One of the crucial 
-%aspect in electronic voting is ability to detect change in outcome of 
-%election because of software bugs. 
 
-
-%   A voting system is software independent if an undetected change or error
-%   in its software can not cause an undetected change or error in an 
-%   election outcome.
-%\section{Verification and Verifiability}
-%  Paste Evote section 2
 
 \begin{enumerate}
 \item Sketch the Monoid -> Group  -> Abelian Group -> Field -> Vector Space
@@ -91,6 +377,297 @@ to demonstrate the idea we have the taken the IACR 2018 election which we discus
 \item Maybe some commitment scheme
 \end{enumerate}
 
+
+Now that we have explained the every bit of information about our certificate, 
+we flesh out the details of algebraic structure we need to develop the formally verified 
+certificate checker. We develop the notation of Monoid
+
+Class Monoid (S : Type) (f : S -> S -> S) (e : S) :=
+ (Associativity: forall a b c, f a (f b c) = f (f a b) c)
+ (IdentityLaw : forall a : S, f a e = f e a = a)
+ 
+ A group is monoid with each element have  a inverse
+ 
+ Class Group (S : Type) (f : S -> S -> S) (e : S) :=
+ (Monoid S f e)
+ (InverseLaw : forall a, exist b, f a b = e) 
+  
+ An Abelian Group, in honor of Henrik Abel,  is a Group with commutativity law
+ 
+ Class Abelelian-Group (S : Type) (f : S -> S -> S) (e : S) :=
+  (Group S f e) 
+  (CommutativeLaw : forall a b, f a b = f b a)
+  
+  A Field is a set with two binary operation f and g
+  
+  Class Field (S : Set) (F+ : S -> S -> S) (F* : S -> S -> S) := 
+  Here goes field
+  
+  Class Vector Space := 
+   Here goes vector space
+   
+   
+ Now we describe the sigma protocol briefly. A sigma protocol is efficient 
+ zero-knowledge-proof protocol in which we a prover "peggy" conveys the truth of 
+ statement to the verifier "verity" without revealing anything other than the truth itself. 
+ The requirement of any protocol to be zero-knowledge is: i) Soundness 
+ ii) Completeness, and iii) Zero knowledge. (verifier learns nothing other than 
+ the truth of statement)
+ 
+ One of the interesting fact about this notion we define the absence of knowledge without 
+ defining what the knowledge is. Now dive deep into representing sigma protocol ( a convenient way 
+ to do zero-knowledge-proof ) inside a theorem prover 
+   
+   Class SigmaProtocol (G : Group) (H : Group) (f : G -> H) := 
+   Here goes the details. 
+   
+   
+   In sigma protocol, the prover generates a random value and commits it using Pedersen's commitment. 
+   He send the value to the verifier. Verifier generates a random number in a given Group Gp and 
+   send it back to verifier. Verified sends the  r * c + q to prover and prover accepts if the transcript is 
+   valid otherwise he rejects it. 
+   
+   
+   Now we prove that Diffie-Hellman discrete logarithm problem is indeed the instance 
+   of sigma protocol, i.e. it follow the soundness (special), completeness and zero knowledge 
+   property. 
+   
+   We have to show three things:
+   \begin{itemize}
+   \item The diffie-hellman implements correct encryption 
+   \item Honest decryption zero knowledge proof
+   \item Pedersen's commitment 
+   \item Wikstrome commiment consistent shuffle 
+   \end{itemize}
+   
+   In this chapter, we formally prove the diffie-hellman, honest decryption zero knowledge proof, 
+   and Pedersen's commitment. However, we have not verified the Wikstrome's commiment 
+   consistent shuffle because it involv
+   
+   
+   
+   
+
+ Electronic voting is nightmare and the reason is that a simple possible of 
+ going anything wrong in the components used to conduction electronic 
+ voting would contribute significantly to result, possibly inverting it. 
+ We can divide the world on the scale of electronic voting:
+ 1. Countries who abolished it
+ 2. Countries who are continuing it
+ 3. Countries who are running a pilot project 
+ 
+ The two early adopters of electronic voting are Germany and The Netherlands. 
+ It was abolished in Germany by Supreme court because the results produced 
+ were not verifiable. German Supreme court said in her statement that
+ we are not against the electronic voting, but electronic voting violates 
+ the fundamental rule of German constitution that every democratic 
+ election to public office should be verifiable. German court emphasized on 
+ public examinability. 
+ 
+ In German elections, the vote counting software treated as a black-box. It will 
+ take a pile of ballots and produce the result with any evidence if the result 
+ produced is indeed the correct one. This situation is in contrast with 
+ paper ballot voting where every single step in the process is verifiable. 
+ 
+ The nature of data in electronic voting makes the problem very difficult.
+ Everything piece of information is electronic which could be manipulated 
+ very easily without anyone noticing. The other problem is that
+ the amount of effort it takes to change one ballot is almost same as 
+ the ballot from whole country.  This is indeed a big problem, because 
+ there are many corporates who would like to elect some favourite party 
+ and given that the democratically elected government controls all the resources, 
+ this would lead to a chaos. 
+ 
+ The nature of data in paper ballot is not electronic which makes it 
+ not susceptible to many electronic attack, e.g. it would always take
+ more effort to vote manipulating at mass scale; however, it 
+ is very unlikely to go undetected. 
+ 
+ 
+ Electronic voting has many benefits and we can solve the problem
+ then we can reap the benefits of it. Electronic voting is always 
+ a active area of research and research community came with 
+ the rule which every voting protocol should have:
+ 1. Correctness: The results produces should be correct, and convincing to 
+ everyone, specifically to losers, without any doubt
+ 2. Verifiability: 
+   The produced result should be verifiable by any one. Verifiability 
+   is easy to achieve in plaintext ballot counting, but it is very difficult problem 
+   in case of encrypted ballot. In order to achieve verification in electronic 
+   voting, we have used zero-knowledge-proof. 
+   
+   3. End-to-end verifiability 
+  3.1: Cast as intended
+  3.2: Collected as cast
+  3.3: Tallied as cast
+  
+  
+  End to end verifiability is a very strong notion and it makes the 
+  produced result by independent of software used to product it. 
+  Any bug in the software or hardware would not affect the result 
+  and it can be caught easily. 
+  Cast as intended: Cast as intended can be used to audit the voting client 
+  software used at polling booths to collect the ballot. It was first proposed 
+  by Josh Benaloh to catch if machine is behaving maliciously. The process is 
+  a voter would cast his options and voting client would encrypt the ballot. 
+  At this point, a voter has two option. He can either commit his ballot which 
+  would be added to bulletin board, or he can challenge the machine to decrypt
+  the ballot which would make the ballot invalid. If machine is cheating then 
+  it will caught with very high probability, because machine would have no idea 
+  when the voter would commit to his options. 
+  
+  Collected as cast: Once every ballot have been cast and posted at bulletin board 
+  then each voter would identify his/her ballot (Question to myself: How would 
+  this solve the problem of ballot stuffing. Everyone has to collaborate
+  
+  1. Each voter checks if their ballot is appearing at bulletin board
+  2. Only eligible voters have cast their vote (under no circumstance, there 
+  should be more votes than eligible voters) 
+  )
+  
+  3. Tallied as cast: 
+   It emphasize on that produced result should be based on the ballots at bulletin
+   board. 
+   
+   
+   This thesis is concern about privacy, verifiability, and tallied as cast. Our approach 
+   is that a vote counting software should not only produce the result, but it should 
+   produce a independently checkable certificate. The purpose of this 
+   certificate to make sure that any independent third party can ascertain that 
+   the produced results are indeed the correct one.  
+   
+   
+   As long as the cast-as-intended and collected-as-cast has been followed,
+   then our counting software produced the result as collect-as-cast with 
+  a witness to attest it result. 
+  
+  Question:
+  1. Why do we need scrutiny sheet. 
+  2. Why do we need a formally verified scrutiny sheet checker
+  
+  One the short comings our method, as we discussed in the previous chapter, 
+  was that it requires intricate knowledge of cryptography to audit the election
+  which substantially reduced the number of scrutineers. 
+  While it is not very difficult to find cryptographer in any economy to 
+  audit it, they are not in abundance and also they are not representative 
+  of democracy.  In order to increase the number scrutineers, we followed 
+  the route of proving a default checker which anyone can run on the 
+  election data and see if the result checks out.  The reason 
+  for formally verifying it to make sure that it is bug free and does not 
+  deviate. Consider the scenario where published certificate checker 
+  does not return true on certificate because of its own bug, but not 
+  because the certificate was produced incorrect. This would off course 
+  be a devastating situation, hence the reason for formally verifying it. 
+  
+  We would follow the same argument. We would write the checker and 
+  formally verify it followed by publishing the source code so that 
+  any one can have a look and see if the verification has been carried out 
+  diligently.  
+  
+  (Question: It going in circular fashion that how can we expect to find 
+  more logicians that cryptographers)
+  
+  The asture reader can point that now we have shifted the burden 
+  from cryptographers shoulders to logician shoulders. We agree 
+  that this is indeed the case, but what make it worthwhile that 
+  we have given the default checker which is verified, i.e. bug free. 
+  What would happen if we do not provide the checker, then how 
+  likely it would be for community/voters to develop the 
+  verified checker? It would off course be healthy for democracy 
+  if some one write his own checker and can match the result 
+  produced by his checker against the default one. 
+  
+  
+
+
+ Many researcher has formally verified the electronic voting scheme in symbolic model (What is symbolic model), 
+ however, to the best of our knowledge, this is first study of electronic voting algorithm implemented 
+ inside a theorem prover and its properties were proved correct. 
+ 
+ The closest of our work is Dirk Pattinson, Milad -Ketabi, but none of these researcher have taken 
+ the privacy into consideration. Their counting algorithm is simple (debatable?) and counts 
+ planetext ballot, while, our implementation can count the encrypted ballot. 
+ Our project progresses from counting a few hundred thousand planetext 
+ ballots to millions of planetext ballot to few thousand encrypted ballot (we will talk more about 
+ inefficiency in chapter 3). While Milad's work has produced the certified checker in CakeML, but it, 
+ again, no longer considers the scrutiny sheet produced by counting encrypted ballots 
+ augmented with zero-knowledge-proofs.  In order to write a verified checker 
+ for these kind of scrutiny sheet, it takes non-trivial amount of knowledge and effort. 
+ 
+ Cryptography is all about hiding secrets by using knowledge of number theory. The first public key cryptography
+ was devised by Martin Hellman based on hardness of discrete logarithm in Group. Public key cryptography 
+ involved public key, private key, encryption function and decryption function. Except private key, every
+ thing is public knowledge.  If Alice want to communicates with Bob, then by some means, using email, or going to his website, 
+ she would fetch the public key of Bob. Using the public key of Bob, she would encrypt the message that she wants to convey by using 
+ encryption function and send 
+ it to Bob. This encrypted message would be visible to everyone including Bob; however, it only possible for Bob to recover the 
+ message by his private key (related to his public key). (Before this introduce the notion of attacker). 
+ Given that encrypted message is available to everyone, is it possible that some one other Bob can recover the original 
+ message?  Depending on encryption, if it is RSA or Diffie-hellman, it always hard for polynomial time attacker to recover 
+ the message. Re-iterate: It is not impossible to recover given infinite amount of time, but hard. The formal notion of 
+ hardness in cryptography is borrowed in computability theory. 
+ 
+ 
+ Homormorphic encryption: 
+ This problem was first proposed by Ron Rivest, and the purpose of homomorphic encryption is to run computation on encrypted data. 
+  If we encrypt the a plaintext message using Diffie-Hellman algorithm:
+  E(m, prkey) = (g^r, g^m * g^r) 
+  What would happen if we multiply two ciphertext ? 
+  E(m1, prkey) = (g^r1, g^m1 * g^r1) 
+  E(m2, prkey)  = (g^r2, g^m2 * g^r2)
+  
+  Multiplying the correspoing elements of tuple, (g^(r1+r2), g^(m1 + m2) * g^(r1 + r2)), and let's decrypt it
+  g^(m1 + m2). 
+  
+  \begin{enumerate}
+  \item Talk about Additive Homomorphic 
+  \item Talk about Multiplicative Homomorphic
+  \item Talk about Full Homomorphic
+  \end{enumerate}
+  
+  As we can see that multiplying a ciphertext amounts to multiplying the corresponding plaintext and encrypting them. 
+  It was an open problem for almost 40 years that if there is 
+  It is also an active area of research by Craig Gentry work on first fully homomorphic encryption. 
+  In our implementation, we needed additive homomorphic encryption and our implementation is tailored towards 
+  ElGamal Encryption algorithm, but it would work with encryption scheme which is homomorphically additive. 
+  
+  Commitment Schemes: 
+  (* Question: What is commitment scheme and why do we need it our formalization *)
+  Commitment schemes are basically digital implementation of "locked box". Two parties who does 
+  not trust each other are participating in some sort of zero-sum-game, e.g. gambling. Both parties 
+  toss a coin simultaneously, and now they want to reveal their outcome.  Who ever first reveal his/her option 
+  would lose the strategic advantage because the other party would change his/her coin to win the game. 
+  In order to solve this problem, We use the digital lock-box called commitment.   
+ Commitment schemes are cryptographic way to commit to some value. Commitment scheme 
+ has two properties:
+ 1. Hiding, no one can guess the original value based on the committed value
+ 2. Binding, committed value can not be open in two different ways
+ 
+ Now, we take the same situation, but augmented with commitments.  First party tosses the coin 
+ and publishes the committed value. Second party tosses the coin 
+ and  publishes the committed values.  Because of hiding property, either parties can not guess the 
+ original value of each others based on the committed values, and because of binding property, 
+ either party can not open their value in any other way other than the original one.  There are various 
+ commitment schemes, but two most popular are 
+ 1. Hash based commitment scheme
+ 2. Discrete Logarithm Based
+ 
+ Hash based commitment: 
+ First party tosses the coin and generate a random value r. It computes hash of  outcome of the coin toss appended with randomness r
+ and publishes it. Similarly, the second party also follows the similar steps and publishes its commitment. Later, both parties open 
+ their coin toss with randomness to verify each others commitment. 
+ 
+ Discrete Logarithm: 
+ Public setup: (p, q, g, y) 
+ First party tosses the coin and generate a random value r. It computes g^r*y^m where m is outcome of coin toss and r is the randomness r
+ and publishes it. Similarly, the second party also follows the similar steps and publishes its commitment. Later, both parties open 
+ their coin toss with randomness to verify each others commitment. 
+  
+ One advantage of discrete logarithm commitment schemes over Hash based is that homomorphic property. Hash based scheme can not be
+ exploited for homomorphic property, while discrete logarithm can be. 
+
+
+  
 \section{Certificate : Ingredient for Verification}
   \fix{There are two notion of verification. Software verification and 
    election verification. A electronic voting scheme implemented in 
@@ -105,8 +682,113 @@ to demonstrate the idea we have the taken the IACR 2018 election which we discus
     
    
 \section{Proof Checker}
-  Write the details of proof checker for both certificates
+  Proof checker or auditor for verifying the encrypted ballot scrutiny sheet requires:
+  1. Checking if the encrypted margin is indeed the encryption of zero.  In order to verify this claim, 
+  he needs to check the zero-knowledge-proof of honest decryption \ref{Here goes the reference to the 
+  section which implements the honest decryption zero knowledge proof}
+  2. For each ballot, he needs to check our claim of a ballot is valid or not. For that he, needs to 
+  check the each row of ballot is indeed permuted by the permutation whose commitment (Pedersen's) has been published. 
+  \ref{Explain the Wikstrome method here about commitment consistent Shuffle}. 
+  We have already published the commitment of (secret) permutation with the zero-knowledge-proof of shuffle. Then, he needs 
+  to check the honest decryption of row permuted shuffled ballots. Similarly, he needs to checks the similar facts for column permuted 
+  ballot. Next, depending on the claim if it is valid then he needs to check if the new margin matrix is equal to previous margin matrix 
+  multiplied by ballot under consideration. If it is not valid then he needs to check if the new margin is same as previous margin and 
+  the invalid ballot has been moved to pile of invalid ballots. He needs to do this until ballots are exhausted.  
+  After ballots are exhausted then we need to check the decryption of final margin. We have already explained the 
+  rest of the process in section \ref{To the section which describes the plaintext checking}.
   
+  
+  
+ 
+  
+  Flesh out the details:
+  1. Why do we need to to prove the properties. 
+      Because we wanted to show that our implementation is indeed the implementation of 
+      Schulze method (weak argument). 
+      
+  
+  \section{Machine Checked Proofs}
+    This chapter is still ongoing investigation.
+	In this chapter, we are going discuss some of the properties of Schulze method, and proving that our implementation of Schulze method
+	follows this property. 
+	
+	1. Condercet winner: 
+	Schulze method follows the Condercet criterion. Condercet criterian is that if a candidate beats everyone in head to head count, then he should 
+	be the winner. We draw the upon on the definition of constructed margin and define the Condercet winner as:
+	
+	Definition condercet (c : Cand) (marg : Cand -> Cand -> Z) := forall d, marg c d >= 0
+	
+	The lemma we prove that condercet winner wins the election is:
+	
+	 Lemma condercet_winner_implies_winner (c : cand) (marg : cand -> cand -> Z) :
+      condercet_winner c marg -> c_wins marg c = true. 
+	  
+   The proof hinges on the fact that if a candidate 'c' beats every other candidate in head to head count, then it beats
+       everyone in generalized margin. 
+       Lemma condercet_winner_marg (c : cand) (marg : cand -> cand -> Z) :
+      forall n, (forall d, marg d c <= marg c d) -> forall d, M marg n d c <= M marg n c d.
+    
+    Recall that our winner definition is exactly the same, i.e. winner beats the everyone based on generalized margin. 
+    c_wins c := forall d, M c d >= M d c. 
+    
+    2. Reversal symmetry:
+      Reversal symmetry states that if we reverse the options on ballot, then winner should not winner any more. 
+      Schulze method follows the reversal symmetry. 
+      To prove reversal symmetry, we assume that when we reverse the ballot then constructed margin would 
+      minus one multiplied by margin constructed from original ballot (Not very clear). 
+      First we defined the notion of unique winner 
+      Definition unique_winner (marg : cand -> cand -> Z) (c : cand) :=
+      c_wins marg c = true /\ (forall d, d <> c -> c_wins marg d = false).
+      
+      and reverse margin 
+      
+       Definition rev_marg (marg : cand -> cand -> Z) (c d : cand) :=
+      -marg c d. (* We multiply -1 to margin matrix *)
+      
+      Our main lemma about stating the reversal symmetry is 
+      
+      Lemma winner_reversed :
+      forall marg c, unique_winner marg c ->
+               (exists d, c_wins marg d = false /\ c <> d) (* at least we need to have two candidates *)->
+               c_wins (rev_marg marg) c = false.
+               
+     Definition reverse_a_ballot (p : ballot) := 
+     let lt := map p cand_all in 
+	 let w = zip cand_all (rev lt) in 
+	 fun c => search_c_in_list w     
+     
+   It says that if we have a unique winner with respect to margin then 
+   the unique winner is loser with respect reverse margin.
+   
+   3. Monotonicity
+	Monotonicity criterion is that if we increase the ranking preference then it would not change the winner. 
+	The proof for this is very simple. We need to notice the increase the margin would not change the constructed margin. 
+	
+	
+	Definition inflate_the_ballot_by_k (k : nat) (f : cand -> nat) (c : cand) := k + f c 
+	
+	Prove that 
+	
+	forall p m k, update_margin p (m : cand-> cand-> Z) = update_margin (inflate_the_ballot_by_k k p) m 
+	
+	It shows that the constructed margin would be the same as ballots inflated by some natural number k. 
+	
+ 4. Majority
+	rank_candiate (c d : cand) (p : ballot) := beq_nat (p c) (p d)
+	c_rank_higher (c : cand) (p : ballot) := forallb (fun d =>  p c > p d) (remove c cand_all). 
+
+	
+	Fixpoint Majority_criterion (c : cand) (l : list ballot) 
+	match l with 
+	| [] => 0
+	| h :: tl => if c_rank_higher c p then S (majority_criteron c tl) else (majority_criteron c tl)
+	end. 
+	
+	
+ 5. 
+	
+	
+   
   	\subsection{A Verified Proof Checker : IACR 2018}
   	Write some details about proof checker.
   
@@ -116,3 +798,181 @@ to demonstrate the idea we have the taken the IACR 2018 election which we discus
    which would take proof certificate as input and spit true or false.
    If it's true then we accept the outcome of election otherwise something 
    wrong.
+   
+   \section{Software Bug}
+Despite all these advantages, electronic voting is nightmare because the minuscule possibility of a bug in 
+the software used for voting could lead to a disaster, possible inverting the result.  The nature of (electronic) data and ease of 
+its manipulability/misinterpretation bring electronic voting many problems, which are not present in paper ballot election, that 
+makes it perfectly susceptible to delivering wrong and unverifiable result. If a software program used in electronic voting 
+for reading the ballots has byte order bug, or even if it depends on some other software which has byte order bug, then the interpretation of 
+ballot would completely be different from the what the voter had in mind. More often than not, these software programs are 
+configured incorrectly and run at the top of (untrusted) operating system and hardware. Operating systems have millions of 
+lines code (Linux has 15 millions lines) which exposes a large attack surface and could be exploit, possibly by current government 
+or foreign country, for illegal gain. The worst, these software and hardware used in electronic voting process are commercial in 
+confidence and treated as a black-box, and, most often, their source code or design is not open for public scrutiny. These software program 
+take a pile of ballot and produce the result without producing any evidence about the correctness of result.  As a consequence,
+from casting the ballot electronically and declaring winner based on cast (electronic) ballot lacks, basic assumption 
+of democracy, correctness, privacy and verifiability. 
+
+
+These software program, during their operations, in electronic vo
+
+
+
+The software and hardware 
+used in the electronic voting process is 
+1.  One major reason for this  is the nature of data in electronic voting. It can be easily manipulated without anyone noticing it. 
+2. The software and  hardware used in electronic voting 
+
+
+
+
+Electronic voting is getting popular in many countries, and the reason for it's popularity is 
+	cost-effectiveness, faster results, and high voter turnouts. 
+	Electronic voting machines (EVM) have clear benefits for large, populous countries like India, with 900 million eligible voters. 
+	In the 2019 general election, India had a 67 percent (roughly 600 million) voter turnout and with the help of EVM, was able to 
+	conduct the election in 2 days. Australia has a smaller population, but its massive size and sparsely populated land makes 
+an  election a big logistical challenge. Australia is actively pursuing Internet voting 
+   to ease the logistic challenges and engage more citizens from the remote places. For over a decade, EVM has been integrated into a democratic Estonia
+  since 2005, whuch demonstrates that the technology is relative mature. The first country to
+   adopt internet voting and showing confidence in technology. In 2019 elections, 
+   as claimed on e-estonia \citep{Estonia},  the time saved was 11,000 working days. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+A democracy can be described as a system where every eligible participant has equal right to express their opinion(s) on different matters. 
+One of the most important example of expressing the opinion is holding elections to elect the leader of country. During the 
+elections, every eligible participant expresses their opinion on a paper, also known as ballot, by ranking the participating candidate in 
+according to their preference. Later, once the cast finishes, a candidate is elected from participating candidates by 
+combing the all choices of participant.  The paper ballot method works great, except it is very time consuming, expensive and error prone. 
+Moreover, paper ballot elections are not environment friendly, and it produces a lot of waste in form of discarded papers. 
+In order to solve the problems posed by paper ballot, many countries are adopting electronic voting. Electronic voting is 
+getting popular in many countries, and the reason for its popularity is cost-effective, faster result, and high voter turn out. Undeniably, electronic voting has helped Australia to ease the logistic challenges of elections because of its massive land size and sparsely 
+population and save millions of dollars.  it has helped India, the second most populous country with 900 million eligible voter, to declare 
+2019 election with 67 percent voter turn out (roughly 600 million) in 2 days. Estonia, a labour shortage country, has saved 
+thousands of man hours, 11,000 working days, by using electronic voting. Despite these successes, EVM is still not adopted as widely as it could be. 
+
+The slow adoption of EVM is largely because of fears about the accuracy of systems. Even though there is a minuscule possibility of a bug in 
+the software used for voting, the consequences of problems like this can be disastrous. If a bug damaged, or even inverting the results. 
+The fear is that problems like this could lead to civil unrest and economic consequences.  The nature of (electronic) data and ease of 
+its manipulability/misinterpretation bring electronic voting many problems, which are not present in paper ballot election, that 
+makes it perfectly susceptible to delivering wrong and unverifiable result. Assuming that a software program used in electronic voting 
+for reading the ballots has byte order bug, or even if it depends on some other software which has byte order bug, then the interpretation of 
+ballot would completely be different from the what the voter had in mind. More often than not, these software programs are 
+configured incorrectly and run at the top of (untrusted) operating system and hardware. Operating systems have millions of 
+lines code (Linux has 15 millions lines) which exposes a large attack surface and could be exploit, possibly by current government 
+or foreign country, for illegal gain. The worst, these software and hardware used in electronic voting process are commercial in 
+confidence and treated as a black-box, and, most often, their source code or design is not open for public scrutiny. These software program 
+take a pile of ballot and produce the result without producing any evidence about the correctness of result.  As a consequence,
+from casting the ballot electronically and declaring winner based on cast (electronic) ballot lacks, basic assumption 
+of democracy, correctness, privacy and verifiability. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Despite all these benefits, electronic voting is nightmare because the minuscule possibility of 
+   a bug in software used in voting could lead to a disaster, possibly 
+   inverting the results \citep{TSwiss},
+   \citep{10.1007/978-3-319-22270-7_3}, \citep{ARANHA2019335},
+   \citep{Feldman:2007:SAD:1323111.1323113}. 
+   By its inherent nature electronic voting has many 
+   problems, which are not present in paper ballot elections that makes it perfectly susceptible 
+   to delivering wrong and unverifiable result  \citep{Wolchok:2010:SAI:1866307.1866309}.
+   The software and hardware used in the electronic voting process  
+	are treated as a black-box and commercial in confidence \citep{AEC:2013:LMM} which  
+	violates the fundamental property of  public examinability of any democratic election. 
+	More often than not, these software programs are configured incorrectly \citep{1301313} and 
+	run at top of (untrusted) operating system and hardware.  Operating systems have
+	millions of lines of code (Linux has 15 million code) which exposes a large attack surface 
+	and could be  exploited for illegal gain in election, possibly by 
+	current government or foreign country.  As a consequence,  from casting ballot electronically to declaring 
+	results based on electronic data (ballot) may raise several questions:
+	
+
+
+
+The key ingredients for achieving the secure election is privacy and verifiability. Achieving either is trival; however, 
+their combination is notoriously hard problem. We can achieve the combination of both by sophisticated cryptography. 
+We can encrypt the ballot to achieve the privacy and use zero-knowledge-proof to assets the different claims made during 
+the process.  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+   
+   
+   
+   
+   

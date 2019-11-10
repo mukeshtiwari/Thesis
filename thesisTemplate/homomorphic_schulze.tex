@@ -10,7 +10,7 @@ things, each voter to verify that their encrypted ballot has been
 recorded as cast, by checking their ballot against a bulletin board. 
 
 \textbf{Chapter Outline:}
-  Turn this into chapter outline once you finish everything.
+ Todo:Turn this into chapter outline once you finish everything.
 We present a verifiable homomorphic tallying scheme for the Schulze 
 method that allows verification of the correctness of the count---on the 
 basis of encrypted ballots---that only reveals the final tally. We 
@@ -93,79 +93,79 @@ scenarios.
 
   
   
-  \smallskip\noindent\emph{The Schulze Method.} We give a brief overview of Schulze method 
-  for convenience of the reader.   The Schulze Method
-  \cite{Schulze:2011:NMC} is a preferential, single-winner vote
-  counting scheme that is gaining popularity due to its relative
-  simplicity while retaining near optimal fairness
-  \cite{Rivest:2010:OSW}.  
-  A \emph{ballot} is a rank-ordered list of
-  candidates where different candidates may be given the same rank.
-  The protocol proceeds in two steps, and first computes the
-  \emph{margin matrix} $m$, where $m(x, y)$ is the relative margin
-  of $x$ over $y$, that is, the number of voters that prefer $x$
-  over $y$, minus the number of voters that prefer $y$ over $x$. In
-  symbols, given a collection $B$ of ballots, 
-  \[ m(x, y) = \sharp\lbrace b \in B \mid x <_b y \rbrace
-             - \sharp \lbrace b \in B \mid y <_b x \rbrace
-  \]
-  where $\sharp$ denotes cardinality, and $<_b$  is the preference
-  relation encoded by ballot $b$. 
-  We note that $m(x, y) = -m(y, x)$, i.e. the margin matrix is
-  symmetric. In a second step, a \emph{generalised margin} $g$ is
-  computed as the strongest path between two candidates
- \[ g(x,y) = max \lbrace str(p) \mid p \mbox{ path from $x$ to
-  $y$} \rbrace \]
-  where a path from $x$ to $y$ is simply a sequence $x = x_0, \dots,
-  x_n = y$ of candidates, and the strength
-  \[ str(x_0, \dots, x_n) = min \lbrace m(x_i, x_{i+1}) \mid 0
-  \leq i < n
-  \rbrace  \]
-  is the lowest margin encountered on a path.
-  Informally, one may think of the
-  generalised margin $g(x, y)$ as transitive accumulated support for
-  $x$ over $y$. We say that $x$ beats $y$ if $g(x,y) \geq g(y, x)$ and a
-  winner is a candidate that cannot be beaten by anyone. 
-  That is, $w$ is a \emph{winner} if $g(w, x) \geq g(x, w)$ for
-  all other candidates $x$. Note that
-  winners may not be uniquely determined (e.g. in the case where no
-  ballots have been cast).
-
-  In previous work \cite{Pattinson:2017:SVE} we have demonstrated
-  how to achieve verifiability of counting plaintext ballots by
-  producing a verifiable \emph{certificate} of the count, where
-  ballot privacy and receipt freeness are not addressed. The
-  certificate has two parts: The first part witnesses the
-  computation of the margin matrix where each line of the
-  certificate amounts to updating the margin matrix by a single
-  ballot. The second part witnesses the determination of winners
-  based on the margin matrix. In the first phase, i.e. the
-  computation of the margin matrix, we perform the following
-  operations for every ballot:
-  \begin{enumerate}
-    \item if the ballot is informal it will be discarded
-    \item if the ballot is formal, the margin matrix will be
-    updated
-  \end{enumerate}
-  The certificate then contains one line for each ballot and thus
-  allows to independently verify the computation of the margin
-  matrix. Based on the final margin matrix, the second part of
-  the certificate presents verifiable evidence for the computation
-  of winners. Specifically, if a candidate $w$ is a winner, it
-  includes:
-  \begin{enumerate}
-    \item an integer $k$ and a path of strength $k$ from $w$ to any
-    other candidate
-    \item evidence, in the form of a co-closed set, of the fact that
-    there cannot be a path of strength $> k$ from any other
-    candidate to $w$.
-  \end{enumerate}
-  Crucially, the evidence of $w$ winning the election \emph{only}
-  depends on the margin matrix. 
-  We refer to \cite{Pattinson:2017:SVE} for details of the second
-  part of the certificate as this will remain unchanged in the work
-  we are reporting here.
-  
+%  \smallskip\noindent\emph{The Schulze Method.} We give a brief overview of Schulze method 
+%  for convenience of the reader.   The Schulze Method
+%  \cite{Schulze:2011:NMC} is a preferential, single-winner vote
+%  counting scheme that is gaining popularity due to its relative
+%  simplicity while retaining near optimal fairness
+%  \cite{Rivest:2010:OSW}.  
+%  A \emph{ballot} is a rank-ordered list of
+%  candidates where different candidates may be given the same rank.
+%  The protocol proceeds in two steps, and first computes the
+%  \emph{margin matrix} $m$, where $m(x, y)$ is the relative margin
+%  of $x$ over $y$, that is, the number of voters that prefer $x$
+%  over $y$, minus the number of voters that prefer $y$ over $x$. In
+%  symbols, given a collection $B$ of ballots, 
+%  \[ m(x, y) = \sharp\lbrace b \in B \mid x <_b y \rbrace
+%             - \sharp \lbrace b \in B \mid y <_b x \rbrace
+%  \]
+%  where $\sharp$ denotes cardinality, and $<_b$  is the preference
+%  relation encoded by ballot $b$. 
+%  We note that $m(x, y) = -m(y, x)$, i.e. the margin matrix is
+%  symmetric. In a second step, a \emph{generalised margin} $g$ is
+%  computed as the strongest path between two candidates
+% \[ g(x,y) = max \lbrace str(p) \mid p \mbox{ path from $x$ to
+%  $y$} \rbrace \]
+%  where a path from $x$ to $y$ is simply a sequence $x = x_0, \dots,
+%  x_n = y$ of candidates, and the strength
+%  \[ str(x_0, \dots, x_n) = min \lbrace m(x_i, x_{i+1}) \mid 0
+%  \leq i < n
+%  \rbrace  \]
+%  is the lowest margin encountered on a path.
+%  Informally, one may think of the
+%  generalised margin $g(x, y)$ as transitive accumulated support for
+%  $x$ over $y$. We say that $x$ beats $y$ if $g(x,y) \geq g(y, x)$ and a
+%  winner is a candidate that cannot be beaten by anyone. 
+%  That is, $w$ is a \emph{winner} if $g(w, x) \geq g(x, w)$ for
+%  all other candidates $x$. Note that
+%  winners may not be uniquely determined (e.g. in the case where no
+%  ballots have been cast).
+%
+%  In previous work \cite{Pattinson:2017:SVE} we have demonstrated
+%  how to achieve verifiability of counting plaintext ballots by
+%  producing a verifiable \emph{certificate} of the count, where
+%  ballot privacy and receipt freeness are not addressed. The
+%  certificate has two parts: The first part witnesses the
+%  computation of the margin matrix where each line of the
+%  certificate amounts to updating the margin matrix by a single
+%  ballot. The second part witnesses the determination of winners
+%  based on the margin matrix. In the first phase, i.e. the
+%  computation of the margin matrix, we perform the following
+%  operations for every ballot:
+%  \begin{enumerate}
+%    \item if the ballot is informal it will be discarded
+%    \item if the ballot is formal, the margin matrix will be
+%    updated
+%  \end{enumerate}
+%  The certificate then contains one line for each ballot and thus
+%  allows to independently verify the computation of the margin
+%  matrix. Based on the final margin matrix, the second part of
+%  the certificate presents verifiable evidence for the computation
+%  of winners. Specifically, if a candidate $w$ is a winner, it
+%  includes:
+%  \begin{enumerate}
+%    \item an integer $k$ and a path of strength $k$ from $w$ to any
+%    other candidate
+%    \item evidence, in the form of a co-closed set, of the fact that
+%    there cannot be a path of strength $> k$ from any other
+%    candidate to $w$.
+%  \end{enumerate}
+%  Crucially, the evidence of $w$ winning the election \emph{only}
+%  depends on the margin matrix. 
+%  We refer to \cite{Pattinson:2017:SVE} for details of the second
+%  part of the certificate as this will remain unchanged in the work
+%  we are reporting here.
+%  
   
   
   \section{Verifiable Homomorphic Tallying}

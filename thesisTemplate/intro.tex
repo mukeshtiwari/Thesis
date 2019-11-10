@@ -5,6 +5,7 @@
 {\textit{Niels Bohr}} 
 
 \section{Problem Statement}
+
 	Electronic voting is getting popular in many countries, and the reason for popularity is 
 	cost-effectiveness, faster results, and high voter turnouts. India has 900 million eligible voter, 
    and with 67 percent (roughly 600 million) voter turnout in 2019 general election, 
@@ -197,30 +198,30 @@ of cryptographic primitives for future work (work in progress).}
  but there are very few, to the best of my knowledge, 
  that have used theorem provers to implement the voting protocol (counting algorithm)
  and verify its correctness properties. 
- \cite{10.1007/978-3-540-31987-0_14}, and  \cite{Delaune2010} have used pi-calculus to model 
+ \citep{10.1007/978-3-540-31987-0_14}, and  \citep{Delaune2010} have used pi-calculus to model 
  and analyse various properties, such as fairness, eligibility, vote-privacy, receipt-freeness and 
  coercion-resistant,  
- of the protocol FOO developed by \cite{10.1007/3-540-57220-1_66}.  \cite{Backes:2008:AVR:1380848.1381255}
+ of the protocol FOO developed by \citep{10.1007/3-540-57220-1_66}.  \citep{Backes:2008:AVR:1380848.1381255}
  presented a general technique to model  remote electronic 
  voting protocol and automatically verifying  its security properties using pi-calculus. 
- \cite{5992139} have used pi-calculus to analyse the ballot secrecy of \cite{Helios:2016:HVS}.
- \cite{10.1007/978-3-642-28641-4_7} have used pi-calculus to ascertain the properties of 
+ \citep{5992139} have used pi-calculus to analyse the ballot secrecy of \citep{Helios:2016:HVS}.
+ \citep{10.1007/978-3-642-28641-4_7} have used pi-calculus to ascertain the properties of 
  Norwegian electronic voting protocol.
- \cite{10.1007/978-3-319-68687-5_7} have used Tamarin  to prove receipt-freeness 
+ \citep{10.1007/978-3-319-68687-5_7} have used Tamarin  to prove receipt-freeness 
  and vote-privacy of Selene voting protocol \citep{Selene}.  Most of these work differs from ours
  in the sense that their primary focus is verification of security protocol in  
  Dolev-Yao model or  complexity-theoretic model, whereas our work is 
  more focused on verified implementation and  verifiability  aspect of vote counting.
 
- The closest to our work is \cite{DeYoung:2012:LLV}, \cite{Pattinson:2015:VCM}, \cite{Pattinson:2016:MSP},
- \cite{Verity:2017:FVI:3014812.3014845}, and \cite{Ghale:2017:FVS}.  \cite{DeYoung:2012:LLV} 
+ The closest to our work is \citep{DeYoung:2012:LLV}, \citep{Pattinson:2015:VCM}, \citep{Pattinson:2016:MSP},
+ \citep{Verity:2017:FVI:3014812.3014845}, and \citep{Ghale:2017:FVS}.  \citep{DeYoung:2012:LLV} 
  used linear logic\citep{GIRARD19871} to model the different entity in electronic voting as a resource. 
  The use of linear logic makes it very natural to capture the different entities in electronic voting,  
  depending on their usage, by means of modality e.g. a voter can cast only one vote, but he might 
- need to show his photo id to multiple times at counting booth. \cite{Pattinson:2015:VCM} treated 
+ need to show his photo id to multiple times at counting booth. \citep{Pattinson:2015:VCM} treated 
  the process of vote counting from
  the perspective of mathematical proof. They used (mathematical) proof theory to model the 
- counting. \cite{Ghale:2017:FVS} have formalized the single transferable votes in Coq and 
+ counting. \citep{Ghale:2017:FVS} have formalized the single transferable votes in Coq and 
  extracted a Haskell code from the formalization. The extracted Haskell code produces the result 
  and a certificate for a given set of input ballots. The certificate can be used by any third party to verify 
  or audit the outcome of election result.  However, none of these work considers privacy as a key 
