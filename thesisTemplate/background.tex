@@ -7,12 +7,15 @@
 \epigraph{People shouldn't be afraid of their government. Governments should be afraid of their people..} 
 {\textit{Alan Moore, V for Vendetta }}
   Counting ballots by hand is tedious, error prone, slow, and costly process. 
-  The Senate election conducted in Western Australia in September 2013 was 
+  For example, the Senate election conducted in Western Australia in September 2013 was 
   declared void by the high court because of the loss of 1370 votes. It was 
   re-conducted in April 2014 at the cost of 20 Million 
-  AUD with additional  delay in results \citep{Aussentate}. Many countries 
-  are now adopting electronic voting to alleviate the problems of hand counting, and 
-  the world can be divided into five broad categories according to 
+  AUD with additional  delay in results \citep{Aussentate}. Before introduction to 
+  electronic voting machines in India, it will take month to declare the result.
+  As a consequence, many countries 
+  are now adopting electronic voting to alleviate the problems introduced by hand counting. 
+  
+  The world can be divided into five broad categories according to 
   the usage of electronic voting \citep{Evoting} \ref{fig:world_electronic_voting_map}: i) No electronic 
   voting (Grey Area), ii)
   Discussion and/or voting technology pilots (Yellow Area), 
@@ -37,12 +40,12 @@
   accessible to everyone including challenged voters, and reduced 
   carbon footprint (for each 
   national election, India saves about 10,000 tonnes of the ballot 
-  paper by using electronic voting machines).
+  paper by using electronic voting machines). 
   There is no doubt that electronic voting has many advantages 
   over paper ballot, but it is certainly not flawless.  
   Electronic voting makes 
   the process faster, but it has its own layer of added complexities 
-  which creates trust issues amongst voters. Some countries 
+  which creates trust issues amongst voters. For this reason, some countries 
   who were the early adopters were also the early abandoner, e.g.
   Germany, and The Netherlands (countries in red color in the world map 
   \ref{fig:world_electronic_voting_map}).
@@ -52,9 +55,10 @@
   Constitutional Court (Bundesverfassungsgericht) because their 
   appeal to scrutinize the election 
   was not heeded by the Committee. They argued that using electronic 
-  voting machines to conduct the election was unconstitutional, and 
+  voting machines to conduct the election was unconstitutional. Furthermore,
+  they added that
   these machines could be hacked, hence results of the 2005 election 
-  could not be trusted. The case was argued on the grounds 
+  could not be trusted on the grounds 
   of public examinability of elections according to German Constitution 
   (Basic Law for the Federal Republic of Germany) \citep{Germanconst}. 
   The Court noted that, under the constitution, elections are 
@@ -71,7 +75,7 @@
  
  
   \noindent	
-  The court did not rule out or prevent the usage of electronic 
+  In its verdict, the court did not rule out or prevent the usage of electronic 
   voting machines,  but suggested to make the process more 
   transparent and trustworthy \citep{Germanconst}.  
   
@@ -100,10 +104,11 @@
   The reason for abolishing the electronic voting was that   
   the voting machines used in elections were susceptible to many attacks,
   and the results of elections conducted using these machines 
-  were not publicly verifiable.  Dutch public foundation, Wij vertrouwen stemcomputers niet
+  were not publicly verifiable.  Besides, a Dutch public foundation, Wij vertrouwen stemcomputers niet
   (We do not trust voting computers), demonstrated that e-voting machines 
   used in election leaks enough information to guess the choice of a voter 
   from distance of 20 to 30 meters  \footnote{https://www.youtube.com/watch?v=B05wPomCjEY}.
+  
   
   
   Germany and The Netherlands are some of the rare cases where 
@@ -117,15 +122,13 @@
   India, one of the largest democracies in world, 
   uses electronic voting machines (also known as EVMs) for national 
   and state level  elections despite the fact that many political parties have raised security 
-  concern against it. It was already shown in 2010 in the paper 
-  Security Analysis of India's Electronic Voting Machines by 
-  \citep{Wolchok:2010:SAI:1866307.1866309}  that it 
+  concern against it. Furthermore, it was already shown in \citep{Wolchok:2010:SAI:1866307.1866309}  that it 
   is possible to manipulate the election results by replacing the 
   parts of machine with malicious look alike components. These components 
-  were capable of receiving instruction over wireless communication. Any malicious 
+  were capable of receiving instruction over wireless communication. As a result, any malicious 
   attacker can control these components from nearby vicinity by sending 
-  instructions over wireless channel using a simple hand-held device and 
-  manipulate the results in their favour \footnote{https://indiaevm.org/}.
+  instructions over wireless channel by using a simple hand-held device and 
+  can  manipulate the results in their favour \footnote{https://indiaevm.org/}.
   
 
   
@@ -237,7 +240,7 @@
    During this whole process of software development, software testing is the only 
    mechanism for quality assurance. However, testing is not enough for 
    instilling the confidence in software that it is bug free 
-   as stated by Edsger W. Dijkstra \citep{Dijkstra:1972:HP:355604.36159}:
+   as stated by Edsger W. Dijkstra \citep{Dijkstra:1972:HP:355604.361591}:
    \begin{displayquote}
    Program testing can be used to show the presence of bugs, 
     but never to show their absence!
@@ -245,7 +248,8 @@
     Besides, these software 
     are closely guarded secrets and their source 
    code in not open for general public because of commercial 
-   interests of companies \citep{AEC:2013:LMM}. 
+   interests of companies \citep{AEC:2013:LMM}. Overall, the lack of transparency 
+   in the process of developing software programs 
    
 %   
 %   The software are developed via a process called software engineering process 
