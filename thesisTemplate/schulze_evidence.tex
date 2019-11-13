@@ -8,20 +8,23 @@ co-operation of all on board it can be safely brought to part.}
 {\textit{Sardar Vallabhbhai Patel}} 
 
 \section{Introduction}
- In the chapter \ref{cha:background},  we have already discussed the 
- high level picture of correctness, verifiability 
-
-% The correctness of vote counting in electronic voting is one of 
-% the main pillars that engenders trust in electronic voting. Even 
-% though, assuming  that election results are verifiable, a bug in 
-% counting software which can cause a incorrect result and only 
-% caught later during verification phase would create a atmosphere of 
-% distrust among voters about electronic voting. The present state of 
-% art in vote counting leaves much to be desired: while some 
-% jurisdictions publish the source code of vote counting for 
-% public scrutiny, others treat the code as commercial in confidence. 
-% None of the systems used today in real world elections are 
-% formally verified.
+ Correctness and verifiability/evidence are two main pillar of any democratic election. 
+ In case of paper ballot election, correctness and verifiability of counting is achieved 
+ by public scrutiny because each step is carefully observed by general member of public, 
+ agents from different political parties. For example. casting ballot at booth 
+ is carefully observed by polling agents and 
+ counting ballots is observed by the scrutineers appointed by different political parties \ref{fig:scrutineers}.
+ Given that electronic voting is relatively young, in this chapter we investigate 
+ how to achieve the correctness and verifiability similar to paper ballot election.
+ 
+\begin{figure}[h!]
+ \centering
+  \includegraphics[width=1\linewidth]{figs/scrutineers.jpg}
+  \caption{Scrutineers, in green jacket, observing the ballot counting}
+  \label{fig:scrutineers}
+  \end{figure} 
+ 
+ 
  
  \textbf{Chapter overview:} In this chapter, we explain the Schulze method in section \ref{sec:schulze_algorithm}, 
  and its formal specification in the section \ref{sec:spec}. The  corner stone of our formalization is 
@@ -135,9 +138,22 @@ beaten by any (other) candidate.
 
 
 	\subsection{An Example}
-	 Todo : Add a example with picture
-	 Draw a image here using TikZ which shows the Condercet paradox 
-	 and resolve by the Schulze Method. Take the example from PhD pre
+	
+	 The graph below shows that collective can be cyclic, even if the preferences of individual voters are not cyclic (Condercet paradox).
+\[
+\xymatrix@R=12ex@C=12ex{
+A \ar@/^/[rr]^{3} \ar@/_/[dr]_{-1} & & B \ar@/^/[ll]^{-3}
+\ar@/^/[dl]^5 \\
+& C \ar@/_/[ul]_{1} \ar@/^/[ur]^{-5}
+}\]
+
+The main idea of the method is to resolve cycles by considering \emph{transitive preferences} or a generalised notion of margin.
+\[
+ \xymatrix@R=12ex@C=12ex{
+A \ar@/^/[rr]^{3} \ar@/_/[dr]_{3} & & B \ar@/^/[ll]^{1}
+\ar@/^/[dl]^5 \\
+& C \ar@/_/[ul]_{1} \ar@/^/[ur]^{1}
+}\]
 	 
 	
 	
