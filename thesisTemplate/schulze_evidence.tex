@@ -214,7 +214,7 @@ definitions of these notions later. The reason for having a \textit{Prop} level 
  it is very easy  and intuitive for human to inspect the definitions, and ascertain the correctness of formalization.
 As we discussed in the
 \textbf{Type vs. Prop} (section \ref{sec:typeprop}), the main reason 
-for having equivalent
+for having an equivalent
 type-level versions of the above is that purely propositional
 information is discarded during program extraction, unlike
 the type-level notions of winning and losing that represent evidence
@@ -480,7 +480,7 @@ and $c$.
 \end{verbatim}
 
 \noindent
-This condition on iterated margins can in turn be to establish the
+This condition on iterated margins can in turn be used to establish the
 type-level winning condition, thus closing the loop to the type
 level winning condition.
 
@@ -1013,7 +1013,7 @@ using a logarithmic scale.
 %\label{fig:test}
 %\end{figure}
   
- \section{Scaling it count millions of Ballots}
+ \section{Counting Millions of Ballots}
  \label{sec:count_million}
  The previous extracted Haskell code was very slow  and was not 
  practical for real life election involving millions of ballots. To scale it to real life election,
@@ -1034,7 +1034,11 @@ We had to redo all the proofs all over again\footnote{Redoing these proofs were 
 tool to automate this process}}.
 Below (Figure \ref{fig:fast}), we include our timing graphs,
 based on randomly generated ballots while keeping number of candidates
-constant i.e. 4. 
+constant i.e. 4 (The reason we kept it to 4 candidate to show the speed up compared to 
+ \ref{fig:test}. During the experimentation, we ran an election with 21 candidate, and 
+ we were able to count 2 million randomly generated ballots
+ before running out of memory.)
+
 
 
 \begin{figure}[htb]
@@ -1178,7 +1182,7 @@ Our ballots are in plaintext and could easily be identified
 if the number of candidates participating in election in 
 are large (Italian attack) \citep{Otten}.
 \noindent
-In nutshell, the pros and cons of this formalization:
+In nutshell, the achieved and missed of this formalization:
 
 \begin{itemize}
 \item Achieved 
