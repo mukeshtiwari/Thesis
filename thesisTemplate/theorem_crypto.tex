@@ -265,21 +265,210 @@ Qed.
   
  
     
+   ToDo : This is first draft. Finish it and rewrite it. 
 \section{Cryptography}
-    Write some basic crypto stuff
+    Cryptography is the science of converting plaintext (understandable to everyone) to ciphertext data. 
+    The earliest known usage of cryptography, replacing a symbol by other,  goes back to  ancient 
+    Egyptian (Khnumhotep \roman{II} , 1500 BCE); however the purpose of symbol replacing was not to protect
+    any sensitive information but to enhance the linguistic appeal. The first known usage of 
+    cryptography to conceal the sensitive information goes back Mesopotamians (1500 BCE) where 
+    they used it to hide the formula for pottery glaze.  The current form of cryptography mostly 
+    developed in 1970. Moreover, the basic principals of modern day cryptography , cryptography hereafter, is based on 
+    mathematical principals than vanilla symbol replacement.  Moreover, It has three distinct 
+    element:
+    \begin{itemize}
+    \item data (plaintext data and ciphertext data)
+    \item algorithm (encryption algorithm and decryption algorithm)
+    \item key (encryption key and decryption key)
+    \end{itemize}
+    
+    Depending on the distinction between the key, encryption key and decryption key, 
+    used in the process, the cryptography can be 
+    divided into two categories: (i) symmetric key cryptography where the 
+    same key is used for encrypting the plaintext data to ciphertext  data, and decrypting 
+    the ciphertext data to plaintext data, e.g. \texttt{Data Encryption Scheme}  
+    (ii) asymmetric (public) key cryptography where 
+    two different keys, public key and private key, are used for encrypting the plaintext 
+    data into ciphertext data and ciphertext data to plaintext data, e.g. \texttt{Diffie-Hellman algorithm} 
+   Since 1970, the cryptography has evolved, and now, it is not only used for confidentiality, but 
+   for integrity, authentication and non-repudiation
+   
+   The mathematical foundations of cryptography lies in algebraic group
+   \begin{itemize}
+     \item Group
+     \item Field 
+     \item Vector 
+    \end{itemize}
+    
+    which we will discuss more in Chapter 7. 
+    
+    In this thesis, we are concern with public key cryptography. We first describe the \texttt{Diffie-Hellman} \citep{Diffie:2006:NDC:2263321.2269104}
+    algorithm, because all the constructions we have used  are based on \texttt{Diffie-Hellman} construction. 
+    
+    \subsection{Group}
+    A group is a set $G$, with a binary operator $f : G x G \rightarrow G$, identity element $e$, and inverse operator $i : G \rightarrow G$ such 
+    that the following laws hold: 
+    \begin{itemize}
+     \item \texttt{Associativity}: $\forall$ a b c $\in$ G, f a (f b c) = f (f a b) c
+    \item \texttt{Closure}: $\forall$ a b $\in$ G, f a b $\in$ G
+    \item \texttt{Inverse Element}: $\forall$ a $\in$ G, $\exists$ b $\in$ G, such that f a b = f b a = e. b is called inverse of a (inv a) and represented $a^{-1}$
+    \item \texttt{Identity}: $\forall$ a $\in$ G, f a e = f e a  = a 
+    \end{itemize}
+   
+    \noindent
+    Furthermore, if a group is commutative, i.e. 
+    $\forall$ a b $\in$  G, f a b = f b a, then we call it abelian group (in honour of Niels Henrik Abel). 
+	    
+    
+     
+     \subsection{Diffie-Hellman Encryption}
+     	Diffie-Hellman can be divided into two steps 
+     	1. The two communication parties, Alice and Bob, agree with shared public parameter which 
+     	   is a finite-cyclic group of order p and generator of the group G := <g> such that $g^{p} = 1 (mod p)$
+     	2. After the initial agreement on public parameters between two parties, 
+     	    2.1 Alice selects a random element  'a' from the group, computes $g^{a}$ (applying the group operator g ..... (a times), 
+     	    and shares the $g^{a}$ with Bob
+     	    2.2 Similar Bob selects a random element from 'b' from the group, computes $g^{b}$, and shares it with Alice
+     	    2.3 After both parties has exchanged its values, Alice computes $(g^{b})^{a}$ and Bob computes $(g^{a})^{b}$. Since the 
+     	    $^$ operator is commutative, both parties hold the value $g^{ab}$ which  is shared secret key. 
+     	    2.4 During the whole process, an (polynomial time) attacker would have $g^{a}$ and $g^{b}$ but he can not compute the 
+     	   $ g^{ab}$ from these two values assuming that discrete logarithm is hard to compute (There are, off course, other attacks exists).
+     
+     In nutshell, Diffie-Hellman algorithm computes a shared secret between two communicating parties
+     
+     \subsection{El-Gamal Encryption Scheme}
+     In 1985, Tahir El-Gamal \citep{elgamal1985public} proposed a new encryption system which was ased on Diffie-Hellman algorithm. El-Gamal encryption 
+     can has three steps:
+     1. Key Generation: The user, Alice, first chooses a finite-cyclic group G of order p and a group group generator g.
+        1.2. She randomly selects a element 'x' from set ${1 \cdot (p - 1)}$
+        1.3. She computes $h := g^{x} $
+        1.4: She publishes <G, g, p, h> 
+      2. Encryption: 
+       2.1. If any party, say Bob, wants to send a encryption of message m, then he randomly selects an element r (1 <= r < q) from group G, 
+       computes a $c1 := g^{r}$ and $c2:= m * h^{r}$, and send it pair (c1, c2) to Alice 
+       
+      3: Decryption: 
+         3.1: In order to get the plaintext message from ciphertext (c1, c2), Alice computes  $c2 * c1^{-x} $
+          =$ m * h ^ {r} * g^{-rx} $ = $ m * g ^ {xr} * g^{-rx} = m $
+     
+     
     
     \subsection{Homomorphic Encryption}
-     Add the details of 
-     homomorphic encryption 
-     \subsubsection{El-Gamal Encryption Scheme}
-        Give both additive and multiplicative
-     \subsubsection{Pallier Encryption Scheme}
-        Write some description
+	     Homomorphic encryption  is a encryption scheme which allows us to perform useful operation on 
+	     encrypted data without decrypting the data. It was first posed by Rivest, Adleman and Dertouzos in \citep{rivest1978data}: 
+	     \begin{displayquote}
+	     
+	     Consider a small loan company which uses a commercial time-sharing service to store its records.  
+	     The loan company’s "data bank" obviously contains sensitive information which should be kept private.  
+	     On the other hand, suppose that the information protection techniques employed by the time sharing 
+	     service are not considered adequate by the loan company.  In particular, the systems programmers would 
+	     presumably have access to the sensitive information.  The loan company therefore decides to encrypt all 
+	     of its data kept in the data bank and to maintain a policy of only decrypting data at the home office -- data 
+	     will never be decrypted by the time-shared computer.
+	     
+	     \end{displayquote}  
+	     
+		A encryption scheme is homomorphic if for any two plaintext $x$ and $y$:
+		\begin{displayquote}
+		
+		Enc(x) $\bigotimes$ Enc(y) = Enc (x $\bigoplus$ y) where 
+		$Enc$ is encryption function, $\bigotimes$ is operation on ciphertext, and $\bigoplus$
+		is operation on plaintext. These schemes are now know as "somewhat homomorphic". 
+		
+		\end{displayquote}
+				
+		These two operators $\bigotimes$ and $\bigoplus$ are very specific. If a cryptosystem that supports an arbitrary 
+		function $f$ on ciphertext, then it is called fully homomorphic cryptosystem:
+		\begin{displayquote}
+		f (Enc(m1), Enc(m2), ..., Enc(mk) = Enc(f(m1, m2, ..., mk)) 
+	    \end{displayquote}
+		
+		\noindent
+		The first fully homomorphic encryption system was proposed by Craig Gentry \citep{Gentry:2009:FHE:1834954}; however, 
+		in this thesis we are mostly concern with "somewhat homomorphic" encryption, so we are not going to present the details overview 
+		of Craig Gentry fully homomorphic construction. From now on, we would be using homomorphic encryption for 
+		 "somewhat homomorphic" encryption. 
+		 	    
+	    
+	    
+	    
+	     
+	    Now that, keeping in mind that Homomorphic encryption enables us to perform useful operation on encrypted data, 
+	    we will see what kind of homomorphic property is exhibited by the ElGamal method discussed in the previous section. 
+	    
+	     
+	     Now that we have a idea about the Homomorphic encryption, we will see what kind of homomorphic property is 
+	     exhibited by ElGamal encryption discusses in the previous section.  Given the public infrastructure (G, p, g, h), 
+	     we encrypt two message $m_{1}$ and $m_{2}$:
+	     Enc(m1, r1) := ($g^r1$, m1 * $ h^{r1}$) 
+	     Enc(m2, r2) := ($g^r2$, m2 * $ h^{r2}$) 
+	     
+	     If we mutiply these two cipher together, we have  ($g^{r1+ r2}$, m1 * m2 * $ h^{r1 + r2}$) and decrypting this combined ciphertext 
+	     would give us m1 * m2. For example, if our end goal is  to achieve multiplication on plaintext, then rather than decrypting each ciphertext individually 
+	     and multiplying them, we could simply multiply all the ciphertext together and decrypt the final result. The advantage of this scheme 
+	     is that it does not leak the individual values which could some times be requirement of scheme, specifically in electronic voting. 
+	     In electronic voting protocols, we do not want to reveal the choices of a individual voter, but it is okay to reveal the final tally.
+	     However, the scheme we presented above is not suitable for most of the electronic voting schemes because the final tally 
+	     is computed by adding individual choices of each voter while the above scheme is multiplying the choices.  There are 
+	     many additive homomorphic encryption schemes, e.g. Benaloh cryptosystem and Paillier cryptosystem. Moreover, we 
+	     can modify the ElGamal encryption scheme to make additive. In additive case, it works as 
+	     
+	      Enc(m1, r1) := ($g^r1$, $g^{m1} $* $ h^{r1}$) 
+	      Enc(m2, r2) := ($g^r2$, $g^{m2}$ * $ h^{r2}$) 
+	      
+	      Multiplying these two ciphers would give us,  ($g^{r1 + r2}$, $g^{m1 + m2} $* $ h^{r1 + r2}$) which would decrypt as 
+	      $g^{m1 + m2}$. Using a linear search if the values are small or more efficient search Pohlig–Hellman algorithm. However, the downside 
+	      of this scheme is that if the values of m1 + m2 ... mn (assuming n values), then calculating it from $g^{m1 + m2 \cdot mn}$ is 
+	      not very practical \citep{10.1007/3-540-69053-0_9}. 
+	     
+     \subsection{Zero Knowledge Proof}
+      In conventional mathematics, a proof of mathematical statement is collection of basic axioms combined according to rules of 
+      the system. For example, based on our definition of group given above, we want to prove that: 
+      
+      forall a $\in$ G, f a a = a $\rightarrow$  a = e
+      
+      We can prove the statement above by using the rules of  Group (below is a proof in Coq theorem prover)
+      
+      \begin{verbatim}
+      
+     
+      (* The identity [e] is unique. *)
+      Lemma unique_id : forall a, f a a = a -> a = e.
+      Proof.
+       intros a H.
+       rewrite <- (id_r a). (* f a e = e *) 
+       rewrite <- (inv_r a). (* f a (inv a) = e *)  
+       rewrite <- assoc.
+       rewrite H. auto.
+       Qed.
+      \end{verbatim}
+     
+     If anyone want to verify our proof, then he would simply check that if the rules are applied correctly. Moreover, these proofs 
+     are static in nature. For example, once the prover has produced the proof, then the content of proof is not going to change
+     and  there would not be any interaction between prover and verifier. 
+     In contrast, zero-knowledge-proof system involves the explicit notion of a interaction between the prover and verifier. Moreover, 
+     the goal of the prover is to convince the verifier about the validity of some statement without revealing any information, i.e. 
+     the only thing verifier would learn is that if statement is true or false without any other information.  More formally, the 
+     zero-knowledge-proof system is 
+     
+     
+     , $Veggy$ with the 
+     requirements: 
+     \begin{enumerate}
+     \item Soundness
+     \item Completeness
+     \item Zero knowledge
+     \end{enumerate}
+     
+   The goal of the 
+     
+      
+     \subsection{Sigma Protocol}
+     
      \subsection{Commitment Schemes}   
-        \subsubsection{Hash Based Commitment Scheme}
         \subsubsection{Discrete Logarithm Based Commitment Scheme}
          Pedersen's Commitment Scheme
-     \subsection{Zero Knowledge Proof}
+    
   		Details from 
   	 \subsection{Sigma Protocol : Efficient Zero Knowledge Proof}
   
