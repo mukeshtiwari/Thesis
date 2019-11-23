@@ -264,60 +264,112 @@ Qed.
   trusting human judgement is inevitable.
   
  
-    
-   ToDo : This is first draft. Finish it and rewrite it. 
 \section{Cryptography}
-    Cryptography is the science of converting plaintext (understandable to everyone) to ciphertext data. 
-    The earliest known usage of cryptography, replacing a symbol by other,  goes back to  ancient 
-    Egyptian (Khnumhotep \roman{II} , 1500 BCE); however the purpose of symbol replacing was not to protect
+    The word cryptography comes from the two Greek words: 
+    \textit{krypt\'{o}s}, meaning \textit{hidden}, and \textit{gr\'{a}fein} meaning \textit{to write}. As a matter of 
+    fact, in the past, hidden writing (cryptography), using the symbol replacement, has been used 
+    to conceal the message. For example,
+    the earliest known usage of cryptography (symbol replacement) goes back to  ancient 
+    Egyptian (Khnumhotep {\rm II}, 1500 BCE); however, the purpose of replacing one symbol by other 
+    was not to protect
     any sensitive information but to enhance the linguistic appeal. The first known usage of 
     cryptography to conceal the sensitive information goes back Mesopotamians (1500 BCE) where 
-    they used it to hide the formula for pottery glaze.  The current form of cryptography mostly 
-    developed in 1970. Moreover, the basic principals of modern day cryptography , cryptography hereafter, is based on 
-    mathematical principals than vanilla symbol replacement.  Moreover, It has three distinct 
-    element:
-    \begin{itemize}
-    \item data (plaintext data and ciphertext data)
-    \item algorithm (encryption algorithm and decryption algorithm)
-    \item key (encryption key and decryption key)
-    \end{itemize}
+    they used it to hide the formula for pottery glaze. Fast forward, around 100 BCE, 
+    Julius Caesar wrote a letter to Marcus  Cicero using a method, now known 
+    as Caesar cipher, which would shift each character in letter by 3 position right with wrapping 
+    around, i.e. X would wrap A, Y would wrap to B, and Z would wrap to C. Decryption was 
+	3 character left shift.  Using the  tools of modern mathematics, encryption and decryption 
+	in \textit{Caesar cipher} is modular addition and modular subtraction (modulo 26), respectively.  
+    Overall, cryptography is art and science of making thing  unintelligible from everyone, except the 
+    intended recipient.  	
+	    
+	The modern cryptography originated in 1970 with two ingenious ideas, \textit{Data Encryption Standard (DES)}, 
+	and \textit{Diffie-Hellman Algorithm}. Data Encryption Standard, developed at IBM in 1970, is a symmetric 
+	key encryption algorithm which uses the same key for encryption and decryption. Since its inception, Data Encryption Standard
+	amassed a bad reputation because of \textit{National Security Agency (NSA)} involvement; however, it had a 
+	a practical problem, key management (sort of chicken egg problem). If two parties wanted to communicate
+	securely over insecure channel using Data Encryption Standard, then they needed to agree on a common key. 
+	In order to agree on common key, they needed a secure channel where they can securely communicate the key. 
+    The solution to this problem came from \textit{Diffie-Hellman} key exchange where two parties can exchange the 
+    key securely over insecure channel. Moreover, the advent of \textit{Diffie-Hellman} key exchange started the 
+    whole new area of public key cryptography where encryption and decryption key are different. 
+    Although \textit{Diffie-Hellman} key exchange suffers from  man-in-the-middle (MITM)  attack if used for keys exchange in its 
+    naivety, e.g. Logjam \citep{Adrian:2015:IFS:2810103.2813707}, nonetheless, 
+    it is a building block for many other algorithm, e.g. ElGamal Encryption \citep{elgamal1985public}. 
     
-    Depending on the distinction between the key, encryption key and decryption key, 
-    used in the process, the cryptography can be 
-    divided into two categories: (i) symmetric key cryptography where the 
-    same key is used for encrypting the plaintext data to ciphertext  data, and decrypting 
-    the ciphertext data to plaintext data, e.g. \texttt{Data Encryption Scheme}  
-    (ii) asymmetric (public) key cryptography where 
-    two different keys, public key and private key, are used for encrypting the plaintext 
-    data into ciphertext data and ciphertext data to plaintext data, e.g. \texttt{Diffie-Hellman algorithm} 
-   Since 1970, the cryptography has evolved, and now, it is not only used for confidentiality, but 
-   for integrity, authentication and non-repudiation
-   
-   The mathematical foundations of cryptography lies in algebraic group
-   \begin{itemize}
-     \item Group
-     \item Field 
-     \item Vector 
-    \end{itemize}
     
-    which we will discuss more in Chapter 7. 
     
-    In this thesis, we are concern with public key cryptography. We first describe the \texttt{Diffie-Hellman} \citep{Diffie:2006:NDC:2263321.2269104}
+    In this thesis, we are mostly concern about public key cryptography and will no longer discuss or explain 
+    symmetric key cryptography, hence any mention of cryptography hereafter should be assumed as
+    public key cryptography. 
+    The basic working principals of modern day cryptography is based on 
+    mathematical principal than vanilla symbol replacement. 
+    In addition, it is no longer just 
+    used to achieving confidentiality, but various other things, e.g. integrity,  authentication, non-repudiation 
+    protocol, digital signature, digital cash, etc.
+    These mathematical principal involves 
+    various algebraic structures and algorithm to manipulate the object from these structures.
+    For example, the underlying mathematical principal of \textit{Diffie-Hellman}  algorithm 
+    is hardness of computing discrete logarithm in finite field. \fix{We will discuss more about these
+    structures in  chapter 7}.
+    
+    
+    
+    
+%    
+%    The current form of cryptography mostly 
+%    developed in 1970. Moreover, the basic principals of modern day cryptography, cryptography hereafter, is based on 
+%    mathematical principals than vanilla symbol replacement.  Moreover, It has three distinct 
+%    element:
+%    \begin{itemize}
+%    \item data (plaintext data and ciphertext data)
+%    \item algorithm (encryption algorithm and decryption algorithm)
+%    \item key (encryption key and decryption key)
+%    \end{itemize}
+%    
+%    Depending on the distinction between the key, encryption key and decryption key, 
+%    used in the process, the cryptography can be 
+%    divided into two categories: (i) symmetric key cryptography where the 
+%    same key is used for encrypting the plaintext data to ciphertext  data, and decrypting 
+%    the ciphertext data to plaintext data, e.g. \texttt{Data Encryption Scheme}  
+%    (ii) asymmetric (public) key cryptography where 
+%    two different keys, public key and private key, are used for encrypting the plaintext 
+%    data into ciphertext data and ciphertext data to plaintext data, e.g. \texttt{Diffie-Hellman algorithm} 
+%   Since 1970, the cryptography has evolved, and now, it is not only used for confidentiality, but 
+%   for integrity, authentication and non-repudiation
+%   
+%   The mathematical foundations of cryptography lies in algebraic group
+%   \begin{itemize}
+%     \item Group
+%     \item Field 
+%     \item Vector 
+%    \end{itemize}
+%    
+%    which we will discuss more in Chapter 7. 
+    
+%    In this thesis, we are concern with public key cryptography.
+    
+    Now we  describe the workings of \texttt{Diffie-Hellman} \citep{Diffie:2006:NDC:2263321.2269104}
     algorithm, because all the constructions we have used  are based on \texttt{Diffie-Hellman} construction. 
+    Before we describe the algorithm, we briefly sketch the algebraic structure Group because it is underlying algebraic structure of 
+    \texttt{Diffie-Hellman}  construction  (typically, the underlying 
+    structure is multiplicative group of a finite field). Also, note that our definition is influenced theorem provers because 
+    we are  writing the type signature of group operator and inverse operator. 
     
     \subsection{Group}
-    A group is a set $G$, with a binary operator $f : G x G \rightarrow G$, identity element $e$, and inverse operator $i : G \rightarrow G$ such 
+    A group is a set $G$, with a binary operator $* : G \rightarrow G \rightarrow G$, identity element $e$, and inverse operator $inv : G \rightarrow G$ such 
     that the following laws hold: 
     \begin{itemize}
-     \item \texttt{Associativity}: $\forall$ a b c $\in$ G, f a (f b c) = f (f a b) c
-    \item \texttt{Closure}: $\forall$ a b $\in$ G, f a b $\in$ G
-    \item \texttt{Inverse Element}: $\forall$ a $\in$ G, $\exists$ b $\in$ G, such that f a b = f b a = e. b is called inverse of a (inv a) and represented $a^{-1}$
-    \item \texttt{Identity}: $\forall$ a $\in$ G, f a e = f e a  = a 
+     \item \texttt{Associativity}: $\forall$  a b c $\in G,$  $a * (b * c) = (a * b) * c$
+    \item \texttt{Closure}: $\forall$ a b $\in G,$  $a * b \in G$
+    \item \texttt{Inverse Element}: $\forall$ a $\in G$ $\exists$ $a^{-1} \in G$, such that $a * a^{-1} = a^{-1} * a = e$. $a^{-1}$ is called inverse of a (
+     $inv$ $a$).
+    \item \texttt{Identity}: $\forall$ a $\in G,$  $a * e = e * a  = a$
     \end{itemize}
    
     \noindent
     Furthermore, if a group is commutative, i.e. 
-    $\forall$ a b $\in$  G, f a b = f b a, then we call it abelian group (in honour of Niels Henrik Abel). 
+    $\forall$ a b $\in  G,$  $a * b = b * a$, then we call it abelian group (in honour of Niels Henrik Abel). 
 	    
     
      
@@ -539,28 +591,62 @@ Qed.
      the reason for special honest verifier zero knowledge) and z.
      
      \subsection{Commitment Schemes}   
-      Commitment schemes are cryptographic primitives equivalent to real life sealed lock-box which is once locked and sealed, the 
-      content inside the lock-box can not be changed.  Basically, these primitives 
-      are backbone of any protocol between two parties, communicating over internet, to force them  to  follow the 
+      Commitment schemes are cryptographic primitives equivalent to real life sealed lock-box. In addition, 
+      once the locked and sealed, the content inside the lock-box can not be changed without breaking the lock and seal. 
+      In general, commitment primitives 
+      are backbone of any cryptographic protocol between two parties, communicating over internet, to force them  to  follow the 
       protocol honestly, even if they would have a huge gain from deviating 
-      from protocol. For example, for some weird reason, Indian cricket team captain, living in Delhi, and Australian cricket team captain,
-      living in Canberra, decide 
-      to toss a coin in advance over phone for a  upcoming series of one-day matches to save some time in ground.
+      from protocol. For example, in order to save some time before a match, Indian cricket team captain, living in Delhi, and Australian cricket 
+      team captain, living in Canberra, decide 
+      to toss a coin in advance over the Internet, using a app called toss-app, for a  upcoming series of one-day matches
       \footnote{
-      In cricket, both captains meet in the ground and toss a coin to decide who would have the first call.} Assuming that Australian
-      captain is going to toss the coin and Indian captain would  call; if Indian captain says "head" over phone and Australian captain 
-      tosses the coin, what would happen if the outcome is "head". Well, depends on how badly Australian wants to have the first call. 
-      If he really wants to have the first call, then he would reply on phone: sorry mate, it is tail and you lost.
-      \footnote{Story influenced by Manuel Blum's coin flipping by telephone}.  However, we can modify the protocol to force 
-      both parties to follow the protocol. Indian captain would keep his call inside a digital lock-box, 
-      lock his call inside a sealed digital lock-box and give the box to 
-      Australian captain. 
-               
-           
-        \subsubsection{Discrete Logarithm Based Commitment Scheme}
-         Pedersen's Commitment Scheme
-    
-  	
+      In a cricket match, which is very popular sport in India and Australia, both captains meet in the ground and toss a coin to 
+      decide who would have the first call.}.  Assuming the workings of toss-app is naive, i.e. one captain is going to going to post
+      his call in the chat box, and the other other captain is going to toss the coin at their end and post the outcome in chat box. 
+      Furthermore, the decision is taken based on the messages posted by the two captains. In this scenario, we are assuming that 
+      the captain, who is tossing the coin, is honest and posting the outcome of the coin honestly in the chat box, which could or 
+      could not be the case.  The question is can we devise some scheme which would for the both parties to behave honestly? 
+      The answer is yes, we can devise such scheme. We would use the sealed lock-box concept, albeit the digital one. Moreover, 
+      the first captain would put his call in digitally sealed lock-box and post it in the chat box. Because it is sealed and 
+      locked, the other captain would have no idea what is the content inside it. Furthermore, it is impossible to break 
+      the lock box, so it is fruitless and waste of time for the other captain to even try. The other captain will toss the coin 
+      and post the outcome in a separate digital sealed lock box. Now that we two digital sealed lock box which can 
+      only be opened by the respective owners, they would move for the next phase of coin tossing  called revealed phase. 
+      In the revealed phase, they both would open their sealed locked box to show that what they have locked, 
+      and the decision would be taken accordingly \footnote{Story influenced by Manuel Blum's coin flipping by telephone}. 
+      
+      
+      Formally, a commitment scheme is two step protocol between a sender S and a receiver R:
+      \begin{enumerate}
+      \item Commit phase: sender S commits a value $m$ by generating a random number $r$ and using some algorithm C, which takes the message 
+      and random r. Moreover, the committed value produced by the commitment algorithm C, c = C(m, r), is shared with receiver R.
+      \item Reveal phase: In the reveal phase, the sender reveals the message m and randomness r which are subsequently used by 
+         receiver to verify the result, i.e. the receiver computes  c' = C(m, r) and matches it again the given c in the commit phase of protocol. 
+      \end{enumerate}
+      
+      
+    \textbf{Security Properties:} 
+     Commitment schemes have to have two properties: hiding and binding. Hiding property ensures that 
+     the receiver can not recover or recompute the original message $m$ from the given commitment $c$, i.e. 
+     it forces the receiver to behave honestly in the protocol. 
+     Furthermore, binding property ensures that it is impossible for sender to come up with 
+     another message $m'$ which is different from $m$ but produces the same commitment $c$, i.e. 
+     it forces the sender to behave honestly in the protocol. 
+     
+    \textbf{Pedersen commitment:}
+     Finally, we give a brief overview of a Pedersen commitment scheme which is based on discrete log.  The protocol as follows assuming 
+     the public parameter available to sender and receiver, i.e. the set up has been conducted to generate the the public parameter, 
+     and both parties have these values. These values include a prime $p$, $y$ a randomly chosen element from $Z_{p}^{*}$, and $g$ 
+     a randomly chosen generator from   $Z_{p}^{*}$.  
+     
+     \begin{itemize}
+     \item Commit phase: The sender generates a random r from $Z_{p}^{*}$, computes $c = g^{r}*y^{m}$ and sent the commitment to 
+        receiver
+      \item Verification phase: In verification phase, the sender reveals the original message $m$ and the randomness $r$. Finally, 
+            the receiver computes  $g^{r}*y^{m}$. Moreover, if the computed  value matches with the commitment, received in 
+            commitment phase, then he accepts it otherwise reject it. 
+     
+	\end{itemize}      
 
 
 
