@@ -22,14 +22,14 @@ The Automath project can be seen as the precursor of
 
 \textbf{Chapter overview:}
  This chapter is overview of Coq theorem prover and Cryptographic primitives. 
- In the section \ref{sec:problemstatement}, I will give a brief overview of 
+ In the section \ref{sec:problemstatement}, we will give a brief overview of 
  theoretical foundation, calculus of construction (\ref{sec:cc}) and calculus of inductive 
- construction (\ref{sec:cic}), of Coq.  In the section \ref{sec:typeprop}, I will discuss about 
+ construction (\ref{sec:cic}), of Coq.  In the section \ref{sec:typeprop}, we will discuss about 
  \texttt{Type} and \texttt{Prop}
  which is very crucial from program extraction point of view.  Our goal during 
  this course of formalization was not only proving the correctness of 
  Schulze method, but extracting a executable OCaml/Haskell code to count 
- ballots.  In the section \ref{sec:deplambda}, I will focus 
+ ballots.  In the section \ref{sec:deplambda}, we will focus 
  on dependent types and  how it leads to correct by construction paradigm
  by designing a  type safe printf function. 
  Section \ref{sec:gallina} focuses on Coq specification language 
@@ -38,7 +38,7 @@ The Automath project can be seen as the precursor of
  using tactics. Finally, in the section  \ref{sec:coqproof}, we will take 
  philosophical route to justify that why should we trust in Coq proofs 
  even though they do not appear anywhere near to a proof written by 
- a human. 
+ a human.  In section \ref{sec:cryptography}
 
 
 \section{Coq: Interactive Proof Assistant}
@@ -265,6 +265,7 @@ Qed.
   
  
 \section{Cryptography}
+\label{sec:cryptography}
     The word cryptography comes from the two Greek words: 
     \textit{krypt\'{o}s}, meaning \textit{hidden}, and \textit{gr\'{a}fein} meaning \textit{to write}. As a matter of 
     fact, in the past, hidden writing (cryptography), using the symbol replacement, has been used 
@@ -276,18 +277,18 @@ Qed.
     cryptography to conceal the sensitive information goes back Mesopotamians (1500 BCE) where 
     they used it to hide the formula for pottery glaze. Fast forward, around 100 BCE, 
     Julius Caesar wrote a letter to Marcus  Cicero using a method, now known 
-    as Caesar cipher, which would shift each character in letter by 3 position right with wrapping 
+    as \textit{Caesar cipher}, which would shift each character in letter by 3 position right with wrapping 
     around, i.e. X would wrap A, Y would wrap to B, and Z would wrap to C. Decryption was 
 	3 character left shift.  Using the  tools of modern mathematics, encryption and decryption 
 	in \textit{Caesar cipher} is modular addition and modular subtraction (modulo 26), respectively.  
     Overall, cryptography is art and science of making thing  unintelligible from everyone, except the 
     intended recipient.  	
 	    
-	The modern cryptography originated in 1970 with two ingenious ideas, \textit{Data Encryption Standard (DES)}, 
+	The modern day cryptography originated in 1970 with two ingenious ideas, \textit{Data Encryption Standard (DES)}, 
 	and \textit{Diffie-Hellman Algorithm}. Data Encryption Standard, developed at IBM in 1970, is a symmetric 
 	key encryption algorithm which uses the same key for encryption and decryption. Since its inception, Data Encryption Standard
 	amassed a bad reputation because of \textit{National Security Agency (NSA)} involvement; however, it had a 
-	a practical problem, key management (sort of chicken egg problem). If two parties wanted to communicate
+	practicality issue, key management (sort of chicken egg problem). If two parties wanted to communicate
 	securely over insecure channel using Data Encryption Standard, then they needed to agree on a common key. 
 	In order to agree on common key, they needed a secure channel where they can securely communicate the key. 
     The solution to this problem came from \textit{Diffie-Hellman} key exchange where two parties can exchange the 
@@ -315,39 +316,7 @@ Qed.
     
     
     
-    
-%    
-%    The current form of cryptography mostly 
-%    developed in 1970. Moreover, the basic principals of modern day cryptography, cryptography hereafter, is based on 
-%    mathematical principals than vanilla symbol replacement.  Moreover, It has three distinct 
-%    element:
-%    \begin{itemize}
-%    \item data (plaintext data and ciphertext data)
-%    \item algorithm (encryption algorithm and decryption algorithm)
-%    \item key (encryption key and decryption key)
-%    \end{itemize}
-%    
-%    Depending on the distinction between the key, encryption key and decryption key, 
-%    used in the process, the cryptography can be 
-%    divided into two categories: (i) symmetric key cryptography where the 
-%    same key is used for encrypting the plaintext data to ciphertext  data, and decrypting 
-%    the ciphertext data to plaintext data, e.g. \texttt{Data Encryption Scheme}  
-%    (ii) asymmetric (public) key cryptography where 
-%    two different keys, public key and private key, are used for encrypting the plaintext 
-%    data into ciphertext data and ciphertext data to plaintext data, e.g. \texttt{Diffie-Hellman algorithm} 
-%   Since 1970, the cryptography has evolved, and now, it is not only used for confidentiality, but 
-%   for integrity, authentication and non-repudiation
-%   
-%   The mathematical foundations of cryptography lies in algebraic group
-%   \begin{itemize}
-%     \item Group
-%     \item Field 
-%     \item Vector 
-%    \end{itemize}
-%    
-%    which we will discuss more in Chapter 7. 
-    
-%    In this thesis, we are concern with public key cryptography.
+  
     
     Now we  describe the workings of \texttt{Diffie-Hellman} \citep{Diffie:2006:NDC:2263321.2269104}
     algorithm, because all the constructions we have used  are based on \texttt{Diffie-Hellman} construction. 
@@ -357,6 +326,7 @@ Qed.
     we have  written the type signature of group operator $*$ and inverse operator $inv$. 
     
     \subsection{Group}
+    \label{sec:group}
     A group is a set $G$, with a binary operator $* : G \rightarrow G \rightarrow G$, identity element $e$, and inverse operator $inv : G \rightarrow G$ such 
     that the following laws hold: 
     \begin{itemize}
@@ -377,6 +347,7 @@ Qed.
     
      
      \subsection{Diffie-Hellman Construction}
+     \label{sec:diffie-hellman}
      	Now we explain \texttt{Diffie-Hellman} construction. The construction can be divided into two steps:
 		\begin{enumerate}
 		\item The two communicating parties, say Alice and Bob, agree with shared public parameters which 
@@ -421,6 +392,7 @@ Qed.
            	 
      
      \subsection{El-Gamal Encryption Scheme}
+     \label{sec:elgamal}
      In 1985, Tahir El-Gamal \citep{elgamal1985public} proposed a new encryption system which was based on Diffie-Hellman algorithm. 
      \textit{El-Gamal} turned the interactive  Diffie-Hellman algorithm into a non-interactive, no need for any active second party, by introducing 
      a randomness.  The \textit{ElGamal} scheme has three phases:
@@ -447,6 +419,7 @@ Qed.
 		
     
     \subsection{Homomorphic Encryption}
+    \label{sec:homomorphic-enc}
 	     Homomorphic encryption  is a encryption scheme which allows us to perform useful operation on 
 	     encrypted data without decrypting the data.
 	     It was first posed by Rivest, Adleman and Dertouzos in \citep{rivest1978data}: 
@@ -538,6 +511,7 @@ Qed.
 	      not very practical \citep{10.1007/3-540-69053-0_9}. 
 	     
      \subsection{Zero Knowledge Proof}
+     \label{sec:zkp}
       In conventional mathematics, a proof of mathematical statement is collection of basic axioms combined according to rules of 
       the system. For example, we want to prove that in for any group (G, *), for any two elements x y $\in$ G, we have:
       \begin{displayquote}
@@ -618,6 +592,7 @@ Qed.
         
    
     \subsection{Sigma Protocol}
+    \label{sec:sigma}
      Sigma protocols are efficient way to achieve zero-knowledge-proof of a knowledge.   Sigma protocol is 
      a three step communication between a prover $P$ and a verifier $V$ where goal of the prover is to convince the verifier that 
      he knows witness w for common input x such that  $(x, w) \in R$.   
@@ -673,6 +648,7 @@ Qed.
      
    
      \subsection{Commitment Schemes}   
+     \label{sec:commscheme}
       Commitment schemes are cryptographic primitives equivalent to real life sealed lock-box.
       Once the lock-box is locked and sealed, the content inside it can not be changed without breaking the lock and seal. 
       In general, commitment primitives 
