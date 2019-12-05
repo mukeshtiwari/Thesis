@@ -958,76 +958,76 @@ Java data structures.  After instantiating the
  where the notion of evidence for winning and losing is as in the
  plaintext version of the protocol (\ref{cha:schulze_method}).  
  
- Below is a glimpse of a concrete certificate for an election, and, in other words, 
- it is a trace of the computation which can be used as a checkable record to verify
- the outcome of election. For the space consideration, we have stripped off 
-the trailing digits in the tally sheet which is marked by $..$, and rather 
- than representing an entry of a matrix as ($i$, $j$), it is represented as 
- $ij$
-
-\begin{lstlisting}[frame=single,basicstyle=\ttfamily\scriptsize]
-M: AA(13.., 10..) AB(90.., 14..)  AC(11.., 23..) BA(16.., 13..) 
-BB(79.., 46..) BC(12.., 14..) CA(50.., 53..) CB(70.., 68..) CC(23.., 82..), 
-D: [AA: 0 AB: 0 AC: 0 BA: 0 BB: 0 BC: 0 CA: 0 CB: 0 CC: 0], 
-Zero-Knowledge-Proof-of-Honest-Decryption: [..]
-------------------------------------------------------------------------------
-V: [AA(42.., 15..) AB(63.., 32..) AC(70, 44..) BA(47.., 34..) BB(16.., 28..)
-BC(39.., 16..) CA(19.., 13..) CB(57.., 12..) CC(19.., 89..),..], I:  [], 
-M: AA(12.., 11..) AB(13.., 66..) AC(16.., 14.) BA(48.., 31..) BB(15.., 52..)
-BC(15.., 68..) CA(39.., 69..) CB(12.., 78..) CC(10.., 40..),
-Row-Permuted-Ballot: AA(53.., 16..) AB(23.., 44..) AC(72.., 47..) 
-BA(10.., 19..) BB(74.., 16..) BC(20.., 60..) CA(44.., 10..) CB(12.., 16..)
-CC(59.., 98..),
-Column-Permuted-Ballot: AA(81.., 41..) AB(17.., 14..) AC(10.., 14..) 
-BA(37.., 12..) BB(14.., 66..) BC(10.., 13..) CA(12.., 13..) CB(14.., 16..)
-CC(12.., 10..),
-Decryption-of-Permuted Ballot: AA0 AB-1 AC1 BA1 BB0 BC1 CA-1 CB-1 CC0,
-Zero-Knowledge-Proof-of-Row-Permutation: [Tuple[...]], 
-Zero-Knowledge-Proof-of-Column-Permutation: [Tuple[..]], 
-Zero-Knowledge-Proof-of-Decryption: [Triple[..]], 
-Permutation-Commitment: Triple[..]
-Zero-Knowledge-Proof-of-Commitment: Tuple[..]
-------------------------------------------------------------------------------
-.
-.
-.
-------------------------------------------------------------------------------
-V: [AA(36.., 10..) AB(20.., 13..) AC(75.., 43..) BA(13.., 31..) BB(27.., 82..)
-BC(31.., 50..) CA(16.., 11..) CB(74.., 15..) CC(26.., 36..)], I: [],
-M: AA(86.., 38..) AB(21.., 14..) AC(16.., 25..) BA(16.., 22..) BB(18.., 15..)
-BC(11.., 63..) CA(15.., 34..) CB(76.., 18..) CC(11.., 10..), 
-Row-Permuted-Ballot: .., Column-Permuted-Ballot: .., 
-Decryption-of-Permuted-Ballot: AA0 AB-10 AC1 BA10 BB0 BC1 CA-1 CB-1 CC0,
-Zero-Knowledge-Proof-of-Row-Permutation: [..],
-Zero-Knowledge-Proof-of-Column-Permutation: [..], 
-Zero-Knowledge-Proof-of-Decryption: [..], 
-Permutation-Commitment: Triple[..], 
-Zero-Knowledge-Proof-of-Commitment: Tuple[..]
-------------------------------------------------------------------------------
-V: [], I: [AA(36.., 10..) AB(20.., 13..) AC(75.., 43..) BA(13.., 31..) 
-BB(27.., 82..) BC(31.., 50..) CA(16.., 11..) CB(74.., 15..) CC(26.., 36..)], 
-M: .., D: [AA: 0 AB: 4 AC: 4 BA: -4 BB: 0 BC: 4 CA: -4 CB: -4 CC: 0],
-Zero-Knowledge-Proof-of-Decryption: [..]
-------------------------------------------------------------------------------
-D: [AA: 0 AB: 4 AC: 4 BA: -4 BB: 0 BC: 4 CA: -4 CB: -4 CC: 0]
-winning: A
-   for B: path A --> B of strength 4, 5-coclosed set: 
-       [(B,A),(C,A),(C,B)]
-   for C: path A --> C of strength 4, 5-coclosed set:
-       [(B,A),(C,A),(C,B)] 
-losing: B
-   exists A: path A --> B of strength 4, 4-coclosed set: 
-     [(A,A),(B,A),(B,B),(C,A),(C,B),(C,C)]
-losing: C
-   exists A: path A --> C of strength 4, 4-coclosed set: 
-     [(A,A),(B,A),(B,B),(C,A),(C,B),(C,C)]
-\end{lstlisting}
+% Below is a glimpse of a concrete certificate for an election, and, in other words, 
+% it is a trace of the computation which can be used as a checkable record to verify
+% the outcome of election. For the space consideration, we have stripped off 
+%the trailing digits in the tally sheet which is marked by $..$, and rather 
+% than representing an entry of a matrix as ($i$, $j$), it is represented as 
+% $ij$
+%
+%\begin{lstlisting}[frame=single,basicstyle=\ttfamily\scriptsize]
+%M: AA(13.., 10..) AB(90.., 14..)  AC(11.., 23..) BA(16.., 13..) 
+%BB(79.., 46..) BC(12.., 14..) CA(50.., 53..) CB(70.., 68..) CC(23.., 82..), 
+%D: [AA: 0 AB: 0 AC: 0 BA: 0 BB: 0 BC: 0 CA: 0 CB: 0 CC: 0], 
+%Zero-Knowledge-Proof-of-Honest-Decryption: [..]
+%------------------------------------------------------------------------------
+%V: [AA(42.., 15..) AB(63.., 32..) AC(70, 44..) BA(47.., 34..) BB(16.., 28..)
+%BC(39.., 16..) CA(19.., 13..) CB(57.., 12..) CC(19.., 89..),..], I:  [], 
+%M: AA(12.., 11..) AB(13.., 66..) AC(16.., 14.) BA(48.., 31..) BB(15.., 52..)
+%BC(15.., 68..) CA(39.., 69..) CB(12.., 78..) CC(10.., 40..),
+%Row-Permuted-Ballot: AA(53.., 16..) AB(23.., 44..) AC(72.., 47..) 
+%BA(10.., 19..) BB(74.., 16..) BC(20.., 60..) CA(44.., 10..) CB(12.., 16..)
+%CC(59.., 98..),
+%Column-Permuted-Ballot: AA(81.., 41..) AB(17.., 14..) AC(10.., 14..) 
+%BA(37.., 12..) BB(14.., 66..) BC(10.., 13..) CA(12.., 13..) CB(14.., 16..)
+%CC(12.., 10..),
+%Decryption-of-Permuted Ballot: AA0 AB-1 AC1 BA1 BB0 BC1 CA-1 CB-1 CC0,
+%Zero-Knowledge-Proof-of-Row-Permutation: [Tuple[...]], 
+%Zero-Knowledge-Proof-of-Column-Permutation: [Tuple[..]], 
+%Zero-Knowledge-Proof-of-Decryption: [Triple[..]], 
+%Permutation-Commitment: Triple[..]
+%Zero-Knowledge-Proof-of-Commitment: Tuple[..]
+%------------------------------------------------------------------------------
+%.
+%.
+%.
+%------------------------------------------------------------------------------
+%V: [AA(36.., 10..) AB(20.., 13..) AC(75.., 43..) BA(13.., 31..) BB(27.., 82..)
+%BC(31.., 50..) CA(16.., 11..) CB(74.., 15..) CC(26.., 36..)], I: [],
+%M: AA(86.., 38..) AB(21.., 14..) AC(16.., 25..) BA(16.., 22..) BB(18.., 15..)
+%BC(11.., 63..) CA(15.., 34..) CB(76.., 18..) CC(11.., 10..), 
+%Row-Permuted-Ballot: .., Column-Permuted-Ballot: .., 
+%Decryption-of-Permuted-Ballot: AA0 AB-10 AC1 BA10 BB0 BC1 CA-1 CB-1 CC0,
+%Zero-Knowledge-Proof-of-Row-Permutation: [..],
+%Zero-Knowledge-Proof-of-Column-Permutation: [..], 
+%Zero-Knowledge-Proof-of-Decryption: [..], 
+%Permutation-Commitment: Triple[..], 
+%Zero-Knowledge-Proof-of-Commitment: Tuple[..]
+%------------------------------------------------------------------------------
+%V: [], I: [AA(36.., 10..) AB(20.., 13..) AC(75.., 43..) BA(13.., 31..) 
+%BB(27.., 82..) BC(31.., 50..) CA(16.., 11..) CB(74.., 15..) CC(26.., 36..)], 
+%M: .., D: [AA: 0 AB: 4 AC: 4 BA: -4 BB: 0 BC: 4 CA: -4 CB: -4 CC: 0],
+%Zero-Knowledge-Proof-of-Decryption: [..]
+%------------------------------------------------------------------------------
+%D: [AA: 0 AB: 4 AC: 4 BA: -4 BB: 0 BC: 4 CA: -4 CB: -4 CC: 0]
+%winning: A
+%   for B: path A --> B of strength 4, 5-coclosed set: 
+%       [(B,A),(C,A),(C,B)]
+%   for C: path A --> C of strength 4, 5-coclosed set:
+%       [(B,A),(C,A),(C,B)] 
+%losing: B
+%   exists A: path A --> B of strength 4, 4-coclosed set: 
+%     [(A,A),(B,A),(B,B),(C,A),(C,B),(C,C)]
+%losing: C
+%   exists A: path A --> C of strength 4, 4-coclosed set: 
+%     [(A,A),(B,A),(B,B),(C,A),(C,B),(C,C)]
+%\end{lstlisting}
 
 
 \begin{wrapfigure}{R}{7.4cm}
 \centering
 \vspace*{-1cm}
-\includegraphics[scale=0.50]{PlotVer3.png}
+\includegraphics[scale=0.30]{PlotVer3.png}
 \vspace*{-1cm}
 \end{wrapfigure}
  We note that the schematic presentation of the certificate above is
@@ -1037,53 +1037,7 @@ losing: C
  development, and are obtained by simply implementing datatype to
  string conversion on the type \texttt{ECount}.
  
-% \noindent
-% \textit{Interpretation of the concrete Certificate:}
-% Now, we will wear the hat of scrutinizer to audit the election based on 
-% scrutiny sheet to gain more understanding. In the very first line, all we 
-% have to make sure that every entry is encrypted margin function \textit{M} 
-% is encryption 
-% of zero. As we can see that every entry in decrypted margin \textit{D} 
-% of encrypted margin \textit{M} is zero, but we can verify this fact with 
-% given \textit{Zero-Knowledge-Proof-of-Honest-Decryption}.
-% 
-% In next few lines, we need to make sure that if ballot from the top of 
-% pile (all cast ballots) \textit{V} is valid then it is added 
-% homomorphically to  running margin \textit{M}, 
-% and if not then moved to pile of invalid ballots \textit{I}. In 
-% order to certify the claim that ballot under consideration is valid 
-% or not, all we have to do is certify the claim that 
-% \textit{Row-Permuted-Ballot} 
-% is indeed row shuffle of ballot under consideration by 
-% some (secret)permutation using the information  
-% \textit{Zero-Knowledge-Proof-of-Row-Permutation}, 
-% \textit{Permutation-Commitment}, and 
-% \textit{Zero-Knowledge-Proof-of-Commitment}. 
-% We need to follow the same methodology 
-% to verify the column permuted ballot \textit{Column-Permuted-Ballot}. 
-% Finally, all we have to verify the decryption claim of 
-% \textit{Decryption-of-Permuted-Ballot}
-% is honest decryption of Column-Permuted-Ballot using 
-% \textit{Zero-Knowledge-Proof-of-Decryption}. We keep doing this 
-% step until we have 
-% processed all the ballots from pile $V$, i.e. $V$ = []. 
-% 
-% Once we have exhausted all the ballots from pile $V$, we 
-% need to certify the that decrypted margin function $D$ is indeed the 
-% honest decryption of encrypted margin function $M$, and we can 
-% verify this claim using \textit{Zero-Knowledge-Proof-of-Decryption}.
- 
 
-%%% DP: I don't understand this ... ? %%%%
-
-%The fact that the certificate was produced using formally verified
-%code implies that (modulo correctness of the implementation of the
-%cryptographic primitives) all certificates necessarily verify.
-%\emph{Verifiability} ensures that external stakeholders can convince
-%themselves in a hardware/software independent way of the correctness
-%of the count, whereas producing certiciates using \emph{verified}
-%code ensures that election authorities always produce correct, and
-%verifiable, results.
 
 
 To demonstrate proof of concept, 
