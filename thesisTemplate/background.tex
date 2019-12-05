@@ -30,9 +30,29 @@
  
  
 \textbf{Chapter Outline:}
-  Write here a chapter outline
+ In the section \ref{sec:electronic_voting}, we discuss 
+ the major concern in electronic voting, software/hardware 
+ bug used in the election process, by high lighting the 
+ state of electronic voting in Australia, Germany, India, 
+ and Netherlands. In the following section \ref{sec:correctness_formal}, we  give 
+ two anecdotes that how formal verification helped in achieving 
+ the correctness and eliminating bug in \textit{CompCert}, 
+ and \textit{Athelon} with 
+ the emphasis that we should formally verify the software programs
+ used in electronic voting to alleviate the concerns of 
+ software/hardware bug. Section \ref{sec:varifiability} 
+ emphasizes that formal verification is not enough
+ to establish the trust and puts forward the concept of 
+ scrutiny sheet (\ref{sec:scruntiny_sheet}), which 
+ can be used independently to attest the result of election, 
+ to achieve verifiability. Finally, we summarize in the section \ref{sec:summary}
+ by emphasizing that formal verification and verifiability both are needed 
+ to ensure the trust in electronic voting. 
+ 
+  
 
 \section{Electronic Voting}
+ \label{sec:electronic_voting}
   Electronic voting is projected as a step towards the future with 
   many benefits, such as increased voter turnout, faster result, 
   accessible to everyone including challenged voters, and reduced 
@@ -222,8 +242,8 @@
 	adopt formal method for electronic voting software development. 
    
    
-   \subsection{Correctness: Formal Method Approach}
-
+   \section{Correctness: Formal Method Approach}
+   \label{sec:correctness_formal}
 
 	Formal verification has been successfully applied in many areas ranging 
 	from verified C compilers CompCert \citep{DBLP:conf/popl/Leroy06}, verified ML compiler
@@ -333,7 +353,8 @@
 	  
 	 
 		
- \subsection{Verifiability: Trust in Electronic Voting}
+ \section{Verifiability: Trust in Electronic Voting}
+ \label{sec:varifiability}
   Formal verification is useful in producing the 
    bug free code, but we solely can not 
    establish the trust in the system based on argument of 
@@ -515,6 +536,7 @@
 	       
     
    \subsection{Scrutiny Sheet}
+   \label{sec:scruntiny_sheet}
    A scrutiny sheet is the tabulation of relevant data to verify the result of election. 
    The idea of requiring that computations provide not only results, but also a witness attesting
     to the correctness of the computation is not new
@@ -639,24 +661,13 @@
    voters into the deployed system.  
   
 
-%  We will discuss in more detail about certificate checking 
-%  in chapter Software Independence.  We will also present a case study of 
-%  formally verified checker for \textit{IACR 2018} (International Association for 
-%  Cryptographic Research) election.
-     
-   
-%  We have take 
-%  
-%  It is very crucial to know that the primary purpose of checkers are to verify the 
-%  correctness of computation, hence, it is important that they 
-%  should be: i) correct, and ii) simple.  
-  
   
   
   
     
    
 \section{Summary}
+\label{sec:summary}
 We reiterate that to maximise trust, reliability and auditability of electronic vote counting, we
 need both approaches, verification and verifiability, to be combined. To ensure
 verifiability, we advocate that vote-counting programs
