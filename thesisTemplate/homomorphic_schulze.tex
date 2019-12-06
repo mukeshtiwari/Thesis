@@ -8,7 +8,7 @@ In this chapter, we will try to achieve: privacy by using encryption, (tallied-a
 verifiability by using zero knowledge proof, and correctness of implementation 
 by proving the correctness properties inside Coq theorem prover. 
 One important point to note that we did not formalize any cryptographic primitive inside the Coq, but 
-took an axiomatic approach. Moreover, we assumed the existence of cryptographic 
+took an axiomatic approach, i.e. we assumed the existence of cryptographic 
 primitive and correctness property about their behaviour (axiomatisation of 
 cryptographic primitives). The reason we took the axiomatic approach 
 because our goal was not to formalize cryptographic primitives, but use these primitives
@@ -25,9 +25,26 @@ scenarios.
 
 
 
-\textbf{Chapter Outline:}
- Todo:Turn this into chapter outline once you finish everything.
+\textbf{Chapter Outline:} In the section \ref{sec:verifiable_homomorphic}, 
+we discuss the technique to achieve verifiable tally. In order to do so, 
+we discuss why do need our ballot to have a matrix representation 
+and not a ranking function. Moreover, we discuss the concept 
+of validity ballot, which comes naturally with matrix representation, 
+steps of homomorphic counting, and cryptographic primitives needed 
+to achieve all the required functionality. Section \ref{sec:realisation} 
+takes a step forward and makes every concept from the previous section
+concrete using the Coq theorem prover. One important point 
+in this section is our inductive data type \textit{ECount}
+augmented with verification data in form of zero-knowledge-proof 
+for various claims made during the counting 
+($ECount$ is conceptually similar as $Count$, but 
+in terms of data, $ECount$ has state data related to counting and verification data
+in form of zero-knowledge proof related to claims made by us, while, $Count$ 
+has just state data).  Section \ref{sec:correct} argues 
+program-as-proof 
 
+
+ 
 
 
 Secure elections are a balancing act between integrity and privacy:
@@ -59,17 +76,7 @@ proofs.
 
   
  \section{Verifiable Homomorphic Tallying}
-%\texttt{
-%  Bullet points of content for reference and later deletion
-%\begin{itemize}
-%  \item general protocol, comparision with plaintext counting
-%  \item two-phase structure: margin matrix, then winners with
-%  winners as before: encryption commutes with margin computation
-%  \item homomorphic computation of margin matrix, ballot
-%  representation
-%  \item computation of winners (as for plaintext)
-%\end{itemize}
-%}
+\label{sec:verifiable_homomorphic}
 The realisation of verifiable homomorphic tallying that we are about to
 describe follows the same two phases as the algorithm (Chapter \ref{sec:schulze_algorithm}): 
 We first homomorphically compute the margin matrix from encrypted ballots, and then compute
@@ -328,47 +335,7 @@ cryptosystem that implements the following:
 \item[Decryption Primitives.]
   decryption of a ciphertext, creation and verification of
  honest decryption zero knowledge proofs. 
-% Below are the primitives 
-%  represented in Coq to achieve the needed functionality
-%  \begin{lstlisting}[frame=single,basicstyle=\ttfamily\footnotesize]
-%  
-%  Inductive Group : Type :=
-%     group : Prime -> Generator -> Pubkey -> Group.
-%    
-% 
-%  Variable encrypt_message :
-%    Group ->  plaintext -> ciphertext.
-%    
-% 
-%  Variable decrypt_message :
-%    Group -> Prikey -> ciphertext -> plaintext.
-%    
-% 
-%  Axiom decryption_left_inverse :
-%    forall (pt : plaintext),
-%      decrypt_message grp privatekey 
-%      (encrypt_message grp pt) = pt.
-%  
-%  
-%  Variable construct_zero_knowledge_decryption_proof :
-%    Group -> Prikey -> ciphertext -> DecZkp.
-%
-% 
-%  Axiom verify_zero_knowledge_decryption_proof :
-%    Group -> plaintext -> ciphertext -> DecZkp -> bool.
-%  
-%  
-%  Axiom verify_honest_decryption_zkp :
-%    forall (pt : plaintext) (ct : ciphertext)
-%      (H : pt = decrypt_message grp privatekey ct),
-%      verify_zero_knowledge_decryption_proof
-%        grp pt ct
-%        (construct_zero_knowledge_decryption_proof grp
-%         privatekey ct) = true.
-%        
-% 
-%        
-%  \end{lstlisting}
+
 \item[Commitment Primitives.]
   generating permutations, creation and verification of commitment
   zero knowledge proofs
@@ -401,15 +368,7 @@ k$.
 
 \section{Formalization in a Theorem Prover} \label{sec:realisation}
 
-%We formalise homomorphic tallying for the Schulze Method inside the
-%Coq theorem prover \citep{Bertot:2004:ITP}. Apart from supporting an
-%expressive logic and (crucial for us) dependent inductive types, Coq
-%has a well developed extraction facility that 
-%we use to extract proofs into OCaml programs. Indeed, our basic
-%approach is to first formally define the notion of a valid
-%certificate, and then prove that a valid certificate can be obtained
-%from any set of (encrypted) ballots. Extracting this proof as a
-%programme, we obtain an executable that is correct by construction. 
+
 
 As we stated in the beginning of this chapter that the purpose of this work was 
 not to verify cryptographic primitives, 

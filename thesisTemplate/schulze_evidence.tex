@@ -41,21 +41,7 @@ co-operation of all on board it can be safely brought to part.}
    the achievements and drawbacks of our work on the scale of \textit{Correctness},
    \textit{Privacy}, and \textit{Verifiability}.
  
-% In this chapter, we formally specify the 
-% Schulze method in \ref{sec:schulze_algorithm}, and the corner stone of our formalization is 
-% a correct by construction dependent inductive data type 
-% that represents all correct executions. Every inhabitant of 
-% this type not only produces a final result, but also 
-% all the intermediate steps that lead to result. Using these 
-% intermediate steps, any external verifier can verify the 
-% final result. As a consequence, we do not even need trust the
-%  execution of the (verified) algorithm: the correctness of 
-%  a particular run of the vote counting code can be verified on
-%  the basis of the evidence for correctness that is produced
-%  along with determination of election winners.
-%  
-%  \textbf{Chapter overview:} In this chapter, we explain the Schulze algorithm,
-%   followed by formal specification and 
+
 
 
 \section{Schulze Algorithm}
@@ -113,12 +99,12 @@ of candidates with $c_0 = c$ and $c_{n+1} = d$ ($n \geq 0$), and the
 nodes, i.e.
 \[ st(c_0, \dots, c_{n+1}) = \min \lbrace m (c_i, c_{i+1}) \mid 0
 \leq i \leq n \rbrace. \]
-\item For candidates c and d, let $S(c, d)$ denote the maximum strength, or generalized margin of a path
+\item For candidates c and d, let $M(c, d)$ denote the maximum strength, or generalized margin of a path
 	from c to d i.e. 
-	\[ S(c, d) = \max \lbrace st (p) : \text{p is path from c to d in G} \rbrace\]
+	\[ M(c, d) = \max \lbrace st (p) : \text{p is path from c to d in G} \rbrace\]
 	
 \item The winning set is, always non empty and  formally proved in \ref{sec:all_winners}, defined as 
- \[ W =  \lbrace c \in C : \forall d \in C \setminus \{c\}, S (c, d) \geq S (d, c) \rbrace\]
+ \[ W =  \lbrace c \in C : \forall d \in C \setminus \{c\}, M (c, d) \geq M (d, c) \rbrace\]
 
 \end{itemize}
 
@@ -138,8 +124,12 @@ beaten by any (other) candidate.
 
 
 	\subsection{An Example}
-	
-	 The graph below shows that collective can be cyclic, even if the preferences of individual voters are not cyclic (Condercet paradox).
+	For some given set of ballots (the actual set of ballots are not very important because we want to demonstrate the Condercet Paradox), we have computed 
+	the margin function $m$ such that $m$ ($A, B$) = 3, $m$ ($B, A$) = -3, $m$ ($A, C$) = -1, 
+	$m$ ($C, A$) = 1, $m$ ($B, C$) = 5, and $m$ ($C, B$) = -5. We have drawn the graph below, and 
+	it shows that collective can be cyclic, even if the preferences of individual voters are not cyclic. This phenomena 
+	is known as Condercet paradox and first observed by french philosopher Marquis de Condorcet in late 18th century \footnote{https://gallica.bnf.fr/ark:/12148/bpt6k417181}.
+	     
 \[
 \xymatrix@R=12ex@C=12ex{
 A \ar@/^/[rr]^{3} \ar@/_/[dr]_{-1} & & B \ar@/^/[ll]^{-3}
@@ -147,7 +137,145 @@ A \ar@/^/[rr]^{3} \ar@/_/[dr]_{-1} & & B \ar@/^/[ll]^{-3}
 & C \ar@/_/[ul]_{1} \ar@/^/[ur]^{-5}
 }\]
 
-The main idea of the method is to resolve cycles by considering \emph{transitive preferences} or a generalised notion of margin.
+The main idea of the method is to resolve cycles by considering \emph{transitive preferences} or a generalised notion of margin. Below is the graph $M$, generalize 
+margin (sometimes, we use generalize margin matrix or generalize margin function) after running  the Schulze method on margin function $m$.  In order to 
+compute $M(A, B)$, we first compute all the path from candidate $A$ to $B$. Well, we have just two path from $A$ to $B$, a direct path between them and 
+a intermediate path via candidate $C$.  Now that we two paths, we compute the path strength $st$ for each path, $st(A, B) = min \lbrace m (A, B) \rbrace $ 
+and $st (A, C, B)$ = $min \lbrace m (A, C), m (C, B) \rbrace$.  Simply these expression:
+
+\begin{align}
+st (A, B)&=  \min \lbrace m (A, B) \rbrace  \nonumber \\
+					  &= \min \lbrace 3 \rbrace \nonumber \\
+                     &= 3 \nonumber
+\end{align}
+
+
+\begin{align}
+st (A, C, B)&=  \min \lbrace m (A, C), m (C, B) \rbrace  \nonumber \\
+                     &= \min \lbrace -1, -5 \rbrace \nonumber \\
+                     &= -5\nonumber
+\end{align}
+
+Once we have the path strength for every path between $A$ and $B$, we compute generalize margin 
+$M(A, B) = \max \lbrace st (A, B), st(A, C, B) \rbrace$, and simplification leads to 3; hence the arrow going
+$A$ to $B$ has strength 3.  
+
+
+\begin{align}
+M (A, B)&=  \max \lbrace st (A, B), st(A, C, B) \rbrace \nonumber \\
+                     &= \max \lbrace 3, -5 \rbrace \nonumber \\
+                     &= 3\nonumber
+\end{align}
+
+Similarly, we can compute other values as well. 
+
+\begin{align}
+st (B, A)&=  \min \lbrace m (B, A) \rbrace  \nonumber \\
+					  &= \min \lbrace -3 \rbrace  \nonumber \\
+                     &= -3 \nonumber
+\end{align}
+
+
+\begin{align}
+st (B, C, A)&=  \min \lbrace m (B, C), m (C, A) \rbrace  \nonumber \\
+                     &= \min \lbrace 5, 1 \rbrace \nonumber \\
+                     &= 1\nonumber
+\end{align}
+
+\begin{align}
+M (B, A)&=  \max \lbrace st (B, A), st(B, C, A) \rbrace \nonumber \\
+                     &= \max \lbrace -3, 1 \rbrace \nonumber \\
+                     &= 1\nonumber
+\end{align}
+
+\begin{align}
+st (A, C)&=  \min \lbrace m (A, C) \rbrace  \nonumber \\
+					  &= \min \lbrace -1 \rbrace  \nonumber \\
+                     &= -1 \nonumber
+\end{align}
+
+
+\begin{align}
+st (A, B, C)&= \min \lbrace m (A, B), m (B, C) \rbrace  \nonumber \\
+                     &= \min \lbrace 3, 5 \rbrace \nonumber \\
+                     &= 3\nonumber
+\end{align}
+
+\begin{align}
+M (A, C)&=  \max \lbrace st (A, C), st(A, B, C) \rbrace \nonumber \\
+                     &= \max \lbrace -1, 3 \rbrace \nonumber \\
+                     &= 3\nonumber
+\end{align}
+
+
+\begin{align}
+st (C, A)&=  \min \lbrace m (C, A) \rbrace  \nonumber \\
+					  &= \min \lbrace 1 \rbrace  \nonumber \\
+                     &= 1 \nonumber
+\end{align}
+
+
+\begin{align}
+st (C, B, A)&= \min \lbrace m (C, B), m (B, A) \rbrace  \nonumber \\
+                     &= \min \lbrace -5, -3 \rbrace \nonumber \\
+                     &= -5\nonumber
+\end{align}
+
+\begin{align}
+M (C, A)&=  \max \lbrace st (C, A), st(C, B, A) \rbrace \nonumber \\
+                     &= \max \lbrace 1, -5 \rbrace \nonumber \\
+                     &= 1\nonumber
+\end{align}
+
+
+
+
+
+\begin{align}
+st (C, B)&=  \min \lbrace m (C, B) \rbrace  \nonumber \\
+					  &= \min \lbrace -5 \rbrace  \nonumber \\
+                     &= -5 \nonumber
+\end{align}
+
+
+\begin{align}
+st (C, A, B)&= \min \lbrace m (C, A), m (A, B) \rbrace  \nonumber \\
+                     &= \min \lbrace 1, 3\rbrace \nonumber \\
+                     &= 1\nonumber
+\end{align}
+
+\begin{align}
+M (C, B)&=  \max \lbrace st (C, B), st(C, A, B) \rbrace \nonumber \\
+                     &= \max \lbrace -5, 1 \rbrace \nonumber \\
+                     &= 1\nonumber
+\end{align}
+
+
+\begin{align}
+st (B, C)&=  \min \lbrace m (B, C) \rbrace  \nonumber \\
+					  &= \min \lbrace 5 \rbrace  \nonumber \\
+                     &= 5 \nonumber
+\end{align}
+
+
+\begin{align}
+st (B, A, C)&= \min \lbrace m (B, A), m (A, C) \rbrace  \nonumber \\
+                     &= \min \lbrace -3, -1\rbrace \nonumber \\
+                     &= -3\nonumber
+\end{align}
+
+\begin{align}
+M (B, C)&=  \max \lbrace st (B, C), st(B, A, C) \rbrace \nonumber \\
+                     &= \max \lbrace 5, -3 \rbrace \nonumber \\
+                     &= 5\nonumber
+\end{align}
+
+\noindent
+Now we have computed all the values of generalize margin $M$, we can interpret it as 
+graph show below.  It is clear for the graph that candidate $A$ is winner, as he beats 
+$B$ with strength 3 (reverse path from $B$ to $A$ is weaker, i.e. strength 1) and 
+$C$ with strength 3 (reverse path from $C$ to $A$ is weaker, i.e. strength 1). 
+
 \[
  \xymatrix@R=12ex@C=12ex{
 A \ar@/^/[rr]^{3} \ar@/_/[dr]_{3} & & B \ar@/^/[ll]^{1}
@@ -434,36 +562,6 @@ between repeated nodes and so reaches a fixed point.
 \end{verbatim}
 
 
-
-
-
-%The proof of the first statement is completely straight forward, as
-%the type carries all the information needed to establish the
-%propositional winning condition. For the second statement above, we
-%introduce an intermediate lemma based on the \emph{iterated margin
-%function}
-%$M_k: C \times C \to Z$. Intuitively, $M_k (c, d)$ is the
-%strength of the strongest path between $c$ and $d$ of length $\leq
-%k+1$. Formally,
-%$M_0 (c, d) = m(c, d)$ and
-%\[ M_{i+1}(c, d) = \max \lbrace M_i(c, d), \max \lbrace  \min
-%\lbrace m(c, e), M_i(e, d) \mid e \in C \rbrace \rbrace \rbrace
-%\] for $i \geq 0$.
-%%
-%It is intuitively clear (and we establish this fact formally) that
-%the iterated margin function stabilises at the $n$-th iteration
-%(where $n$ is the number of candidates), as paths with repeated
-%nodes don't contribute to maximising the strength of a path. This
-%proof loosely follows the evident pen-and-paper proof given for
-%example in
-%\citep{Carre:1971:ANR} that is based on cutting out segments of paths
-%between repeated nodes and so reaches a fixed point.
-%
-%\begin{verbatim}
-% Lemma iterated_marg_fp: forall (c d : cand) (n : nat),
-%      M n c d <= M (length cand_all) c d.
-%\end{verbatim}
-
 \noindent
 That is, the \emph{generalised margin}, i.e. the strength of the strongest (possibly infinite) path
 between two candidates is effectively computable.
@@ -505,7 +603,6 @@ type level losing condition.
       -> loses_type c.
 \end{verbatim}
 
-%\textbf{Todo : Write a notation Chapter. What does it mean to be exists, and existsT}
 
 The proof of lemma  $iterated\_marg\_loses\_type$ is not straight forward because
 we are in a similar situation  as we were in $wins\_prop\_type$. 
@@ -518,14 +615,6 @@ We do  a linear search on list of candidates  to find the witness constructively
 the list of candidates is  finite we would eventually terminate and find one.  
 This completes our loop of prop level loser to type level loser. 
 
-
-%Coq does not allow the case analysis on \texttt{Prop} when the goal in not in \texttt{Prop}, 
-%hence,  we can not eliminate \texttt{exists n, P n} in order to show \texttt{existsT n, P n}. 
-%The idea is basically turning proposition level existence, \emph{exists}, 
-%to type level existence, \emph{existsT}. 
-%We can do  a linear search on list of candidates  to find the witness constructively, and since, 
-%the list of candidates is  finite we would eventually terminate and find one.  
-%This completes our loop of prop level loser to type level loser. 
 
 \begin{verbatim}
 Corollary reify_opponent (c: cand):
@@ -618,16 +707,12 @@ In the original paper describing the
 Schulze method \citep{Schulze:2011:NMC}, a ballot is a linear
 preorder over the set of candidates.
 
-\begin{wrapfigure}{r}[0cm]{0.4\textwidth}
-  \begin{center}
-    %\raisebox{0pt}[-1cm]
-    \raisebox{0pt}[\dimexpr\height-3.5\baselineskip\relax]
+\begin{figure}
+   \begin{center}
     {\includegraphics[width=0.37\textwidth]{bal-cropped.pdf}}
-    \vspace*{-8ex}
-    %\raisebox{0pt}[\dimexpr\height-8.5\baselineskip\relax]{xx}
-    %\includegraphics[width=4cm]{ballot.png}
-  \end{center}
-\end{wrapfigure}
+    \caption{Ballot Representation}
+    \end{center}
+\end{figure}
 In practice, ballots are
 implemented by asking voters to put numerical preferences against
 the names of candidates as represented by the image on the right.
@@ -1158,24 +1243,6 @@ certificates.
 
 \section{Summary}
 
-%In this formalization, we have presented a formalisation of 
-%the Schulze method for
-%counting preferential ballots. Our formalisation focuses on the
-%correct execution of the method. 
-%In our formalisation of vote counting, there is a one-to-one
-%correspondence between correct executions of the protocol, and
-%inhabitants of a (dependent) inductive type. In our Coq development,
-%we have used the propositions-as-types approach, and have
-%constructed an existence proof, from which we have generated Haskell
-%code. An alternative approach would be to implement a function that
-%directly constructs inhabitants, and obtain a detailed performance
-%comparison between both approaches. While we anticipate that a
-%direct implementation brings performance benefits, our experimental
-%evaluation shows that even with very little optimisation (Section
-%\ref{sec:eval}), extracting
-%vote counting program from an existence proof allows us to count a
-%relatively large number of ballots already.
-
 Our formalization achieves \textit{Correctness}, \textit{Practicality}, and 
 (tallied-as-cast) \textit{Verifiability}. The major problem in this formalization is \textit{Privacy}.  
 Our ballots are in plaintext and could easily be identified
@@ -1200,8 +1267,8 @@ In nutshell, the achieved and missed of this formalization:
 \end{itemize}
 \item Missed
 \begin{itemize}
-\item Privacy : There is no privacy  because the ballots involved 
-         are simply plaintext, and potentially, it could lead coercion and vote-selling.
+\item Privacy: There is no privacy  because the ballots involved 
+         are simply plaintext, and potentially, it could lead coercion and vote-selling (coercion).
 \end{itemize}
 \end{itemize}
 
@@ -1213,9 +1280,9 @@ certificate verifier, possibly in a language such as CakeML
 \citep{Kumar:2014:CVI} that is guaranteed to
 be correct to the machine level. 
 
- In the next chapter, we will try to solve privacy problem, possibly coercion, using encryption, and to keep 
+ In the next chapter, we will try to solve privacy and coercion problem, using encryption, and to keep 
  it verifiable, we will use zero-knowledge-proof. However, solution for privacy comes at cost, e.g. 
  a loss in the pool of scrutineers because auditing a certificate generated by counting encrypted ballot 
- would requires intricate knowledge of cryptography.  
+ would requires intricate knowledge of cryptography.
  
 
