@@ -37,11 +37,21 @@ concrete using the Coq theorem prover. One important point
 in this section is our inductive data type \textit{ECount}
 augmented with verification data in form of zero-knowledge-proof 
 for various claims made during the counting 
-($ECount$ is conceptually similar as $Count$, but 
+($ECount$ is conceptually similar as $Count$ (section \ref{sec:inductive_type}), but 
 in terms of data, $ECount$ has state data related to counting and verification data
-in form of zero-knowledge proof related to claims made by us, while, $Count$ 
-has just state data).  Section \ref{sec:correct} argues 
-program-as-proof 
+in form of zero-knowledge proof related to claims made by us, while $Count$ 
+has just state data).  In the section \ref{sec:correct}, we have demonstrated 
+our main theorem which states that for any set of given encrypted ballots, 
+winner can always be found. Apart from the main theorem, this section 
+also incorporates the proof of correctness by stating 
+the winners produced by encrypted ballots are same as 
+ the plain-text ballots (section \ref{sec:all_winners}) if 
+ encrypted ballots are aligned (decrypt) with plain-text ballot. 
+ Section \ref{sec:extract} focuses on extraction, instantiating 
+ the cryptographic primitives with UniCrypt library, and 
+ experimental results. Finally, section \ref{sec:summary} 
+ highlights our assumptions, scalability issues, the 
+ goals we achieved and the goals we missed. 
 
 
  
@@ -983,12 +993,12 @@ Java data structures.  After instantiating the
 %\end{lstlisting}
 
 
-\begin{wrapfigure}{R}{7.4cm}
+\begin{figure}
 \centering
-\vspace*{-1cm}
-\includegraphics[scale=0.30]{PlotVer3.png}
-\vspace*{-1cm}
-\end{wrapfigure}
+%\vspace*{-1cm}
+\includegraphics[scale=0.50]{PlotVer3.png}
+%\vspace*{-1cm}
+\end{figure}
  We note that the schematic presentation of the certificate above is
  nothing but a representation of the data contained in the extracted
  type \texttt{ECount} that we have chosen to present schematically.
@@ -1024,6 +1034,7 @@ bindings.
 
 
 \section{Summary}
+\label{sec:summary}
 
 \noindent The main contribution of our formalisation is that of independently
 verifiable \emph{evidence} for a set of candidates to be the winners
@@ -1110,7 +1121,7 @@ In a nutshell, the achieved and missed part of this formalization:
 Our formalization leaves some gaps which needed to be filled:
 \begin{itemize}
 \item A formally verified cryptographic library to fill the \texttt{correctness gap}.
-\item A formally verified checker to ease the auditing of election to fill the \textit{Scrutineers} gap
+\item A formally verified checker to ease the auditing of election to fill the \texttt{Scrutineers} gap
 \end{itemize}
 
 
@@ -1123,5 +1134,5 @@ develop formally verified certificate checker for the certificate we produced in
 However, due to time constraint and complex nature of our certificate, we could not 
 formalize every cryptographic primitive needed to verify our certificate. Rather, 
 we have developed a proof of concept formally verified certificate checker for 
- IACR 2018 election (International Association for Cryptologic Research), a simpler 
+ International Association for Cryptologic Research 2018 election, a simpler 
  scrutiny sheet than ours.  
