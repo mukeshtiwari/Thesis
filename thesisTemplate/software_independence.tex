@@ -7,17 +7,17 @@
 \section{Introduction}
 
 
-One of the major disadvantage, as we discusses in the last chapter, of introducing cryptography 
+One of the major disadvantage of introducing cryptography 
 to achieve privacy and verifiability, encryption to make the 
 content of ballot private and zero-knowledge-proof for verification of claims, makes the verification 
 process cumbersome. As a consequence, the verification process (checking the scrutiny sheet) is only accessible 
-to tiny fraction of representative population, mainly cryptographers, results into a sharp decrease in number of scrutineers. 
+to tiny fraction of representative population, cryptographers, results into a sharp decrease in number of scrutineers. 
 While it is not very difficult to find cryptographers in any economy, 
 they are not in abundance, and in addition, they are not representative of democracy. 
 In order to increase the number of scrutineers, we follow the route of providing a formally verified open-source 
 reference certificate checker, which anyone can inspect and run on the election data. 
-  The rationale behind formally verified certificate checker is \emph{correctness}, 
-  and open-source is to gain the public trust  via scrutiny or openness.  
+  The rationale behind formally verifying the certificate checker is \emph{correctness}
+  and open sourcing is to gain the public trust  via scrutiny or openness.  
   For example, consider a scenario where we do not provide the reference checker,
   then how 
   likely would it be for community/voters to develop the 
@@ -45,8 +45,167 @@ good to  have openness in democracy to make it more strong.
 \textbf{Chapter Outline:} 
 
 
-In this chapter, we flesh down all the concepts required to develop a certificate  in the certificate we generated 
 
+In this chapter, we sketch all the concepts required to develop a verified certificate checker for the certificate we generated 
+in the last chapter.  We have already explained our certificate in the section \ref{sec:extract}, but intuitively, 
+checking our certificate amounts to prove that  homomorphic margin has been computed correctly and zero-knowledge-proof for each claim checks out, which is honest decryption, 
+a ballot has been permuted by the same permutation whose commitment is published (commitment consistent shuffle \citep{Wikstrom:2009:CPS}), and 
+homomorphic computing of final tally.  We will give a formal proof of honest decryption, Pedersen's commitment, and homomorphic computing of 
+tally; however, we will not prove the  shuffle (it is still ongoing work).  
+
+We have taken a minor detour in this chapter 
+
+
+
+\section{Algebraic Structures: Builing Blocks}
+The basic building blocks any cryptographic system are algebraic structures, specifically cyclic group of prime order. More formally:
+
+\begin{definition}[Group] 
+A group is a set $G$, with a binary operator $* : G \rightarrow G \rightarrow G$, identity element $e$, and inverse operator $inv : G \rightarrow G$ such 
+    that the following laws hold:  \end{definition} 
+    \begin{itemize}
+     \item \texttt{Associativity}: $\forall$  a b c $\in G,$  $a * (b * c) = (a * b) * c$
+    \item \texttt{Closure}: $\forall$ a b $\in G,$  $a * b \in G$
+    \item \texttt{Inverse Element}: $\forall$ a $\in G$ $\exists$ $a^{-1} \in G$, such that $a * a^{-1} = a^{-1} * a = e$. $a^{-1}$ is called inverse of $a$ ($inv$ a).
+    \item \texttt{Identity}: $\forall$ a $\in G,$  $a * e = e * a  = a$
+    \end{itemize}
+  
+    \noindent
+    If the group is commutative, i.e. $\forall$ a b $\in  G,$  $a * b = b * a$, then we call it abelian group.  We can represent the abelian group in Coq by using the 
+    typeclass functionality. 
+ 
+ 
+ \begin{verbatim}
+
+Record AbelGroup (G : Type) (Hdec : forall x y : G, {x = y} + {x <> y}) 
+       (dot : G -> G -> G)  (inv : G -> G) (e : G) :=
+  {
+    dot_associativity : forall x y z, 
+      dot x (dot y z) = dot (dot x y) z;
+    dot_left : forall x, dot x e = x;
+    dot_right : forall x, dot e x = x;
+    left_inverse : forall x, dot (inv x) x = e;
+    right_inverse : forall x, dot x (inv x) = e;
+    commutative : forall x y, dot x y = dot y x
+  }.
+  
+\end{verbatim}    
+
+\noindent
+Our Coq encoding is slight different from the definition of the group we gave above, mainly that \textit{G : Type} "read it as A has the type Type" and 
+\textit{(Hdec : forall x y : G, {x = y} + {x <> y})}. Because of theoretical foundations of Coq lies in type theory, every term in Coq has to have a type;
+hence we need to explicitly state the type of term $G$, and we assume a decidable equality $Hdec$ on the elements of $G$.  
+
+
+
+\begin{verbatim}
+
+Record VectorSpace (F G : Type)
+      (Hfdec : forall x y : F, {x = y} + {x <> y})
+      (Hgdec :  forall x y : G, {x = y} + {x <> y})
+      (Fadd Fsub Fmul Fdiv : F -> F -> F) 
+      (Fopp Finv : F -> F)
+      (Fzero Fone : F)
+      (Gdot : G -> G -> G) (Gone : G)
+      (Ginv : G -> G) (op : G -> F -> G) :=
+  {
+    vs_field :> @field_theory F Fzero Fone Fadd
+             Fmul Fsub Fopp Fdiv Finv (@eq F);
+    module_abegrp :> @AbelGroup G Hgdec Gdot Ginv Gone;
+    mod_dist_Gdot : forall (r : F) (x y : G),
+        op (Gdot x y) r = Gdot (op x r) (op y r);
+    mod_dist_Fadd : forall (r s : F) (x : G),
+        op x (Fadd r s) = Gdot (op x r) (op x s);
+    mod_dist_Fmul : forall (r s: F) (x : G),
+        op x (Fmul r s) = op (op x s) r;
+    mod_id : forall (x : G), op x Fone = x;
+    mod_ann : forall (x : G), op x Fzero = Gone;
+  }.
+\end{verbatim}
+
+\section{Commitment Schemes}
+
+
+\section{Sigma Protocol: Efficient Zero-Knowledge-Proof}
+A sigma protocol is a two party protocol, a prover $P$ and a verified $V$, where prover $P$ try to convince the $V$ that he 
+holds a private input $x$ for some public input $w$ such that a binary relation $R$ holds, i.e. $(x, w) \in R$.  Sigma protocol, 
+in general, is a three step protocol:
+\begin{enumerate}
+\item Initialisation: $P$ generates a random message $r$, commits it, and send the committed message to $V$
+\item Challenge: $V$ generates a random message $c$, and sends it to $V$
+\item Response: $P$ sends a response $z$ to $V$
+\end{enumerate} 
+
+\noindent
+Upon receiving the response $z$, $V$ either accepts the proof or rejects the proof.  
+
+
+
+We can represent the sigma protocol in Coq as:
+\begin{verbatim}
+Record SigmaProtocol (PubInput : Type) (* Statement x *)
+       (Witness : Type) (* witness w *)
+       (Rel : PubInput -> Witness -> bool) (* decidable relation *)
+       (RandCoin : Type) (* random coin *) 
+       (Commitment : Type) (* commitments *)
+       (Challenge : Type) (* challenges *) 
+       (Response : Type) (* response *) :=
+  MkSigma 
+    {
+      (* Initial commitment send by the prover *)
+      initial : RandCoin  -> Commitment;
+      (* Randomness send by the verifier.  *)     
+      challenge : Challenge;
+      (* response generate by prover *)
+      response : Witness -> RandCoin -> Challenge -> Response;
+      (* check the response *)
+      check : PubInput -> Commitment -> Challenge -> Response -> bool;
+    }.
+\end{verbatim}
+
+\noindent
+\textbf{Completeness:} When $P$ and $V$ follow the protocol, then $V$ accepts the proof. In Coq formulation:
+\begin{verbatim}
+ Axiom completeness : forall (x : PubInput) (w : Witness) 
+          (r : RandCoin) (com : Commitment) 
+          (cha : Challenge) (res : Response),
+          Rel x w = true -> com = initial r -> 
+          res = response w r cha ->
+          check x com cha res = true.
+\end{verbatim}
+
+\noindent
+The correctness axiom is mere formulation of what it means to be $P$ and $V$ follows the protocol. 
+All it says that for every given public input $x$, witness $w$, random coin toss $r$ of $P$, 
+commitment $c$, challenge $chal$ of $V$,  and response $res$, if the relation $Rel$ $x$ $w$ holds,
+commitment $com$ depends on the random coin toss $r$,  response $res$ depends on 
+witness $w$ and random coin $r$ and challenge $cha$, then $v$ always accepts the proof, i.e. 
+$check$ returns true based on public inputs. 
+
+
+
+\subsection{Discrete Log}
+\subsection{Honest Decryption is Diffie Hellman Tuple}
+
+\section{Homomorphic Tally}
+We encrypt each entry in our ballot by additive ElGamal encryption. 
+
+\begin{verbatim}
+  
+ elGamal_enc (g h : G) (m : G) (r : G) := (g^r, g^m * h^r)
+ elGamal_dec (
+ matrix_mult (rMargin : Matrix cand_all cand_all (G * G) := pointwise multliplication
+ 
+\end{verbatim}
+
+
+
+\section{IACR 2018 Election}
+
+
+
+\section{Summary}
+In this chapter, we have sketch the ideas for developing a formally verified certificate checker. 
 
 \begin{enumerate}
 \item Diffie-Hellman Tuple for honest decryption
@@ -55,6 +214,9 @@ In this chapter, we flesh down all the concepts required to develop a certificat
 \item Pedersan Commitment 
 \item Wikstrom shuffle 
 \end{enumerate}
+
+
+
 
 
 \begin{enumerate}
