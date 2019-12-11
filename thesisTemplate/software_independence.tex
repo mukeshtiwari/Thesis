@@ -58,16 +58,19 @@ We have taken a minor detour in this chapter
 
 
 \section{Algebraic Structures: Builing Blocks}
-The basic building blocks any cryptographic system are algebraic structures, specifically cyclic group of prime order. More formally:
+The basic building blocks any cryptographic system are algebraic structures, specifically cyclic group of prime order, field and vector space. In general, 
+we do not need vector space, and group and field are sufficient for most of the cryptographic purposes. However,
+vector space  of a cyclic group of prime order over the field of integers modulo the same order is nicer to work 
+because multiplying a group element by a field element can be abstracted over scalar multiplication. 
 
 \begin{definition}[Group] 
 A group is a set $G$, with a binary operator $* : G \rightarrow G \rightarrow G$, identity element $e$, and inverse operator $inv : G \rightarrow G$ such 
     that the following laws hold:  \end{definition} 
     \begin{itemize}
-     \item \texttt{Associativity}: $\forall$  a b c $\in G,$  $a * (b * c) = (a * b) * c$
-    \item \texttt{Closure}: $\forall$ a b $\in G,$  $a * b \in G$
-    \item \texttt{Inverse Element}: $\forall$ a $\in G$ $\exists$ $a^{-1} \in G$, such that $a * a^{-1} = a^{-1} * a = e$. $a^{-1}$ is called inverse of $a$ ($inv$ a).
-    \item \texttt{Identity}: $\forall$ a $\in G,$  $a * e = e * a  = a$
+     \item \texit{Associativity}: $\forall$  a b c $\in G,$  $a * (b * c) = (a * b) * c$
+    \item \texit{Closure}: $\forall$ a b $\in G,$  $a * b \in G$
+    \item \texit{Inverse Element}: $\forall$ a $\in G$ $\exists$ $a^{-1} \in G$, such that $a * a^{-1} = a^{-1} * a = e$. $a^{-1}$ is called inverse of $a$ ($inv$ a).
+    \item \texit{Identity}: $\forall$ a $\in G,$  $a * e = e * a  = a$
     \end{itemize}
   
     \noindent
@@ -96,31 +99,65 @@ Our Coq encoding is slight different from the definition of the group we gave ab
 \textit{(Hdec : forall x y : G, {x = y} + {x <> y})}. Because of theoretical foundations of Coq lies in type theory, every term in Coq has to have a type;
 hence we need to explicitly state the type of term $G$, and we assume a decidable equality $Hdec$ on the elements of $G$.  
 
-
-
+\begin{definition}[Field] 
+A field  is a set $F$, with two binary operator $+ : F \rightarrow F \rightarrow F$,  and $\cdot : F \rightarrow F \rightarrow F$, 
+two identity element $0$ and $1$, and two unary operator $- : F \rightarrow F$, $1/ : F \rightarrow F$  such that:
+\end{definition} 
+ \begin{itemize}
+ \item (F, +, 0, -) forms an abelian group.
+ \item (F - $\lbrace 0 \rbrace$, $\cdot$, 1, 1/) forms an abelian group.
+ \item $\cdot$ distributes over +.
+ \end{itemize}
+ 
+ 
+ \fix{rewrite it}
+\begin{Definition}[Vector Space}
+A vector  space is a set 
+ 
+ \begin{definition}[Vector Space]
+	A vector space is a set $G$ with a binary operator $\cdot$, identity 
+	element $e$ in $G$, a unary operator $-_G$, and a set $F$ 
+	with two binary operators $+$ and $*$, two identity elements $0$ and $1$ in $F$,
+	two unary operators $-_F,1/$, and binary (exponentiation) operator ${-}^{-}$  such that:
+        \begin{description}
+		\item[\rm Abelian group:] $\langle G, \cdot, e, -_G \rangle$ form an Abelian Group
+		\item[\rm Field:] $\langle F, +, *, 0, 1, -_F, 1/ \rangle$ form a field
+		\item[\rm Distributivity with respect to vector
+                  addition:] ~\\
+                  $\forall r \in F, \forall x, y \in G, (x \cdot y)^r = x^r \cdot y^r$
+		\item[\rm Distributivity with respect to field addition:] ~\\
+                     $\forall r, s \in F, \forall x \in G, x^{r+s} = x^r \cdot x^s$
+		\item[\rm Compatibility:] $\forall r, s \in F, \forall x \in G, x^{r*s} = x^{r^s}$
+		\item[\rm Identity:] $\forall x \in G, x^1 = x$
+		\item[\rm Annihilator:] $\forall x \in G, x^0 = 1$
+        \end{description}
+\end{definition}
+ 
 \begin{verbatim}
 
-Record VectorSpace (F G : Type)
-      (Hfdec : forall x y : F, {x = y} + {x <> y})
-      (Hgdec :  forall x y : G, {x = y} + {x <> y})
-      (Fadd Fsub Fmul Fdiv : F -> F -> F) 
-      (Fopp Finv : F -> F)
-      (Fzero Fone : F)
-      (Gdot : G -> G -> G) (Gone : G)
-      (Ginv : G -> G) (op : G -> F -> G) :=
+Record VectorSpace (G F : Type)
+       (Gdot : G -> G -> G) (Sop : G -> F -> G)
+       (Hfdec : forall x y : F, {x = y} + {x <> y})
+       (Hgdec :  forall x y : G, {x = y} + {x <> y})
+       (Fadd Fsub Fmul Fdiv : F -> F -> F) 
+       (Fopp Finv : F -> F)
+       (Fzero Fone : F)
+       (Gone : G)
+       (Ginv : G -> G) :=
   {
-    vs_field :> @field_theory F Fzero Fone Fadd
+    vs_field : @field_theory F Fzero Fone Fadd
              Fmul Fsub Fopp Fdiv Finv (@eq F);
-    module_abegrp :> @AbelGroup G Hgdec Gdot Ginv Gone;
+    module_abegrp :  @AbelGroup G Hgdec Gdot Ginv Gone;
     mod_dist_Gdot : forall (r : F) (x y : G),
-        op (Gdot x y) r = Gdot (op x r) (op y r);
+        Sop (Gdot x y) r = Gdot (Sop x r) (Sop y r);
     mod_dist_Fadd : forall (r s : F) (x : G),
-        op x (Fadd r s) = Gdot (op x r) (op x s);
+        Sop x (Fadd r s) = Gdot (Sop x r) (Sop x s);
     mod_dist_Fmul : forall (r s: F) (x : G),
-        op x (Fmul r s) = op (op x s) r;
-    mod_id : forall (x : G), op x Fone = x;
-    mod_ann : forall (x : G), op x Fzero = Gone;
+        Sop x (Fmul r s) = Sop (Sop x s) r;
+    mod_id : forall (x : G), Sop x Fone = x;
+    mod_ann : forall (x : G), Sop x Fzero = Gone;
   }.
+
 \end{verbatim}
 
 \section{Commitment Schemes}
@@ -137,31 +174,85 @@ in general, is a three step protocol:
 \end{enumerate} 
 
 \noindent
-Upon receiving the response $z$, $V$ either accepts the proof or rejects the proof.  
-
-
-
-We can represent the sigma protocol in Coq as:
+Upon receiving the response $z$, $V$ either accepts the proof or rejects the proof.  Now we define the sigma protocol in 
+Coq as:
 \begin{verbatim}
-Record SigmaProtocol (PubInput : Type) (* Statement x *)
+Record SigmaProtocol (Statement : Type) (* statement x *)
        (Witness : Type) (* witness w *)
-       (Rel : PubInput -> Witness -> bool) (* decidable relation *)
-       (RandCoin : Type) (* random coin *) 
+       (Rel : Statement -> Witness -> bool) (* decidable relation *)
+       (RandCoin : Type) (* random coin of prover*) 
        (Commitment : Type) (* commitments *)
-       (Challenge : Type) (* challenges *) 
+       (Challenge : Type) (* random challenges of verifier *) 
        (Response : Type) (* response *) :=
   MkSigma 
     {
       (* Initial commitment send by the prover *)
-      initial : RandCoin  -> Commitment;
+      initial : Statement -> Witness -> RandCoin  -> 
+         Statement * Commitment;
       (* Randomness send by the verifier.  *)     
-      challenge : Challenge;
+      challenge : Statement * Commitment -> Challenge -> 
+         Statement * Commitment * Challenge;
       (* response generate by prover *)
-      response : Witness -> RandCoin -> Challenge -> Response;
+      response : Statement * Commitment * Challenge -> 
+        Witness -> RandCoin -> 
+        Statement * Commitment * Challenge * Response; 
       (* check the response *)
-      check : PubInput -> Commitment -> Challenge -> Response -> bool;
+      verify:  Statement * Commitment * Challenge * Response -> bool;
+      (* Simulator *)
+      simulator : Statement -> Challenge -> Response ->
+        Statement * Commitment * Challenge * Response;
+      (* Extractor *)
+      extractor : Challenge -> Response -> Challenge -> 
+         Response -> Witness;
+      
+      (* Completness *)
+      Completness : forall (s : Statement) (w : Witness) (r : RandCoin)
+                      (e : Challenge),
+          Rel s w = true ->
+          verify (response (challenge (initial s w r) e) w r) = true;
+                                       
+      (* Special Soundness *)
+      Special_Soundness : forall s c e1 e2 r1 r2, 
+        verify (s, c, e1, r1) = true ->
+        verify (s, c, e2, r2) = true ->
+        exists w,  w = extractor e1 r1 e2 r2 /\ Rel s w = true;
+      
     }.
+
 \end{verbatim}
+
+\noindent
+Our definition of sigma protocol is almost complete except we have not given 
+the special honest verifier zero knowledge proof axiom.  Recall that special honest 
+verifier zero knowledge proof amounts to a probabilistic polynomial time simulator 
+$S$ which would generate a proof transcript $(a, e, r)$ for any given statement 
+$s$ and challenge $e$ for some relation $R$ with same probability distribution as if there 
+were a real conversation between a prover $P$ and a verifier $V$ 
+for the statement $s$ and challenge $e$ such that $(s, w) \in  R$.
+Informally, the real proof transcript depends on statement $s$, witness $w$, 
+while the simulated proof transcript depends on statement $s$ and challenge $e$. 
+(simulator does have not access to witness $w$, so to generate a accepting 
+proof just by using $s$ and $e$, it uses a concept call rewinding  
+
+
+One important point to note that simulator does not have the access of 
+witness $w$, so in order to generate a accepting proof transcript, 
+it will first choose the challenge $e$ and response $r$ randomly, and generate 
+the commitment. 
+
+The zero-knowledge property means that "whatever the verifier outputs from this interaction, he could have generated without interacting at all". If that's true, then the interaction must not have conveyed any meaningful "knowledge" to the verifier.
+
+
+
+If we were doing probabilistic reasoning, we could have represent the real view and 
+simulator's view as following:
+\begin{verbatim}
+
+
+\end{verbatim}
+
+
+
 
 \noindent
 \textbf{Completeness:} When $P$ and $V$ follow the protocol, then $V$ accepts the proof. In Coq formulation:
