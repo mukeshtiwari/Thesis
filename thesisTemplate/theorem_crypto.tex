@@ -104,7 +104,7 @@ augmentation of Calculus of Construction
  \%d is a directive for integer value, but the type of input, "hello Coq", is string. In addition, 
  type-safe printf should print the input when the format string is aligned with type of input, e.g.
  printf "\%s \%d" "hello Coq" 42 should print the string "hello Coq  42" because the first directive 
- of format string, \%s, and type of input, "hello Coq", is aligned. Similarly, the second directive 
+ of format string, \%s, and type of input, "hello Coq", are aligned. Similarly, the second directive 
  of format string, \%d, is also aligned with the type of input, 42.
  
  The high level idea is to split the printf arguments into two parts: i) format string, 
@@ -138,8 +138,10 @@ Inductive format :=
 Fixpoint format_string (inp : string) : format :=
   match inp with
   | EmptyString => Fend
-  | String ("%"%char) (String ("d"%char) rest) => Fint (format_string rest)
-  | String ("%"%char) (String ("s"%char) rest) => Fstring (format_string rest)
+  | String ("%"%char) (String ("d"%char) rest) => 
+        Fint (format_string rest)
+  | String ("%"%char) (String ("s"%char) rest) => 
+       Fstring (format_string rest)
   | String c rest => Fother c (format_string rest)
   end.
 
@@ -266,7 +268,7 @@ Qed.
   hinges on the implementation. 
   Coq implementation (written in OCaml)  has two parts, the type checker (small kernel), 
   and tactic language to build the proofs.
-  We lay our trust in type checker, because it's small kernel and can be 
+  We lay our trust in type checker, because it is a small kernel and can be 
   manually inspected. Furthermore, if there
   is a bug in tactic language, which often is the case, then build proof would 
   not pass the type checker.  Also, we can use the publicly available proof 
@@ -454,8 +456,8 @@ Qed.
 		A encryption scheme is homomorphic if for any two plaintext $x$ and $y$:
 		\begin{displayquote}
 		
-		 $Enc(x) \bigotimes Enc(y) = Enc (x \bigoplus y)$  where 
-		$Enc$ is encryption function, $\bigotimes$ is operation on ciphertext, and $\bigoplus$
+		 $Enc_{pk}(x) \bigotimes Enc_{pk}(y) = Enc_{pk} (x \bigoplus y)$  where 
+		$Enc$ is encryption function, $pk$ is the public key, $\bigotimes$ is operation on ciphertext, and $\bigoplus$
 		 is operation on plaintext.
 		
 		\end{displayquote}
@@ -463,7 +465,7 @@ Qed.
 		These two operators $\bigotimes$ and $\bigoplus$ are very specific. If a cryptosystem that supports an arbitrary 
 		function $f$ on ciphertext, then it is called fully homomorphic cryptosystem:
 		\begin{displayquote}
-		  $ f (Enc(m_{1}), Enc(m_{2}), ..., Enc(m_{k}) = Enc( f (m_{1}, m_{2}, ..., m_{k}))$ 
+		  $ f (Enc_{pk}(m_{1}), Enc_{pk}(m_{2}), ..., Enc_[pk}(m_{k}) = Enc_{pk}( f (m_{1}, m_{2}, ..., m_{k}))$ 
 	    \end{displayquote}
 		
 		\noindent
@@ -471,14 +473,14 @@ Qed.
 		in this thesis we are mostly concern with partially homomorphic encryption (either additive or multiplicative, but not both),
 		specifically additive ElGamal, 
 		so we are not going to present the details overview 
-		of Craig Gentry fully homomorphic construction. From now on, we would be using homomorphic encryption for 
+		of Craig Gentry fully homomorphic construction. From now on, we would be using the term homomorphic encryption for 
 		partially homomorphic encryption. 
 		 	    
 	    
 	    
 	    
 	     
-	    Now that, keeping in mind that homomorphic encryption enables us to perform useful operation on encrypted data, 
+	    Now, keeping in mind that homomorphic encryption enables us to perform useful operation on encrypted data, 
 	    we will see what kind of homomorphic property is exhibited by the ElGamal method discussed in the previous section. 
 	    Given a public infrastructure <$G, p, g, h$> for ElGamal scheme, 
 	     we encrypt two message $m_{1}$ and $m_{2}$ by taking two random numbers $r_{1}$,  $r_{2}$ from the group:
@@ -660,9 +662,10 @@ Qed.
      $z_{1} = r + w * c_{1}$ and  $z_{2} = r + w * c_{2}$, we can find the witness w by  $(z_{2} - z_{1})/(c_{2} - c_{1})$.
      
      \item Honest Verifier Zero Knowledge also holds. Simulator can always produce a transcript $(g^{z} x^{-c}, c, z)$ by randomly 
-     choosing $c$, the random choice $c$ is the reason for special honest verifier zero knowledge, and $z$.
+     choosing $c$ (the random choice $c$ is the reason for special honest verifier zero knowledge), and $z$. 
      \end{itemize}
      
+     \subsection{Fiat-Shamir Transform}
    
      \subsection{Commitment Schemes}   
      \label{sec:commscheme}
@@ -691,8 +694,9 @@ Qed.
       and the decision would be taken accordingly \footnote{Story influenced by Manuel Blum's coin flipping by telephone}. 
       
       
-      Formally, a commitment scheme is two step protocol between a sender $S$ and a receiver $R$:
+      Formally, a commitment scheme is three step protocol between a sender $S$ and a receiver $R$:
       \begin{enumerate}
+      \item Key Generation phase:
       \item Commit phase: sender $S$ commits a value $m$ by generating a random number $r$ and using some algorithm $C$, which takes the message 
       and random $r$. Moreover, the committed value produced by the commitment algorithm $C$, $c = C(m, r)$, is shared with receiver $R$.
       \item Reveal phase: In the reveal phase, the sender reveals the message $m$ and randomness $r$ which are subsequently used by 
@@ -723,7 +727,7 @@ Qed.
      
 	\end{itemize}      
 
-
+	\fix{perfectly hiding and computationally binding}
 
 \section{Summary}
 In this chapter, we gave a brief summary of Coq theorem prover and cryptographic notation needed to understand the further chapters. By no means, 
