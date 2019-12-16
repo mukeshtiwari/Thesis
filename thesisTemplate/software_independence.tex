@@ -43,9 +43,6 @@ good to  have openness in democracy to make it more strong.
   simply running the checker, which has been checked by a community having the 
   expertise of cryptography and logic. 
 
-\textbf{Chapter Outline:} 
-
-
 
 In this chapter, we will discuss all the concepts required to develop a verified certificate checker for the certificate we generated 
 in the last chapter.  We have already explained our certificate in the section \ref{sec:extract}, but intuitively, 
@@ -61,9 +58,19 @@ its complexity and would take a fair amount of time (the efforts are ongoing).  
 of the concepts explained in this chapter would be sufficient to develop the formally verified 
 certificate checker for IACR election. 
 
+\textbf{Chapter Outline:} In the section $\ref{sec:algebra}$, we discuss the underlying algebraic structures needed for various 
+ cryptographic operations. Section $\ref{sec:pedersen}$ focuses on generalizing the Pedersen commitment scheme for 
+ a matrix. In the following section $\ref{sec:sigma_coq}$, we discuss the details of sigma protocol, and its formalization 
+ in Coq. Moreover, we also discuss how to turn a probabilistic reasoning, which is the heart of sigma protocols, to 
+ deterministic reasoning without losing the meaning of sigma protocol. In section $\ref{sec:conc_sigma}$, we show 
+ how to make a concrete instance of sigma protocol by giving an example of discrete logarithm. In addition, 
+ we show the protocol needed for honest decryption (section $\ref{sec:dec_sigma}$). Section $\ref{sec:homo_tally}$ sketches 
+ the homomorphically tally based on additive ElGamal scheme. Finally, we discuss the IACR scrutiny sheet in section $\ref{sec:election_iacr}$, 
+ and we summarize the chapter in the section $\ref{sec:summary}$
 
 
 \section{Algebraic Structures: Building Blocks}
+\label{sec:algebra}
 The basic building blocks any cryptographic system are algebraic structures, specifically cyclic group of prime order, field and vector space. In general, 
 we do not need vector space, and group and field are sufficient for most of the cryptographic purposes. However,
 vector space  of a cyclic group of prime order over the field of integers modulo the same order is nicer to work 
@@ -132,32 +139,66 @@ is  a vector space over a field $\mathbb{F}$ if the following properties hold:
 
 \end{itemize}
 
- 
-% \begin{definition}[Vector Space]
-%	A vector space is a set $G$ with a binary operator $\cdot$, identity 
-%	element $e$ in $G$, a unary operator $-_G$, and a set $F$ 
-%	with two binary operators $+$ and $*$, two identity elements $0$ and $1$ in $F$,
-%	two unary operators $-_F,1/$, and binary (exponentiation) operator ${-}^{-}$  such that:
-%        \begin{description}
-%		\item[\rm Abelian group:] $\langle G, \cdot, e, -_G \rangle$ form an Abelian Group
-%		\item[\rm Field:] $\langle F, +, *, 0, 1, -_F, 1/ \rangle$ form a field
-%		\item[\rm Distributivity with respect to vector
-%                  addition:] ~\\
-%                  $\forall r \in F, \forall x, y \in G, (x \cdot y)^r = x^r \cdot y^r$
-%		\item[\rm Distributivity with respect to field addition:] ~\\
-%                     $\forall r, s \in F, \forall x \in G, x^{r+s} = x^r \cdot x^s$
-%		\item[\rm Compatibility:] $\forall r, s \in F, \forall x \in G, x^{r*s} = x^{r^s}$
-%		\item[\rm Identity:] $\forall x \in G, x^1 = x$
-%		\item[\rm Annihilator:] $\forall x \in G, x^0 = 1$
-%        \end{description}
-%\end{definition}
-% 
 
-\section{Commitment Schemes}
+
+\section{Pedersen Commitment Scheme}
+\label{sec:pedersen}
+Recall that in the last chapter to prove that if a ballot was valid or invalid, we generated a secret permutation $\pi$ and published its commitment using 
+Pedersen commitment scheme. Later, we use this to shuffle each row and column of the ballot by this (secret) permutation. 
+In the shuffle algorithm \citep{Wikstrom:2009:CPS}), the data structure of permutation $\pi$ is matrix (a permutation matrix to be precise).
+In this section, we discuss that how to use generalize Pedersen commitment scheme for matrix. 
+
+A Pedersen commitment for any two give group element $g$ $h$ $\in G$, a message $m \in \mathbb{F}$, and random element 
+$r \in \mathbb{F}$ is:
+
+\begin{displayquote}
+
+$\text{Pedersen\_commitment  g h m r := } g^r \cdot h^m$  
+
+\end{displayquote}
+
+We can extend the Pedersen commitment for a group element $g$, 
+vector of $n$ group element $h_{1}, h_{2} \dots h_{n}$, vector of $n$ 
+field element $m_{1}, m_{2} \dots m_{n}$, and a random field element 
+$r$ is:
+
+\begin{displayquote}
+
+$\text{Pedersen\_generalized g hs ms r := } g^r \cdot \prod_{i = 1}^n  h_{i}^{m_{i}}$  
+
+\end{displayquote}
+
+The $\prod_{i = 1}^n  h_{i}^{m_{i}}$ function can be written in Coq as 
+(this program is written in tactic mode):
+
+\begin{verbatim}
+Theorem pedersen_generalized : forall (n : nat), 
+   Vector.t G (S n) -> Vector.t F (S n) -> G.
+Proof.
+  induction n.
+  intros h m .
+  inversion h;
+    inversion m.
+  exact (h0 ^ h1).
+  intros hs ms.
+  inversion hs; 
+    inversion ms.
+  exact ((h0 ^ h) * 
+  IHn H0 H2).
+Defined.
+\end{verbatim}
+
+Finally, to commit a matrix of size $NxN$, we need to call 
+$Pedersen\_generalized$ on each column of matrix which 
+would produce a vector of commitment of size N.
+
+
+ 
 
 
 
 \section{Sigma Protocol: Efficient Zero-Knowledge-Proof}
+\label{sec:sigma_coq}
 A sigma protocol is a two party protocol, a prover $P$ and a verified $V$, where prover $P$ try to convince the $V$ that he 
 holds a private input $x$ for some public input $w$ such that a binary relation $R$ holds, i.e. $(x, w) \in R$.  Sigma protocol, 
 in general, is a three step protocol:
@@ -336,6 +377,7 @@ we can define parallel composition, AND composition,
 EQ composition, OR composition, etc.
 
 \subsection{Concrete Sigma Protocol: Discrete Logarithm}
+\label{sec:conc_sigma}
 One of the most basic sigma protocol is proof of knowledge of 
 discrete logarithm, i.e. given two elements$g$ and $h$ of 
 a group $G$, prover convinces the verifier that 
@@ -355,7 +397,7 @@ a challenge $e$, and so forth:
 
 \begin{displayquote}
 
-$\text{initial (r : RandCoin) := } g^r}$  
+$\text{initial r := } g^r}$  
 
 $\text{challenge := } e$
 
@@ -374,6 +416,7 @@ Based on these definitions, we can easily discharge the three proofs, \textit{Co
 algebraic manipulation.
 
 \subsection{Honest Decryption: Diffie Hellman Tuple}
+\label{sec:dec_sigma}
 We have sigma protocol at our arsenal, we focus on honest decryption 
 problem. How can we convince someone that for a given group 
 $(G, g, p, h)$ and private key $x$ ($h := g^x$), the message $m$ is the 
@@ -415,6 +458,7 @@ decryption of $(c_{1}, c_{2})$.  Clearly, the tuple $(g, h, g^r, h^r \cdot g^{m_
 
 
 \section{Homomorphic Tally}
+\label{sec:homo_tally}
 Now that we have sorted out the correct decryption, the next challenge in our 
 tally sheet is  computing the final tally homomorphically.  Since our encryption 
 is additive ElGamal, and recall that our ballot is matrix of ciphertext: 
@@ -468,6 +512,7 @@ final decrypted tally. As a consequence, if the number of candidates and ballots
 this method is no longer a practical method. 
 
 \section{IACR 2018 Election}
+\label{sec:election_iacr}
 We followed some of these techniques explained above write a formal 
 certificate checker for  IACR 2018 directors election scrutiny sheet.  
 The 2018  IACR directors election considered seven 
@@ -577,6 +622,7 @@ yes, which asserts that the result produced were correct.
 
 
 \section{Summary}
+\label{sec:summary}
 In this chapter, we have sketched the ideas for developing a formally verified certificate checker
 for the certificate we produced in the last chapter. However, due to time constraint and 
 complexity of shuffle primitive, 
@@ -584,10 +630,10 @@ we ended up verifying a simple certification, which did not not involve any zero
 of shuffle.  Finally, in this chapter we closed the loop of decrease in number of scrutineers because 
 any one can run the certificate checker. Moreover, we open sourced the checker, so 
 that it can be inspected by anyone (we would like to call it correctness by democratic 
-process).  However, cryptographic concepts are 
+process).  One thing we would like to emphasize that cryptographic concepts are 
 inherently very complex, so running a certificate checker certainly not amounts 
 to understanding the various bits of cryptography and formal method used to develop the
-certificate checker. 
+certificate checker.
 
 In the next chapter, we will discuss some of the properties of Schulze method which we have 
 formalized in Coq. 

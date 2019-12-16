@@ -329,9 +329,7 @@ Qed.
     These mathematical principal involves 
     various algebraic structures and algorithm to manipulate the object from these structures.
     For example, the underlying mathematical principal of \textit{Diffie-Hellman}  algorithm 
-    is hardness of computing discrete logarithm in finite field. \fix{We will discuss more about these
-    structures in  chapter 7}.
-    
+    is hardness of computing discrete logarithm in finite field.
     
     
   
@@ -665,7 +663,19 @@ Qed.
      choosing $c$ (the random choice $c$ is the reason for special honest verifier zero knowledge), and $z$. 
      \end{itemize}
      
-     \subsection{Fiat-Shamir Transform}
+     \textbf{Fiat-Shamir Transform:}
+      In practice, the \textit{Fiat-Shamir} transform is used to turn a Sigma protocol into a non-interactive proof. 
+      As a consequence, there is no longer any interaction with verifier. A \textit{Fiat-Shamir}  transform to sigma protocol is:
+      
+      \begin{itemize}
+     \item Prover $P$ randomly selects an element $r$ from [0 $\dotsb$ q), computes $a = g^r$
+     \item Prover $P$ computes $c =  H(a || x) $ where $H$ is a hash function
+     \item Prover $P$ computer $z := r + c  * w $
+     \end{itemize}
+      Finally, $P$ publishes the transcript $(a, c, z)$ for anyone to verify her claim. Subsequently, 
+      any one who is verifying the claim has to check two things: (i) $c := H (a || x)$, and (ii) 
+      $g^{z} = a * x^{c}$. 
+      
    
      \subsection{Commitment Schemes}   
      \label{sec:commscheme}
@@ -696,7 +706,6 @@ Qed.
       
       Formally, a commitment scheme is three step protocol between a sender $S$ and a receiver $R$:
       \begin{enumerate}
-      \item Key Generation phase:
       \item Commit phase: sender $S$ commits a value $m$ by generating a random number $r$ and using some algorithm $C$, which takes the message 
       and random $r$. Moreover, the committed value produced by the commitment algorithm $C$, $c = C(m, r)$, is shared with receiver $R$.
       \item Reveal phase: In the reveal phase, the sender reveals the message $m$ and randomness $r$ which are subsequently used by 
@@ -727,7 +736,7 @@ Qed.
      
 	\end{itemize}      
 
-	\fix{perfectly hiding and computationally binding}
+	
 
 \section{Summary}
 In this chapter, we gave a brief summary of Coq theorem prover and cryptographic notation needed to understand the further chapters. By no means, 
