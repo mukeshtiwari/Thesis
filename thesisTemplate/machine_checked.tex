@@ -132,10 +132,8 @@ Qed.
       condorcet_winner c marg -> 
       M marg n d c <= M marg n c d.  
 \end{verbatim}
-
-    
    
-\section[Reversal Symmetry}
+\section{Reversal Symmetry}
  The \textit{Reversal symmetry} is a voting method criterion which states that if the voting method has produced a unique 
  winner, say $c$, based on the cast ballots, then $c$ should not be elected if the individual choices were 
  reversed. In context of Schulze method, we first need to define the unique winner, and ballot reversal. 
@@ -171,10 +169,45 @@ Definition rev_marg
    -marg c d.
 \end{verbatim}
 
+Based on the our definition of $rev\_marg$, we can formally state the reversal symmetry as:
+\begin{verbatim}
+Lemma winner_reversed :
+      forall marg c, unique_winner marg c ->
+      c_wins (rev_marg marg) c = false.
+\end{verbatim}
+
+The lemma, $winner\_reversed$, expresses that if a candidate $c$ is a unique winner 
+with respect to $marg$ (computed from $P$), then she is not a winner with respect 
+to $rev\_marg$ (computed from reversing all the entries in $P$).
 
 
+The proof for this lemma is fairly intuitive. In this lemma, we assume the 
+existence of unique winner, say $c$ with respect to $marg$, which means that the generalize 
+margin between her and every other candidate would be greater than the reverse generalized 
+margin, i.e.  $\forall d$, $M \text{ marg } (c, d)$ > $M \text{ marg } (d, c)$. 
+Intuitively, in this case 
+we can partition all the candidates, assuming that $n$ candidates, into anything  from minimum two set to maximum 
+$n$ singleton set. In two set case, we have a unique winner in one set and rest of the candidates 
+are members of the second set, and in maximum case, there is linear ordering (a chain) starting from winner 
+and going all the way to the candidate who has lost to everyone (also known as \textit{Schwartz Criterion}).
+Moving further, if we compute the generalize margin with respect to $rev\_marg$, then 
+for the candidate $c$ it would be the case that:  $\forall d$, $M \text{ rev\_marg } (c, d)$ <  $M \text{ rev\_marg } (d, c)$. 
+One key observation is that the graph we get after computing the generalized margin with respect to $rev\_marg$ is 
+simply a mirror image, every path is reversed, of the graph we get after computing the generalize margin with respect to $marg$. 
+In terms of Coq, it is:
+\begin{verbatim}
+Lemma path_with_rev_marg :
+  forall k marg c d,
+  Path marg k c d <->  Path (rev_marg marg) k d c.
+\end{verbatim}
 
- 
+
+In connection with \textit{Schwartz Criterion}, the number of partitions in case of $rev\_marg$  
+would remain the same as they were in $marg$ case;
+however, their content would be different. The winner in case of $marg$ would be a loser in case of $rev\_marg$
+\footnote{We are currently focussing on Schwartz Criterion. Once we prove it, then proof of Reversal symmetry would 
+ trivial.}.
+
  	
  
  \section{Summary}
