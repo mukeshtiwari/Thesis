@@ -169,28 +169,22 @@ $\text{Pedersen\_generalized g hs ms r := } g^r \cdot \prod_{i = 1}^n  h_{i}^{m_
 \end{displayquote}
 
 The $\prod_{i = 1}^n  h_{i}^{m_{i}}$ function can be written in Coq as 
-(this program is written in tactic mode):
+(this program is written using Equation library \citep{Sozeau:2019:ERH:3352468.3341690}):
 
 \begin{verbatim}
-Theorem pedersen_generalized : forall (n : nat), 
-   Vector.t G (S n) -> Vector.t F (S n) -> G.
-Proof.
-  induction n.
-  intros h m .
-  inversion h;
-    inversion m.
-  exact (h0 ^ h1).
-  intros hs ms.
-  inversion hs; 
-    inversion ms.
-  exact ((h0 ^ h) * 
-  IHn H0 H2).
-Defined.
+
+Equations prod {F G n}  
+   (f : G -> F -> G) (g : G -> G -> G)
+   (v : Vector.t G (S n)) (w : Vector.t F (S n)) : G :=
+  prod  (n := 0) f g (vcons h _) (vcons m  _) := f h m;
+  prod  (n := S n) f g (vcons h hs) (vcons m ms)  := 
+     g (f h m) (prod f g hs ms).
+
 \end{verbatim}
 
-Finally, to commit a matrix of size $NxN$, we need to call 
-$Pedersen\_generalized$ on each column of matrix which 
-would produce a vector of commitment of size N.
+Finally, to commit a matrix of size $N \times N$, we need to call 
+$Pedersen\_generalized$ on each column of matrix. Consequently, 
+we  would get a vector of commitments of size N.
 
 
  
@@ -628,7 +622,8 @@ for the certificate we produced in the last chapter. However, due to time constr
 complexity of shuffle primitive, 
 we ended up verifying a simple certification, which did not not involve any zero-knowledge-proof 
 of shuffle.  Finally, in this chapter we closed the loop of decrease in number of scrutineers because 
-any one can run the certificate checker. Moreover, we open sourced the checker, so 
+any one can run the certificate checker. Moreover, we open sourced 
+\footnote{https://github.com/mukeshtiwari/secure-e-voting-with-coq} the checker, so 
 that it can be inspected by anyone (we would like to call it correctness by democratic 
 process).  One thing we would like to emphasize that cryptographic concepts are 
 inherently very complex, so running a certificate checker certainly not amounts 

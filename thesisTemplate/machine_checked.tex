@@ -1,15 +1,188 @@
 \chapter{Machine Checked Schulze Properties}
 \label{cha:machine_checked}
- There are various criteria on which we measure the voting scheme. It was not until the pioneer Arrow who proved 
- that a preferential voting scheme can not have all the properties (Arrow Paradox). 
+
+
+ Since the beginning of democracy, social scientist are constantly looking for methods  which would 
+ aggregate the individual choice  to arrive at acceptable group decisions. 
+ In general, these acceptable group decisions were based on intuition of the society at that time,
+ but not backed by mathematical theory. The first mathematical 
+ treatment to combine the individual choices (social mathematics)  can be 
+ attributed to french philosopher and mathematician Marquis de Condorcet (Condorcet method, 1785) and his contemporary
+ and co-national mathematician Jean-Charles de Borda (Borda count, 1770). However, the first formal system, foundational cornerstone
+ of modern social choice theory, for collective preference was given by Kenneth Arrow. In 1950, Kenneth Arrow 
+ published a paper titled \textit{A Difficulty in the Concept of Social Welfare} \citep{arrow1950difficulty}. 
+ In this paper, Kenneth Arrow envisioned an axiomatic system having the properties:
+ 
+ \begin{itemize}
+ \item Unrestricted domain
+ \item Non-dictatorship
+ \item Pareto efficiency
+ \item Independence of irrelevant alternatives
+ \end{itemize}
+ 
+ Moreover, he concluded that no preferential voting method which can combine or aggregate the individual choices into a community wide 
+ ranking would have all the properties of his axiomatic system. This result is now known as \textit{Arrow's impossibility theorem}. 
+
+
+ In the light of impossibility theorem, Schulze method, a preferential voting method, can not have all the properties, and it fails on 
+ Independence of irrelevant alternatives (IIA) criterion. Despite the fact that Schulze method fails on IIA,  it has a plenty of other nice 
+ properties established by social choice theorist. In this chapter, we will discuss some of 
+ the properties.  Moreover, we will show that our implementation adheres to these properties. 
+ 
+ \section{Condorcet Winner}
+	A \textit{Condorcet winner} is a candidate who beats every other candidate in pairwise comparison (also known as head to head competition). 
+	Recall that in Schulze method, the pairwise comparison method was margin function, denoted as $marg$, which defined as:
+	\begin{displayquote}
+	Given a set of ballots $P$ and candidate set $C$, we construct graph $G$ based on the margin function $marg: C \times C \to \mathbb{Z}$. Given two candidates $c, d \in C$,
+the \emph{margin} of $c$ over $d$ is
+the number of voters that prefer $c$ over $d$, minus the number of voters that prefer $d$ over $c$. 
+In symbols:
+\[
+  marg(c, d) = \sharp \lbrace b \in P \mid c >_b d \rbrace -
+            \sharp \lbrace b \in P \mid d >_b c \rbrace
+\] where $\sharp$ denotes cardinality and $>_b$ is the strict
+(preference) ordering given by the ballot $b \in P$.
+ 
+ \end{displayquote}
+  
+	 
+  Now we define the \textit{Condorcet winner} in Coq as:
+ \begin{verbatim}
+Definition condorcet_winner (c : cand) 
+  (marg : cand -> cand -> Z) := forall d, marg c d >= 0.
+\end{verbatim}
+
+  Informally, the definition, \textit{condorcet\_winner}, states that 
+  if a candidate $c$  is \textit{condorcet winner}, then she has been ranked higher against
+  every other candidate.  Having the definition of  condorcet winner, our goal is to concluded that if there is 
+ 	a condorcet winner, the Schulze methods always elects it as a winner.  
+ 	
+\begin{verbatim}
+(* if candidate c is condorcet winner then it's winner of election *)
+ Lemma condorcet_winner_implies_winner (c : cand) 
+    (marg : cand -> cand -> Z) :  condorcet_winner c marg ->
+    c_wins marg c = true. 
+Proof.
+      intros Hc. 
+      pose proof  condorcet_winner_genmarg.
+      pose proof c_wins_true.
+      apply H0. intros d.
+      pose proof (H c d (length cand_all) marg Hc).
+      auto.
+Qed.
+\end{verbatim}
+ 		
+ The proof of this theorem hinges on the two key facts:
+ \begin{enumerate}
+  \item If a canddiate beats everyone in pairwise comparison, then generalized margin between him and every other candidate would 
+      be  greater than or equal to 0.
+  \item If a canddiate beats everyone in pairwise comparison, then generalized margin between every other candidate and him would 
+      be  less than or equal to 0.
+ \end{enumerate}
  
  
- Schulze method comes very close to fulling many criteria set by voting experts; however, 
- it can not full fill all because of Arrow paradox. In  
+ It is not very hard to see these two facts based on the definition of generalized margin. Intuitively, 
+ if a candidate $c$ is the condorcet winner, then the strongest path between her and every other 
+ candidate, say $d$,  would be either a direct path, $marg$ $c$ $d$, or a more stronger path, $M (c, d)$, 
+ via some other intermediate candidates. 
+  
+ \begin{displayquote}
+ A directed \emph{path} in the graph, $G$, from
+candidate $c$ to candidate $d$ is a sequence $p \equiv c_0, \dots, c_{n+1}$
+of candidates with $c_0 = c$ and $c_{n+1} = d$ ($n \geq 0$), and the
+\emph{strength}, st, of path, p, is the minimum margin of adjacent
+nodes, i.e.
+\[ st(c_0, \dots, c_{n+1}) = \min \lbrace m (c_i, c_{i+1}) \mid 0
+\leq i \leq n \rbrace. \]
+\item For candidates c and d, let $M(c, d)$ denote the maximum strength, or generalized margin of a path
+	from c to d i.e. 
+	\[ M(c, d) = \max \lbrace st (p) : \text{p is path from c to d in G} \rbrace\]
+  
+   \end{displayquote}
+   
+ We capture these two facts in Coq:
  
- \section{Properties}
-	 List some properties which it follows with pictures ?
- 	\subsection{Condercet Winner}
- 	\subsection{Reversal Symmetry}
- 	\subsection{Monotonicity}
- 	\subsection{Schwartz set}
+ \begin{verbatim}
+ Lemma gen_marg_gt0 :
+   forall c d n marg, 
+   condorcet_winner c marg -> 
+   M marg n c d >= 0.
+Proof. 
+    (* Coq terms omitted *)
+Qed.
+
+Lemma gen_marg_lt0 :
+   forall c d n marg , 
+   condorcet_winner c marg ->
+   M marg n d c <= 0.
+Proof.
+   (* Coq terms omitted *)
+Qed.
+\end{verbatim}   
+ 
+ Using these two key facts, we concluded that for any condorcet winner candidate $c$, 
+ the generalized margin between her and every other opponent is greater than or equal 
+ to reverse generalized margin between every other candidate and her.  Formally, 
+ in Coq we prove the following theorem on which  the proof of 
+ \textit{condorcet\_winner\_implies\_winner} hinges. 
+ 
+\begin{verbatim}
+ Lemma condorcet_winner_genmarg :
+      forall c d n marg, 
+      condorcet_winner c marg -> 
+      M marg n d c <= M marg n c d.  
+\end{verbatim}
+
+    
+   
+\section[Reversal Symmetry}
+ The \textit{Reversal symmetry} is a voting method criterion which states that if the voting method has produced a unique 
+ winner, say $c$, based on the cast ballots, then $c$ should not be elected if the individual choices were 
+ reversed. In context of Schulze method, we first need to define the unique winner, and ballot reversal. 
+ 
+ \begin{verbatim}
+ Definition unique_winner 
+ (marg : cand -> cand -> Z) (c : cand) :=
+  c_wins marg c = true /\
+  (forall d, d <> c -> c_wins marg d = false).
+\end{verbatim}  
+
+Informally, our definition of \textit{unique\_winner} states that the candidate $c$ is a unique winner
+if it wins the election with respect to computed margin function, $marg$, and every other candidate 
+other than $c$ loses the election. 
+
+We capture the ballot reversal in terms of margin function. For any given ballot set, if the computed 
+margin between two candidates $c$ and $d$ is: 
+\[
+  marg(c, d) = \sharp \lbrace b \in P \mid c >_b d \rbrace -
+            \sharp \lbrace b \in P \mid d >_b c \rbrace
+\] 
+
+If we reverse each ballot from the ballot set, then the new margin function, denoted as $rev\_marg$, would be:
+\[
+  rev\_marg(c, d) = -1 * marg (c, d)
+\] 
+
+We capture this notion formally in Coq as:
+
+\begin{verbatim}
+Definition rev_marg 
+   (marg : cand -> cand -> Z) (c d : cand) :=
+   -marg c d.
+\end{verbatim}
+
+
+
+
+ 
+ 	
+ 
+ \section{Summary}
+ Although, we have just proved two properties of Schulze method (more are still going on), and so far, this chapter 
+ is far from being complete. The rationale behind this chapter was to put forward the idea of 
+ not only implementing the voting method and proving its correctness, but also proving that the implementation 
+ follows the property of voting method. In the next chapter, I will conclude this thesis and some possible 
+ direction for future work. 
+ 
+ 
+ 
