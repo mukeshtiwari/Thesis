@@ -12586,7 +12586,7 @@ abstract = "This paper presents a detailed and up-to-date security analysis of t
 }
 
 @misc{Aussentate,
-  title = {Western Australia Senate Election},
+  title = {Western {A}ustralia {S}enate {E}lection},
   howpublished = {\url{https://www.theguardian.com/world/2014/feb/28/western-australia-senate-election-re-run-to-be-held-on-5-april}},
   note = {Accessed on October 18, 2019.}
 }
@@ -13344,4 +13344,45 @@ isbn="978-3-540-48658-9"
   pages={328--346},
   year={1950},
   publisher={The University of Chicago Press}
+}
+
+@InProceedings{10.1007/978-3-642-28869-2_20,
+author="Jourdan, Jacques-Henri
+and Pottier, Fran{\c{c}}ois
+and Leroy, Xavier",
+editor="Seidl, Helmut",
+title="Validating LR(1) Parsers",
+booktitle="Programming Languages and Systems",
+year="2012",
+publisher="Springer Berlin Heidelberg",
+address="Berlin, Heidelberg",
+pages="397--416",
+abstract="An LR(1) parser is a finite-state automaton, equipped with a stack, which uses a combination of its current state and one lookahead symbol in order to determine which action to perform next. We present a validator which, when applied to a context-free grammar {\$}{\backslash}mathcal G{\$}and an automaton {\$}{\backslash}mathcal A{\$}, checks that {\$}{\backslash}mathcal A{\$}and {\$}{\backslash}mathcal G{\$}agree. Validating the parser provides the correctness guarantees required by verified compilers and other high-assurance software that involves parsing. The validation process is independent of which technique was used to construct {\$}{\backslash}mathcal A{\$}. The validator is implemented and proved correct using the Coq proof assistant. As an application, we build a formally-verified parser for the C99 language.",
+isbn="978-3-642-28869-2"
+}
+
+@InProceedings{10.1007/978-3-030-00419-4_2,
+author="Blom, Michelle
+and Stuckey, Peter J.
+and Teague, Vanessa J.",
+editor="Krimmer, Robert
+and Volkamer, Melanie
+and Cortier, V{\'e}ronique
+and Gor{\'e}, Rajeev
+and Hapsara, Manik
+and Serd{\"u}lt, Uwe
+and Duenas-Cid, David",
+title="Ballot-Polling Risk Limiting Audits for IRV Elections",
+booktitle="Electronic Voting",
+year="2018",
+publisher="Springer International Publishing",
+address="Cham",
+pages="17--34",
+abstract="Risk-limiting post election audits guarantee a high probability of correcting incorrect election results, independent of why the result was incorrect. Ballot-polling audits select ballots at random and interpret those ballots as evidence for and against the actual recorded result, continuing this process until either they support the recorded result, or they fall back to a full manual recount. Ballot-polling for first-past-the-post elections is well understood, and used in some US elections. We define a number of approaches to ballot-polling risk-limiting audits for Instant Runoff Voting (IRV) elections. We show that for almost all real elections we found, we can perform a risk-limiting audit by looking at only a small fraction of the total ballots (assuming no errors).",
+isbn="978-3-030-00419-4"
+}
+
+@inproceedings{anand2017certicoq,
+  title={CertiCoq: A verified compiler for Coq},
+  author={Anand, Abhishek and Appel, Andrew and Morrisett, Greg and Paraskevopoulou, Zoe and Pollack, Randy and Belanger, Olivier Savary and Sozeau, Matthieu and Weaver, Matthew}
 }

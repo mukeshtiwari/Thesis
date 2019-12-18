@@ -1,11 +1,116 @@
-\chapter{Conclusion}
+\chapter{The End of Journey}
 \label{cha:conc}
-Summary your thesis and discuss what you are going to do in the future in Section~\ref{sec:future}.
+This chapter is summarizes the key outcomes of this dissertation, followed by possible 
+future work. 
+
+\section{Conclusion}
+Recall that the journey started with the purpose to make the electronic voting 
+process transparent and trustworthy. The current state of 
+art software program used by many government is mostly black-box which 
+takes a pile of ballots and produces result.  To improve the current situation, 
+we focussed on answering the 
+four main concerns: \textit{(i) correctness}, \textit{(ii) privacy},
+\textit{(iii) coercion resistance}, and \textit{(iv) verifiability (tallied-as-cast)} by 
+using \textit{Schulze method} an example. 
+
+\subsection{Correctness}
+With the intentions to solve the 
+correctness in electronic voting, we approached from 
+mathematical logic.  Rather than implementing the Schulze method, 
+we gave a specification of the Schulze winning condition and losing 
+condition with respected to already computed margin function. 
+Moreover, we proved the correctness properties about our specification.
+Also, we put forward the idea of formalizing the properties 
+of voting protocol (Schulze method) in the framework developed by Kenneth Arrow 
+in theorem prover itself. For example, 
+in the last chapter, we proved the \textit{Condorcet} winner property 
+of Schulze method. Given that ballot counting is one of the most 
+crucial phase of election, the correctness of counting software 
+should be explored from all the possible directions. 
+
+\subsection{Verifiability}
+We answered the verifiability issue by producing a 
+independently checkable scrutiny sheet. In our case, 
+it contained the step by step computation of margin, 
+winners and loser with the proof why they win or 
+lose the election. This scrutiny 
+sheet can be used any independent third to verify the 
+outcome of election. In case of plain-text ballots, 
+achieving verifiability was trivial, but the encrypted 
+ballot case was very complex. The reason 
+for complexity was the inherent nature of cryptography, 
+so to keep the encrypted ballot election verifiable 
+we augmented the scrutiny sheet with zero-knowledge-proofs. 
+Finally, we developed a formally verified certificate checker to ease the 
+auditing of election (although, we ended up developing 
+checker of different election). 
+
+\subsection{Privacy and Coercion Resistance}
+Our approach to privacy and coercion problem was homomorphic encryption. 
+To keep the content of ballot private, we did not decrypt
+any individual ballot and computed the final tally homomorphically 
+by multiplying the cipher-texts. In the final step, we decrypted 
+the fully computed tally, which 
+in turn did not reveal any individual ballots.  Since there 
+was no decryption of any individual ballot, there was 
+no way a voter could have convinced any one about her 
+choices. 
 
 
 \section{Future Work}
 \label{sec:future}
-Good luck.
+\subsection{Formalizing Cryptographic Entities}
+During the formalization, we assume the cryptographic primitives 
+for various construction, e.g. encryption primitive, decryption primitive,
+zero-knowledge-proof primitive, etc. Moreover,  
+we assumed axioms about their correctness property. 
+Formalizing all these primitives and proving the 
+axioms we assumed would further close the trust 
+gap.  
+
+
+\subsection{Formalizing Properties of Schulze Method}
+We have formalized just two properties, 
+\textit{Condorcet winner}, and \textit{Reversal symmetry},
+but taking it further and proving all the properties 
+would put more trust in the implementation. Moreover, 
+it would be a good stress testing for the specification/implementation 
+and see how far it can go. 
+
+\subsection{Formally Verified Checker}
+Another interesting avenue would be to explore
+the formally verified certificate checker.  In our formally verified 
+certificate checker, we extracted OCaml code for certificate checking. 
+However, we wrote a substantial amount of unverified OCaml code 
+for parsing the scrutiny sheet. To alleviate this kind of concerns, 
+it would be worth exploring a verified parser, and, probably, 
+evaluating the whole certificate inside Coq environment. 
+There has already been verified parsers written in 
+Coq \citep{10.1007/978-3-642-28869-2_20}, 
+and given that we proved the two large primes inside a Coq, 
+it does not seem a far fetched concept. 
+
+\subsection{Risk Limiting Audit for Preferential Voting Scheme}
+One challenging potential opportunity would be developing 
+a risk limiting audit system for Schulze method. In nutshell, 
+risk limiting audit is a method to audit the election by 
+randomly sampling the ballots. Risk limiting is very well 
+understood in the first-past-the-post voting system, 
+and some of the work has been done in the context 
+IRV elections \citep{10.1007/978-3-030-00419-4_2},
+but so far none, to the best of my knowledge, 
+for Schulze method.
+
+\subsection{Formalizing Code Extraction}
+This is orthogonal, but very important from the perspective of 
+electronic voting.  One of the biggest concern with code extraction of Coq in OCaml/Haskell 
+is that all the security properties proved inside Coq are no longer valid 
+in OCaml/Haskell. Taking the mission critical importance of electronic voting into account, 
+we need a mechanism to translate the proofs all the way up to assembly level. 
+CertiCoq \citep{anand2017certicoq} seems promising, but it is not very mature yet. The other possibility is 
+using the CakeML \citep{Kumar:2014:CVI} to develop the electronic voting  
+schemes. 
+
 
 
 
