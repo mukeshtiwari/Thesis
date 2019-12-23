@@ -300,7 +300,7 @@ Real_view (s : Statement) (w : Witness) (e : Challenge) := do
 \begin{verbatim}
 Simulator_view (s : Statement) (e : Challenge) := do
  z <- G (* random element from some group G *)
- return (s, g^r * s^(-e), e, z)
+ return (s, g^z * s^(-e), e, z)
 \end{verbatim}
 
 \begin{verbatim}
@@ -338,7 +338,7 @@ Real_view (s : Statement) (w : Witness) (e : Challenge)
 \begin{verbatim}
 Simulator_view (s : Statement) (e : Challenge) 
  (z : Response) :=
- (s, g^r s^(-e), e, z)
+ (s, g^z s^(-e), e, z)
 
 \end{verbatim}
 
@@ -352,14 +352,16 @@ In terms of Coq, it is expressed as:
 
 \begin{verbatim}
  (* Probablistic Reasoning could have made it nicer *)
- Special_Honest_Verifier_ZKP  (s : Statement) (w : Witness) (e : Challenge):
+ Special_Honest_Verifier_ZKP  (s : Statement) 
+  (w : Witness) (e : Challenge) 
+  (Rel : Statement -> Witness -> bool) (H: Rel s w = true),
   forall (r : RandCoin), verify (Real_view s w e r) = true <->
   forall (z : Response), verify (Simulator_view s e z) = true;
 
 \end{verbatim}
 
 The axiom $Special\_Honest\_Verifier\_ZKP$ says that for any  given 
-fixed statement $s$, witness $w$, challenge $e$ and assumption that $Rel$ $s$ $w$ holds, 
+fixed statement $s$, witness $w$, challenge $e$, relation $Rel$, and assumption that $Rel$ $s$ $w$ holds, 
 then for every random coin $r$  and a accepting real transcript, simulator can construct 
 an accepting transcript from all random response drawn from response space. 
 We add this axiom to the record data type $SigmaProtocol$ to make it 

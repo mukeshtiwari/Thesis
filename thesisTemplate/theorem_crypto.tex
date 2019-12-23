@@ -64,16 +64,169 @@ theory of Calculus of
 Inductive Construction \citep{Paulin-Mohring:1993:IDS:645891.671440} which itself is an 
 augmentation of Calculus of Construction 
 \citep{Coquand:1988:CC:47724.47725} with inductive data-type.  
+The underlying theory of CoC and CIC is (typed) lambda calculus, so 
+before we describe the CoC and CIC syntax and its typing judgement, 
+we will take a brief detour to explain 
+different variant of lambda calculus starting from 
+untyped lambda calculus and moving up in the ladder by 
+adding various abstractions. Later, we will show that 
+these all variant, including CoC, can be abstracted into one 
+framework by using pure type system \citep{berardi1988towards} 
+\citep{Barendregt:1993:LCT:162552.162561}. 
+
+
+Lambda calculus was invented by Alonzo Church in the 1930, 
+and his motive was to use lambda calculus as a foundation 
+for formal mathematics, specifically the notation of 
+computable function by means of an algorithm.  
+It is a simplest programming language having just 
+three constructs, i.e. variable, application, and abstraction, 
+and the abstract syntax tree of lambda calculus is:
+\begin{displayquote}
+
+T = V (* Variables *) \\
+   | $\lambda$ V. T (* Abstraction *) \\
+   | T T       (* Application *)
+
+\end{displayquote}
+
+Using these three rules, we can construct the lambda terms corresponding to 
+various mathematical notions. For example, we can represent
+$True$ as $\lambda x. \lambda y. x$, $False$ as $\lambda x. \lambda y. y$,
+$Zero$ as $\lambda f.\lambda x. x$,  $One$ as $\lambda f.\lambda x. f x$, etc. 
+However, there is nothing which is stopping us to construct lambda terms which 
+has no meaning, e.g. applying a variable $x$ with itself learning to a lambda 
+term $x x$. To avoid these kind of terms, we extend the lambda calculus with 
+another abstraction called \textit{types}. Moreover, we add \textit{typing judgement} (rule) 
+which dictates which terms is well-typed and which one is not.  This new 
+lambda calculus augmented with \textit{types} is known as 
+\textit{Simple Typed Lambda Calculus}, represented as $\lambda^{\to}$. 
+The abstract syntax tree for \textit{Simple Typed Lambda Calculus} is:
+
+\begin{displayquote}
+
  
+$\mathcal{T} = \mathcal{V} $ (* Type Variable *) \\
+                     | $\mathcal{T \rightarrow T}$ (* Arrow Type *)
+
+\end{displayquote}
+
+\begin{displayquote}
+T = V (* Variables *) \\
+   | $\lambda$ V : $\mathcal{T}$. T (* Abstraction *) \\
+   | T T       (* Application *)
+
+\end{displayquote}
+
+\noindent
+The typing judgement is a relation between \textit{types} and \textit{terms} in some abstract typing context $\Gamma$. The $\Gamma$ 
+is a set/list of typing assumption of the form $x : A$, meaning $x$ is of type $A$. Moreover, $\Gamma$ $\vdash$ $x : A$ means that 
+the term $x$ has type $A$ in the context $\Gamma$.
+The typing judgement of \textit{Simple Typed Lambda Calculus} 
+has three rules, \textit{Var, Abstraction}, and \textit{Application}, to ensure that the terms are well-typed:
+\begin{itemize}
+\item Var: ${\frac {\text{x : A }  \in \text{  }\Gamma }{\Gamma \text{  } \vdash \text{  x : A }}$
+\item Abstraction: ${\frac {\Gamma \text{, x : A } \vdash \text{ e : B }}{\Gamma \text{  }\vdash \text{ } (\lambda \text{ x : A. e ) : }A \rightarrow B}}$
+\item Application: ${\frac {\Gamma \text{  } \vdash \text{ f : } A \rightarrow B \quad \Gamma \text{  }\vdash \text{ x : A }}{\Gamma \text{  } \vdash \text{  f  x  : B} }}$
+\end{itemize}
+
+\noindent
+Now these three typing judgement rules rule out the term $x x$ because it is not well-typed term, and this can be 
+inferred from \textit{Application} rule. 
+The  \textit{Application} rule states that for $f$ $x$ to be a well typed term of some type $B$, the $f$ has to have 
+a type $A \rightarrow B$ for some type $A$ and $x$ has to have the type $A$. Following the 
+\textit{Application rule}, for $x x$ to be well typed, the $x$ has to have a arrow type $A \rightarrow B$
+and type $A$ in some typing context $\Gamma$. However, it is not possible that $A$ = $A \rightarrow B$
+leading to rejection of term $xx$. 
+
+Simple typed lambda calculus is great for many practical purposes except it is verbose. Consider a function 
+which takes a input and simply returns it, also known as identity function. Assuming that we two 
+base type, $nat$ for the type of natural numbers and $bool$ for type of boolean values, as member of 
+type variable set $\mathcal{V}$. We can represent a
+ identity function on boolean value as $\lambda x : bool. x$, and on natural number as 
+ $\lambda x : nat, x$. In general, we would have one identity function per type. We can 
+ abstract these types in to type variable, but we need to type these type variables as well
+ to keep everything well typed.  Consequently, abstracting the 
+ \textit{types} over type variable, which itself is of sort \textit{kinds} and represented as $*$, 
+ leads to \textit{Second Order Lambda Calculus} ($\lambda2$), and 
+ now the identity function over different types can be abstracted into a single function:
+ $\lambda \alpha : \star. \lambda x : \alpha. x$.
+ There are various other variants or abstractions 
+ of typed lambda calculus, which we would not discuss here, that can be categorized into:
+ \begin{itemize}
+ \item Terms depending on terms ($\lambda^{\to}$)
+ \item Terms depending on types  ($\lambda2$)
+ \item Types depending on types  ($\lambda {\underline{\omega}}$)
+ \item Types depending on terms  ($\lambda P$)
+ \end{itemize}
+
+
+% \begin{figure}[!htb]
+%        \center{\includegraphics[width=\textwidth]{figs/Lambda_Cube_img.svg.png}}
+%        \caption{Lambda Cube}
+%      \end{figure} 
+
+All these variation of lambda calculus can be captured into a unified framework
+known as \textit{Pure Type System} or \textit{Generalized Type System}.
+The \textit{PTS} is group of type system that allows the dependencies between 
+types and terms. Unlike the simple typed lambda calculus ($\lambda^{\to}$) where 
+terms and types live in two disjoint world, \textit{PTS} blurs this distinction between 
+types and terms.  The abstract syntax  of pure type system:
+ \begin{displayquote}
+
+    T = V   (* \textit{variable} *)\\
+       |  C   (* \textit{constant} *)\\
+       | T T (* \textit{application} *)\\
+       | $\lambda$ V : T. T (* \textit{abstraction}*) \\
+       | $\prod$ V : T. T  (* \textit{dependent function type} *)
+   \end{displayquote}
+
+\noindent
+The pure type system parametrized by a specification, i.e. 
+set of sorts $S$, axioms $A$, and rules $R$, such that: 
+
+ \begin{itemize}
+	\item $S$ is a subset of  $C$, i.e.  $S \subseteq C$. 
+	\item $A$ is the axioms of form \textit{c : s} where $c \in C$ and $s \in S$, i.e.  $A \subseteq C \times S$. 
+	\item $R$ is the set of rules of form $(s_{1}, s_{2}, s_{3})$ such that $s_{1}, s_{2}, \text{ and } s_{3} \in S$, i.e.
+	 $R \subseteq S \times S \times S$.
+ 
+ \end{itemize}
+ 
+\noindent 
+The typing judgement for \textit{PTS} is defined by following rules:
+ \begin{itemize}
+ \item Axiom: $\vdash \text{c : s} $ 
+ \item Start: $\frac{\Gamma \text{  } \vdash \text{ A : s}}{\Gamma \text{, x : A }\vdash \text{ x : A}}$
+ \item Weakening: $\frac{\Gamma \text{ } \vdash \text{ A : B } \quad \Gamma \text{ } \vdash \text{ C : s }}{\Gamma, \text{ x : C } \vdash \text{ A : B }}$
+ \item Product: $\frac{\Gamma \text{ } \vdash \text{ A : }s_{1} \quad \Gamma, \text{ x : A } \vdash \text{ B : }s_{2}}{\Gamma \text{ } \vdash (\prod \text{ x : A. B) : }s_{3}}$
+ \item Application: $\frac{\Gamma \text{ }\vdash \text{ F : (}\prod \text{x : A. B)} \quad \Gamma \text{ }\vdash \text{ a : A }}{\Gamma \text{ }\vdash \text{ Fa : B [x := a]}}$
+ \item Abstraction: $\frac{\Gamma, \text{ x : A }\vdash \text{ b : B } \quad \Gamma \text{ }\vdash (\prod \text{x : A. B) : s }}{\Gamma \text{ }\vdash (\lambda \text{x : A. b) : (}\prod \text{ x : A. B)}}$
+ \item Conversion: $\frac{\Gamma \text{ }\vdash \text{ A : B } \quad \Gamma \text{ }\vdash \text{ B' : s } \quad \text{B  }=_{\beta} \text{ B' }}{\Gamma \text{ } \vdash \text{ A : B' }}$
+\end{itemize}   
+
+
+
+
+We would later instantiate these 
+parameters to a specific value to get the instance of Calculus of Construction. 
+ 
+
 
 \subsection{Calculus of Construction}
 \label{sec:cc}
+The Calculus of Construction is a higher order  natural deduction style proof system 
+for constructive proofs where every proof a typed $\lambda$-abstractions.  Its syntax 
+is defined as (a simplified version):
+
+
+
+
+
+
 \subsection{Calculus of Inductive Construction}
 \label{sec:cic}
-%\fix{Flesh out the details of 
-% Calculus of construction and Inductive construction}
-% \fix{Write here about syntax and semantics of CIC}
- 
+
  
 \subsection{Type vs. Prop: Code Extraction}
 \label{sec:typeprop}
@@ -98,7 +251,7 @@ augmentation of Calculus of Construction
   
  
  Using the expressiveness of dependent type, we construct a type-safe version of 
- printf. Our goal is to generate compiler error when the given format string and the type of 
+ printf \citep{Pierce:2004:ATT:107626}. Our goal is to generate compiler error when the given format string and the type of 
  corresponding input values  
  do not match, e.g. printf "\%d \%s" "hello Coq" 42 should be compiler error because
  \%d is a directive for integer value, but the type of input, "hello Coq", is string. In addition, 
@@ -371,12 +524,13 @@ Qed.
 		\item After agreeing with public parameters, Alice and Bob initiates the key exchange protocol (assuming that 
 		 Alice goes first):
 		 \begin{enumerate}
-		   \item Alice selects a random element $a$ from the $G$, computes $g^{a}$ ( $g * g * g ... * g$  $a$ times), and shares 
+		   \item Alice selects a random number $a$, where 1 < $a$ < $p$, computes $g^{a}$ ( $g * g * g ... * g$  $a$ times), and shares 
 		   $g^{a}$ to Bob. 
-		   \item Similarly, Bob selects are random element $b$ from the $G$, computes $g^{b}$, and shares  $g^{b}$
+		   \item Similarly, Bob selects are random number $b$, where 1 < $b$ < $p$, computes $g^{b}$, and shares  $g^{b}$
 		   with Alice.
-		   \item Finally, Alice computes the key $(g^{b})^{a}$, and Bob computes the key $(g^{a})^{b}$.  Because group exponentiation is 
-		   a commutative operator, both, Alice and Bob, have the common key $g^{ab}$. 
+		   \item Finally, Alice computes the key $(g^{b})^{a}$, and Bob computes the key $(g^{a})^{b}$.  A basic 
+		   algebraic simplification on Alice's key and Bob's key would show that they both have the 
+		   common key  $g^{ab}$.
 		   
 		 \end{enumerate}
       \end{enumerate}		

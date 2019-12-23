@@ -5,7 +5,14 @@ future work.
 
 \section{Conclusion}
 Recall that the journey started with the purpose to make the electronic voting 
-process transparent and trustworthy. The current state of 
+process transparent and trustworthy.  The premise was:
+
+\begin{displayquote}
+Given the potential advantages of electronic voting, we need to address the correctness,
+privacy, and verifiability concerns for its widespread adoption.
+\end{displayquote}
+
+The current state of 
 art software program used by many government is mostly black-box which 
 takes a pile of ballots and produces result.  To improve the current situation, 
 we focussed on answering the 
@@ -16,16 +23,19 @@ using \textit{Schulze method} an example.
 \subsection{Correctness}
 With the intentions to solve the 
 correctness in electronic voting, we approached from 
-mathematical logic.  Rather than implementing the Schulze method, 
-we gave a specification of the Schulze winning condition and losing 
+mathematical logic route.  Rather than implementing the Schulze method, 
+we gave a logical specification of the Schulze winning condition and losing 
 condition with respected to already computed margin function. 
+These specifications were simple enough that 
+any one could inspect them, and 
+make sure that the intent is captured correctly in these specifications. 
 Moreover, we proved the correctness properties about our specification.
 Also, we put forward the idea of formalizing the properties 
-of voting protocol (Schulze method) in the framework developed by Kenneth Arrow 
+of voting protocol, in our case Schulze method, in the framework developed by Kenneth Arrow 
 in theorem prover itself. For example, 
 in the last chapter, we proved the \textit{Condorcet} winner property 
 of Schulze method. Given that ballot counting is one of the most 
-crucial phase of election, the correctness of counting software 
+crucial phase of any election, the correctness of counting software 
 should be explored from all the possible directions. 
 
 \subsection{Verifiability}

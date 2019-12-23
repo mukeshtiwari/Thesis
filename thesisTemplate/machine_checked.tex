@@ -11,7 +11,7 @@
  and co-national mathematician Jean-Charles de Borda (Borda count, 1770). However, the first formal system, foundational cornerstone
  of modern social choice theory, for collective preference was given by Kenneth Arrow. In 1950, Kenneth Arrow 
  published a paper titled \textit{A Difficulty in the Concept of Social Welfare} \citep{arrow1950difficulty}. 
- In this paper, Kenneth Arrow envisioned an axiomatic system having the properties:
+ In this paper, Kenneth Arrow envisioned an axiomatic system having the following properties:
  
  \begin{itemize}
  \item Unrestricted domain
@@ -74,9 +74,9 @@ Qed.
  		
  The proof of this theorem hinges on the two key facts:
  \begin{enumerate}
-  \item If a canddiate beats everyone in pairwise comparison, then generalized margin between him and every other candidate would 
+  \item If a canddiate beats everyone in pairwise comparison, then generalized margin between her and every other candidate would 
       be  greater than or equal to 0.
-  \item If a canddiate beats everyone in pairwise comparison, then generalized margin between every other candidate and him would 
+  \item If a canddiate beats everyone in pairwise comparison, then generalized margin between every other candidate and her would 
       be  less than or equal to 0.
  \end{enumerate}
  
@@ -161,6 +161,25 @@ If we reverse each ballot from the ballot set, then the new margin function, den
   rev\_marg(c, d) = -1 * marg (c, d)
 \] 
 
+This fact can also be demonstrated using a single ballot $ABC$. The interpretation is $A$ is strictly preferred over $B$, 
+and $B$ is preferred over $C$ (but we don not need strict preferences to have this property). 
+The margin function constructed from this ballot is: 
+
+\[
+\bordermatrix{ & A & B & C \cr
+      A & 0 & 1 & 1 \cr
+      B & -1 & 0 & 1 \cr
+      C & -1 & -1 & 0 }
+      \]
+      
+After reversing the original ballot, we get $CBA$ and the margin function is:
+\[
+\bordermatrix{ & A & B & C \cr
+      A & 0 & -1 & -1 \cr
+      B & 1 & 0 & -1 \cr
+      C & 1 & 1 & 0 }
+      \]
+
 We capture this notion formally in Coq as:
 
 \begin{verbatim}
@@ -177,21 +196,18 @@ Lemma winner_reversed :
 \end{verbatim}
 
 The lemma, $winner\_reversed$, expresses that if a candidate $c$ is a unique winner 
-with respect to $marg$ (computed from $P$), then she is not a winner with respect 
-to $rev\_marg$ (computed from reversing all the entries in $P$).
+with respect to $marg$ (computed from some ballot set $P$), then she is not a winner with respect 
+to $rev\_marg$ (computed from reversing all the entries in the ballot set $P$).
 
 
-The proof for this lemma is fairly intuitive. In this lemma, we assume the 
+The proof for this lemma is fairly intuitive, but it takes some efforts to prove it in Coq. 
+In this lemma, we assume the 
 existence of unique winner, say $c$ with respect to $marg$, which means that the generalize 
 margin between her and every other candidate would be greater than the reverse generalized 
 margin, i.e.  $\forall d$, $M \text{ marg } (c, d)$ > $M \text{ marg } (d, c)$. 
-Intuitively, in this case 
-we can partition all the candidates, assuming that $n$ candidates, into anything  from minimum two set to maximum 
-$n$ singleton set. In two set case, we have a unique winner in one set and rest of the candidates 
-are members of the second set, and in maximum case, there is linear ordering (a chain) starting from winner 
-and going all the way to the candidate who has lost to everyone (also known as \textit{Schwartz Criterion}).
-Moving further, if we compute the generalize margin with respect to $rev\_marg$, then 
-for the candidate $c$ it would be the case that:  $\forall d$, $M \text{ rev\_marg } (c, d)$ <  $M \text{ rev\_marg } (d, c)$. 
+If we compute the generalize margin with respect to $rev\_marg$, then 
+for the candidate $c$ it would be the case that:  
+$\forall d$, $M \text{ rev\_marg } (c, d)$ <  $M \text{ rev\_marg } (d, c)$. 
 One key observation is that the graph we get after computing the generalized margin with respect to $rev\_marg$ is 
 simply a mirror image, every path is reversed, of the graph we get after computing the generalize margin with respect to $marg$. 
 In terms of Coq, it is:
@@ -201,13 +217,16 @@ Lemma path_with_rev_marg :
   Path marg k c d <->  Path (rev_marg marg) k d c.
 \end{verbatim}
 
-
-In connection with \textit{Schwartz Criterion}, the number of partitions in case of $rev\_marg$  
-would remain the same as they were in $marg$ case;
-however, their content would be different. The winner in case of $marg$ would be a loser in case of $rev\_marg$
-\footnote{We are currently focussing on Schwartz Criterion. Once we prove it, then proof of Reversal symmetry would 
- trivial.}.
-
+Using the lemma $path\_with\_rev\_marg$, we can conclude that if the strength of 
+a path going from $c$ to $d$ with respect to $marg$ is greater than or equal to $k$ 
+(by definition of $Path$ inductive type), then the strength of a reverse path from $d$ to 
+$c$ would also be greater than or equal to $k$ with respect $rev\_marg$. 
+Using all this fact, and some auxiliary  lemma 
+the proof of reversal symmetry is mere rewriting the facts
+\footnote{At the time of writing this thesis, proof of reversal 
+symmetry hinges on a auxiliary lemma which 
+is fairly intuitive, but demands a lot of  Coq machinery (a typical situation 
+in theorem proving). We are in the process of proving it}. 
 
  	
  
