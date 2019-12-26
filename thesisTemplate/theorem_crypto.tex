@@ -366,7 +366,7 @@ Defined.
   
  
  Using the expressiveness of dependent type, we construct a type-safe version of 
- printf \citep{Pierce:2004:ATT:107626}. Our goal is to generate compiler error when the given format string and the type of 
+ printf \citep{Pierce:2004:ATT:1076265}. Our goal is to generate compiler error when the given format string and the type of 
  corresponding input values  
  do not match, e.g. printf "\%d \%s" "hello Coq" 42 should be compiler error because
  \%d is a directive for integer value, but the type of input, "hello Coq", is string. In addition, 
