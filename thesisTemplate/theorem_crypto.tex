@@ -23,8 +23,8 @@ The Automath project can be seen as the precursor of
 \textbf{Chapter overview:}
  This chapter is overview of Coq theorem prover and Cryptographic primitives. 
  In the section \ref{sec:problemstatement}, we will give a brief overview of 
- theoretical foundation, calculus of construction (\ref{sec:cc}) and calculus of inductive 
- construction (\ref{sec:cic}), of Coq.  In the section \ref{sec:typeprop}, we will discuss about 
+ theoretical foundation, calculus of construction and calculus of inductive 
+ construction, of Coq.  In the section \ref{sec:typeprop}, we will discuss about 
  \texttt{Type} and \texttt{Prop}
  which is very crucial from program extraction point of view.  Our goal during 
  this course of formalization was not only proving the correctness of 
@@ -67,7 +67,7 @@ augmentation of Calculus of Construction
 The underlying theory of CoC and CIC is (typed) lambda calculus, so 
 before we describe the CoC and CIC syntax and its typing judgement, 
 we will take a brief detour to explain 
-different variant of lambda calculus starting from 
+different variants of lambda calculus starting from 
 untyped lambda calculus and moving up in the ladder by 
 adding various abstractions. Later, we will show that 
 these all variant, including CoC, can be abstracted into one 
@@ -125,9 +125,9 @@ the term $x$ has type $A$ in the context $\Gamma$.
 The typing judgement of \textit{Simple Typed Lambda Calculus} 
 has three rules, \textit{Var, Abstraction}, and \textit{Application}, to ensure that the terms are well-typed:
 \begin{itemize}
-\item Var: ${\frac {\text{x : A }  \in \text{  }\Gamma }{\Gamma \text{  } \vdash \text{  x : A }}$
-\item Abstraction: ${\frac {\Gamma \text{, x : A } \vdash \text{ e : B }}{\Gamma \text{  }\vdash \text{ } (\lambda \text{ x : A. e ) : }A \rightarrow B}}$
-\item Application: ${\frac {\Gamma \text{  } \vdash \text{ f : } A \rightarrow B \quad \Gamma \text{  }\vdash \text{ x : A }}{\Gamma \text{  } \vdash \text{  f  x  : B} }}$
+\item Var: \[ {\frac {\text{x : A }  \in \text{  }\Gamma }{\Gamma \text{  } \vdash \text{  x : A }} \]
+\item Abstraction: \[ {\frac {\Gamma \text{, x : A } \vdash \text{ e : B }}{\Gamma \text{  }\vdash \text{ } (\lambda \text{ x : A. e ) : }A \rightarrow B}} \]
+\item Application: \[ {\frac {\Gamma \text{  } \vdash \text{ f : } A \rightarrow B \quad \Gamma \text{  }\vdash \text{ x : A }}{\Gamma \text{  } \vdash \text{  f  x  : B} }} \]
 \end{itemize}
 
 \noindent
@@ -194,53 +194,163 @@ set of sorts $S$, axioms $A$, and rules $R$, such that:
  \end{itemize}
  
 \noindent 
-The typing judgement for \textit{PTS} is defined by following rules:
+The typing judgement for \textit{PTS} in typing context $\Gamma$ is defined by following rules ($s$ ranges of $S$, and $x$ ranges over V 
+ with usual notion of  variable capture avoidance):
  \begin{itemize}
- \item Axiom: $\vdash \text{c : s} $ 
- \item Start: $\frac{\Gamma \text{  } \vdash \text{ A : s}}{\Gamma \text{, x : A }\vdash \text{ x : A}}$
- \item Weakening: $\frac{\Gamma \text{ } \vdash \text{ A : B } \quad \Gamma \text{ } \vdash \text{ C : s }}{\Gamma, \text{ x : C } \vdash \text{ A : B }}$
- \item Product: $\frac{\Gamma \text{ } \vdash \text{ A : }s_{1} \quad \Gamma, \text{ x : A } \vdash \text{ B : }s_{2}}{\Gamma \text{ } \vdash (\prod \text{ x : A. B) : }s_{3}}$
- \item Application: $\frac{\Gamma \text{ }\vdash \text{ F : (}\prod \text{x : A. B)} \quad \Gamma \text{ }\vdash \text{ a : A }}{\Gamma \text{ }\vdash \text{ Fa : B [x := a]}}$
- \item Abstraction: $\frac{\Gamma, \text{ x : A }\vdash \text{ b : B } \quad \Gamma \text{ }\vdash (\prod \text{x : A. B) : s }}{\Gamma \text{ }\vdash (\lambda \text{x : A. b) : (}\prod \text{ x : A. B)}}$
- \item Conversion: $\frac{\Gamma \text{ }\vdash \text{ A : B } \quad \Gamma \text{ }\vdash \text{ B' : s } \quad \text{B  }=_{\beta} \text{ B' }}{\Gamma \text{ } \vdash \text{ A : B' }}$
+ \item Axiom: \[ \frac{\text{c : s } \in A}{\Gamma \text{  } \vdash \text{ c : s}} \]
+ \item Start: \[ \frac{\Gamma \text{  } \vdash \text{ A : s}}{\Gamma \text{, x : A }\vdash \text{ x : A}} \]
+ \item Weakening: \[ \frac{\Gamma \text{ } \vdash \text{ A : B } \quad \Gamma \text{ } \vdash \text{ C : s }}{\Gamma, \text{ x : C } \vdash \text{ A : B }} \]
+ \item Product: \[ \frac{\Gamma \text{ } \vdash \text{ A : }s_{1} \quad \Gamma, \text{ x : A } \vdash \text{ B : }s_{2}}{\Gamma \text{ } \vdash (\prod \text{ x : A. B) : }s_{3}} \]
+ \item Application: \[ \frac{\Gamma \text{ }\vdash \text{ F : (}\prod \text{x : A. B)} \quad \Gamma \text{ }\vdash \text{ a : A }}{\Gamma \text{ }\vdash \text{ Fa : B [x := a]}} \]
+ \item Abstraction: \[ \frac{\Gamma, \text{ x : A }\vdash \text{ b : B } \quad \Gamma \text{ }\vdash (\prod \text{x : A. B) : s }}{\Gamma \text{ }\vdash (\lambda \text{x : A. b) : (}\prod \text{ x : A. B)}} \]
+ \item Conversion: \[ \frac{\Gamma \text{ }\vdash \text{ A : B } \quad \Gamma \text{ }\vdash \text{ B' : s } \quad \text{B  }=_{\beta} \text{ B' }}{\Gamma \text{ } \vdash \text{ A : B' }} \]
 \end{itemize}   
 
 
 
-
-We would later instantiate these 
-parameters to a specific value to get the instance of Calculus of Construction. 
- 
-
-
-\subsection{Calculus of Construction}
+\subsection{Calculus of Construction/Inductive Construction}
 \label{sec:cc}
 The Calculus of Construction is a higher order  natural deduction style proof system 
-for constructive proofs where every proof a typed $\lambda$-abstractions.  Its syntax 
-is defined as (a simplified version):
+for constructive proofs where every proof a typed $\lambda$-abstractions.  Using the 
+\textit{Pure Type System} syntax, it can be expressed as:
 
+\begin{displayquote}
 
+    $S$ = \[ \lbrace  Prop \rbrace \cup \lbrace  Type_{i} \mid  i \in \mathbb{N} \rbrace \]
+    $A$ =  \[ \lbrace Prop : Type_{0} \rbrace \cup \lbrace Type_{i} : Type_{i+1} \mid i \in \mathbb{N} \rbrace \]
+    $R$ = 
+     \[
+   \left\{ \begin{array}{l}
+   (Prop, Type_{i}, Type_{i}) \text{      } i \in \mathbb{N}  \\
+   (s, Prop, Prop)  \text{     } s \in S \\
+   (Type_{i}, Type_{j}, Type_{max (i, j)}) 
+  \end{array}\right\}
+\]
+       
+\end{displayquote}
 
+\noindent
+The sort \textit{Prop} captures type of expression which represents logical proposition, while 
+the sort \textit{Type} captures the computational content.   Calculus of Construction is
+ powerful enough to encode inductive definitions \citep{pfenning1989inductively}, but 
+ one of the main drawback is efficiency of computation of function over these encoded 
+ inductive definitions, and some other properties could not be proven \citep{10.1007/3-540-45413-6_16}.
+In order to solve these problems, \citep{Paulin-Mohring:1993:IDS:645891.671440}  introduced 
+Inductive definitions, pattern matching, and fixpoint in the Calculus of Construction to make the data structure 
+representation more efficient. Below is the  (incomplete) syntax of Calculus of Inductive Construction:
 
+ \begin{displayquote}
 
-
-\subsection{Calculus of Inductive Construction}
-\label{sec:cic}
-
+    T = ...  (*  Pure Type System *) \\
+       | Ind $\lbrace$ V : T :=  $\textbf{V : T} \rbrace$.V (* inductive definition) \\
+       | case T of \textbf{V => T} (* pattern matching *)  \\
+       | fix_{n}  $\lbrace$ V : T := T $\rbrace$ (* recursion *) \\
+   \end{displayquote}
+ 
+ 
+\noindent
+We would like to point that the current underlying theory of Coq has been 
+extended with Co-Inductive types \citep{10.1007/3-540-60579-7_3}; however, 
+the discussion of Co-Inductive types is not very relevant for this thesis.	
  
 \subsection{Type vs. Prop: Code Extraction}
 \label{sec:typeprop}
- \fix{explain here the difference between Prop and Types. How it affects 
-  the code extraction }
-  It's good starting point to tell the reader that we have two definitions, 
-  one in type and other in prop. Why ? Because Type computes, but it's
-  not very intuitive for human inspection while Prop does not compute, 
-  but it's very intuitive for human inspection. We have connected that 
-  the definition expressed in Type is equivalent to Prop definition. 
+ Every term in Coq has
+ a type, and proofs
+ are constructive in nature, so
+ we can extract a computational program from 
+ a suitable proof.  Moreover, every proof in Coq 
+ has two parts: (i) computational part, and (ii) logical 
+ proposition.
+ The type of logical propositions are \textit{Prop}, while the type of 
+ computational parts are \textit{Type}. During the extraction process \citep{Letouzey:2008:ECO}, 
+ every term of sort Prop is removed and no longer exists in extracted 
+ code, and only the terms of sort Type are translated into target language
+ (OCaml/Haskell/Scheme). Because of this, Coq in general does not allow
+ the case analysis on
+ the terms (logical objects) of sort Prop   when the goal is in not in Prop, 
+ but in certain cases it can be achieved (we call this special 
+ case reification and explained next). 
+ 
+ 
   
   \subsubsection{Reification}
   \label{sec:reification}
+  Sometimes it is very natural to express certain properties/definitions
+  in the Prop than the Type. Moreover, the definitions/terms in the Prop are very 
+  intuitive for human inspection 
+  and understanding. The only problem is that the terms of the sort Prop do not carry any 
+  computational content but only the proof part. However, 
+  we can escape this situation if the term of sort Prop is decidable and its domain is finite (in this 
+  case Prop is equivalent to bool, but this is not the case 
+  in general in \textit{Constructive Logic} compared to 
+  \textit{Higher Order Logic} 
+  with the law of excluded middle). 
+  In the case of decidable predicate in Prop over a finite domain,  we can extract 
+  the witness constructively by using 
+  a program of linear search that tries the decidable predicate on 
+  every element of its (finite) domain. Below is the linear search 
+  reification code 
+  which produces a Type level witness, \textit{existsT},
+  from a Prop level witness, \textit{exists}, by iterating 
+  through all the elements of finite type $A$ (the finiteness 
+  of $A$ is captured by the list $l$).
+  
+  
+  
+  \begin{verbatim}
+Require Import Coq.Lists.List.
+Import ListNotations.
+
+(* type level existential quantifier *)
+Notation "'existsT' x .. y , p" :=
+  (sigT (fun x => .. (sigT (fun y => p)) ..))
+    (at level 200, x binder, right associativity,
+     format "'[' 'existsT'  '/  ' x  ..  y ,  '/  ' p ']'")
+  : type_scope.
+
+(* the following shows that a decidable (or boolean valued) 
+   predicate on a finite list
+   can always be reified in terms of strong existence *)
+Theorem reify {A: Type} (P: A -> bool) : forall (l: list A), 
+    (exists x, In x l /\ P x = true) -> existsT x, P x = true.
+Proof.
+  refine (
+      fix Fn l :=
+        match l with
+        | [] => fun H => _
+        | h :: tl => fun H => _
+        end).
+  contradict H. intro.
+  destruct H as [x [H1 H2]].
+  firstorder.
+
+  assert (Hbiv: {P h  = true} + {P h <> true}).
+  decide equality.
+  destruct Hbiv as [Htrue | Hfalse].
+  exists h. assumption.
+  specialize (Fn tl). apply Fn.
+  destruct H as [x [H1 H2]].
+  destruct H1. subst.
+  firstorder. exists x.
+  firstorder.
+Defined. 
+
+  \end{verbatim}
     
+    
+    
+  We have used many standard tricks like this  
+  to make  our formalization more accessible for human inspection.
+  For example, we have two definition, one in Prop and other in Type, 
+  of winner, loser and path. The rationale behind two definitions 
+  is that that Prop definitions are very natural and easy to understand 
+  compared to their Type counter part. Furthermore, we have shown that they are 
+  equivalent to each other, and used the definitions in Type for
+  computation.  Also, there is a nice Coq library 
+  ConstructiveEpsilon\footnote{https://coq.github.io/doc/master/stdlib/Coq.Logic.ConstructiveEpsilon.html}
+  which uses the similar trick as ours; however, we have not used this library in 
+  our formalization. 
  \subsection{Correct by Construction: Type Safe Printf}
  \label{sec:deplambda}
   One of the highly sought feature of Coq is dependent type, 
