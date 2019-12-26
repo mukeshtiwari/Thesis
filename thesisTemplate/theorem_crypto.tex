@@ -63,7 +63,7 @@ Coq  is an interactive proof assistant (theorem prover) based on
 theory of Calculus of 
 Inductive Construction \citep{Paulin-Mohring:1993:IDS:645891.671440} which itself is an 
 augmentation of Calculus of Construction 
-\citep{Coquand:1988:CC:47724.47725} with inductive data-type.  
+\citep{Coquand:1988:CC:47724.47725}.  
 The underlying theory of CoC and CIC is (typed) lambda calculus, so 
 before we describe the CoC and CIC syntax and its typing judgement, 
 we will take a brief detour to explain 
@@ -72,10 +72,14 @@ untyped lambda calculus and moving up in the ladder by
 adding various abstractions. Later, we will show that 
 these all variant, including CoC, can be abstracted into one 
 framework by using pure type system \citep{berardi1988towards} 
-\citep{Barendregt:1993:LCT:162552.162561}. 
+\citep{Barendregt:1993:LCT:162552.162561}.  
+In addition, 
+pure type system can be extended with three rules, 
+inductive data type, pattern matching, and recursion 
+to accommodate Calculus of Inductive Construction. 
 
 
-Lambda calculus was invented by Alonzo Church in the 1930, 
+Lambda calculus was invented by Alonzo Church in the 1930s, 
 and his motive was to use lambda calculus as a foundation 
 for formal mathematics, specifically the notation of 
 computable function by means of an algorithm.  
@@ -252,6 +256,7 @@ representation more efficient. Below is the  (incomplete) syntax of Calculus of 
 We would like to point that the current underlying theory of Coq has been 
 extended with Co-Inductive types \citep{10.1007/3-540-60579-7_3}; however, 
 the discussion of Co-Inductive types is not very relevant for this thesis.	
+
  
 \subsection{Type vs. Prop: Code Extraction}
 \label{sec:typeprop}
