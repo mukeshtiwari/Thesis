@@ -11,9 +11,9 @@ co-operation of all on board it can be safely brought to part.}
  Correctness and verifiability/evidence are two main pillar of any democratic election. 
  In case of paper ballot election, correctness and verifiability of counting is achieved 
  by public scrutiny because each step is carefully observed by general member of public, 
- agents from different political parties. For example. casting ballot at booth 
+ and agents from different political parties. For example, casting ballot at booth 
  is carefully observed by polling agents and 
- counting ballots is observed by the scrutineers appointed by different political parties \ref{fig:scrutineers}.
+ counting ballots is observed by the scrutineers (Figure \ref{fig:scrutineers}) appointed by different political parties.
  Given that electronic voting is relatively young, in this chapter we investigate 
  how to achieve the correctness and verifiability similar to paper ballot election.
  
@@ -126,10 +126,13 @@ beaten by any (other) candidate.
 	\subsection{An Example}
 	For some given set of ballots (the actual set of ballots are not very important because we want to demonstrate the Condercet Paradox), we have computed 
 	the margin function $m$ such that $m$ ($A, B$) = 3, $m$ ($B, A$) = -3, $m$ ($A, C$) = -1, 
-	$m$ ($C, A$) = 1, $m$ ($B, C$) = 5, and $m$ ($C, B$) = -5. We have drawn the graph below, and 
+	$m$ ($C, A$) = 1, $m$ ($B, C$) = 5, and $m$ ($C, B$) = -5. We have drawn the graph below (Figure \ref{marginfn}), and 
 	it shows that collective can be cyclic, even if the preferences of individual voters are not cyclic. This phenomena 
 	is known as Condercet paradox and first observed by french philosopher Marquis de Condorcet in late 18th century \footnote{https://gallica.bnf.fr/ark:/12148/bpt6k417181}.
-	     
+	   
+	   
+
+ \begin{figure}[h]
 \[
 \xymatrix@R=12ex@C=12ex{
 A \ar@/^/[rr]^{3} \ar@/_/[dr]_{-1} & & B \ar@/^/[ll]^{-3}
@@ -137,14 +140,20 @@ A \ar@/^/[rr]^{3} \ar@/_/[dr]_{-1} & & B \ar@/^/[ll]^{-3}
 & C \ar@/_/[ul]_{1} \ar@/^/[ur]^{-5}
 }\]
 
-The main idea of the method is to resolve cycles by considering \emph{transitive preferences} or a generalised notion of margin. Below is the graph $M$, generalize 
-margin (sometimes, we use generalize margin matrix or generalize margin function) after running  the Schulze method on margin function $m$.  In order to 
+\caption{Margin Function/Matrix (Graph Interpretation)}\label{marginfn}
+\end{figure}  
+
+
+The main idea of the method is to resolve cycles by considering \emph{transitive preferences} or a generalised notion of margin. 
+Figure \ref{generalizemargin} is the graph interpretation of generalised 
+margin, $M$, after running the Schulze method on margin function $m$ (the 
+word margin function is used interchangeably with margin matrix).  In order to 
 compute $M(A, B)$, we first compute all the path from candidate $A$ to $B$. Well, we have just two path from $A$ to $B$, a direct path between them and 
 a intermediate path via candidate $C$.  Now that we two paths, we compute the path strength $st$ for each path, $st(A, B) = min \lbrace m (A, B) \rbrace $ 
 and $st (A, C, B)$ = $min \lbrace m (A, C), m (C, B) \rbrace$.  Simply these expression:
 
 \begin{align}
-st (A, B)&=  \min \lbrace m (A, B) \rbrace  \nonumber \\
+\hspace{-3cm} st (A, B)&=  \min \lbrace m (A, B) \rbrace  \nonumber \\
 					  &= \min \lbrace 3 \rbrace \nonumber \\
                      &= 3 \nonumber
 \end{align}
@@ -170,7 +179,7 @@ M (A, B)&=  \max \lbrace st (A, B), st(A, C, B) \rbrace \nonumber \\
 Similarly, we can compute other values as well. 
 
 \begin{align}
-\hspace*{-10mm} st (B, A)&=  \min \lbrace m (B, A) \rbrace  \nonumber \\
+\hspace{-3cm} st (B, A)&=  \min \lbrace m (B, A) \rbrace  \nonumber \\
 					  &= \min \lbrace -3 \rbrace  \nonumber \\
                      &= -3 \nonumber
 \end{align}
@@ -189,7 +198,7 @@ M (B, A)&=  \max \lbrace st (B, A), st(B, C, A) \rbrace \nonumber \\
 \end{align}
 
 \begin{align}
-st (A, C)&=  \min \lbrace m (A, C) \rbrace  \nonumber \\
+\hspace{-3cm} st (A, C)&=  \min \lbrace m (A, C) \rbrace  \nonumber \\
 					  &= \min \lbrace -1 \rbrace  \nonumber \\
                      &= -1 \nonumber
 \end{align}
@@ -209,7 +218,7 @@ M (A, C)&=  \max \lbrace st (A, C), st(A, B, C) \rbrace \nonumber \\
 
 
 \begin{align}
-st (C, A)&=  \min \lbrace m (C, A) \rbrace  \nonumber \\
+\hspace{-3cm} st (C, A)&=  \min \lbrace m (C, A) \rbrace  \nonumber \\
 					  &= \min \lbrace 1 \rbrace  \nonumber \\
                      &= 1 \nonumber
 \end{align}
@@ -232,7 +241,7 @@ M (C, A)&=  \max \lbrace st (C, A), st(C, B, A) \rbrace \nonumber \\
 
 
 \begin{align}
-st (C, B)&=  \min \lbrace m (C, B) \rbrace  \nonumber \\
+\hspace{-3cm} st (C, B)&=  \min \lbrace m (C, B) \rbrace  \nonumber \\
 					  &= \min \lbrace -5 \rbrace  \nonumber \\
                      &= -5 \nonumber
 \end{align}
@@ -252,7 +261,7 @@ M (C, B)&=  \max \lbrace st (C, B), st(C, A, B) \rbrace \nonumber \\
 
 
 \begin{align}
-st (B, C)&=  \min \lbrace m (B, C) \rbrace  \nonumber \\
+\hspace{-3cm} st (B, C)&=  \min \lbrace m (B, C) \rbrace  \nonumber \\
 					  &= \min \lbrace 5 \rbrace  \nonumber \\
                      &= 5 \nonumber
 \end{align}
@@ -271,17 +280,20 @@ M (B, C)&=  \max \lbrace st (B, C), st(B, A, C) \rbrace \nonumber \\
 \end{align}
 
 \noindent
-Now we have computed all the values of generalize margin $M$, we can interpret it as 
-graph show below.  It is clear for the graph that candidate $A$ is winner, as he beats 
+Now we have computed all the values of generalize margin $M$, we can interpret it as a
+graph show below.  It is clear from the graph that candidate $A$ is winner, as he beats 
 $B$ with strength 3 (reverse path from $B$ to $A$ is weaker, i.e. strength 1) and 
 $C$ with strength 3 (reverse path from $C$ to $A$ is weaker, i.e. strength 1). 
 
+\begin{figure}[h] 
 \[
  \xymatrix@R=12ex@C=12ex{
 A \ar@/^/[rr]^{3} \ar@/_/[dr]_{3} & & B \ar@/^/[ll]^{1}
 \ar@/^/[dl]^5 \\
 & C \ar@/_/[ul]_{1} \ar@/^/[ur]^{1}
 }\]
+\caption{Generalised Margin (Graph Interpretation)}\label{generalizemargin}
+\end{figure}
 	 
 	
 	
@@ -292,22 +304,26 @@ A \ar@/^/[rr]^{3} \ar@/_/[dr]_{3} & & B \ar@/^/[ll]^{1}
 	easiest way of stipulating that a type be finite is to require
 	existence of a list containing all inhabitants of this type \citep{DBLP:conf/icfp/FirsovU15}.
 
-\begin{verbatim}
+%\begin{verbatim}
+\begin{minted}{coq}
   Variable cand : Type.
   Variable cand_all : list cand.
   Hypothesis cand_fin : forall c: cand, In c cand_all.
   Hypothesis dec_cand : forall n m : cand, {n = m} + {n <> m}.
-  Hypothesis cand_in : cand_all <> nil.
-\end{verbatim}
+  Hypothesis cand_in : cand_all <> [].
+\end{minted}
+%\end{verbatim}
 
 \noindent
 For the specification of winners of Schulze elections, we take the
 margin function as given for the moment (and later construct it from
 the incoming ballots). In Coq, this is conveniently expressed as a
 variable:
-\begin{verbatim}
-   Variable marg : cand -> cand -> Z.
-\end{verbatim}
+
+\begin{minted}{coq}
+   Variable marg : cand -> cand -> Z.   
+\end{minted}
+
 
 \noindent
 We formalise the notion of path and strength of a path by means of a
@@ -318,22 +334,25 @@ the winner to other candidates are at least as strong as the reverse path. Duall
  is that there is a candidate who beats the loser, i.e. the path from the candidate to the loser is 
  stronger than the reverse path. 
 
+\begin{minted}{coq}
 
-\begin{verbatim}
   (* prop-level path *)
   Inductive Path (k: Z) : cand -> cand -> Prop :=
     | unit c d : marg c d >= k -> Path k c d
-    | cons  c d e : marg c d >= k -> Path k d e -> Path k c e.
+    | cons  c d e : marg c d >= k -> 
+           Path k d e -> Path k c e.
     
   (* winning condition of Schulze Voting *)
-  Definition wins_prop (c: cand) := forall d: cand, exists k: Z,
+  Definition wins_prop (c: cand) := 
+    forall d: cand, exists k: Z,
       Path k c d /\ (forall l, Path l d c -> l <= k).
 
   (* dually, the notion of not winning: *)
-  Definition loses_prop (c : cand) := exists k: Z, exists  d: cand,
+  Definition loses_prop (c : cand) := 
+    exists k: Z, exists  d: cand,
       Path k d c /\ (forall l, Path l c d -> l < k).
-\end{verbatim}
 
+\end{minted}
 
 \noindent
 We reflect the fact that the above are \emph{propositions} in
@@ -423,7 +442,7 @@ $W_{k+1}$-coclosed sets, that is, sets $R \subseteq C \times C$ for which
 $R \subseteq W_{k+1}(R)$.
 That is, to demonstrate that $(d, c) \in GFP(W_{k+1})$, we need
 to exhibit a $W_{k+1}$-coclosed set $R$ with $(d, c) \in R$.
-If we unfold the definitions, we have
+If we unfold the definitions, we have:
 \[ W_k(R) = \lbrace (c, e) \in C^2 \mid m(c, e) < k \mbox{ and
 } (m(c, d) < k \mbox{ or } (d,e) \in R \mbox{ for all } d \in C)
 \rbrace \]
@@ -448,30 +467,32 @@ definitions where we isolate the function \texttt{marg\_lt} (that
 determines whether the margin between two candidates is less than a
 given integer) for clarity:
 
-\begin{verbatim}
+
+\begin{minted}{coq}
   Definition marg_lt (k : Z) (p : (cand * cand)) :=
     Zlt_bool (marg (fst p) (snd p)) k.
 
-  Definition W (k : Z) (p: cand * cand -> bool) (x: cand * cand) :=
-    andb  (marg_lt k x)
+  Definition W (k : Z) (p: cand * cand -> bool) 
+    (x: cand * cand) := andb  (marg_lt k x)
     (forallb (fun m => orb (marg_lt k (fst x, m)) 
                            (p (m, snd x))) cand_all).
-\end{verbatim}
+\end{minted}
 
 \noindent
 In order to formulate type-level definitions, we need to promote the
 notion of path from a Coq proposition to a proper type, and
 formulate the notion of $k$-coclosed predicate.
 
-\begin{verbatim} 
+\begin{minted}{coq} 
   Definition coclosed (k : Z) (f : (cand * cand) -> bool) :=
     forall x, f x = true -> W k f x = true.
 
   Inductive PathT (k: Z) : cand -> cand -> Type :=
-  | unitT : forall c d, marg c d >= k -> PathT k c d
-  | consT : forall c d e, marg c d >= k -> PathT k d e -> PathT k c e.
+  | unitT c d :  marg c d >= k -> PathT k c d
+  | consT c d e : marg c d >= k -> 
+          PathT k d e -> PathT k c e.
  
-\end{verbatim}
+\end{minted}
 
 
 \noindent
@@ -484,15 +505,17 @@ then for each individual candidates participating in election, it produces two w
 (ii) a $k$+1 co-closed set.  These witness are basic building blocks of the 
 scrutiny sheet we produce after election. 
 
-\begin{verbatim}
-  Definition wins_type c := forall d : cand, existsT (k : Z),
+\begin{minted}{coq}
+  Definition wins_type c := 
+    forall d : cand, existsT (k : Z),
     ((PathT k c d) * (existsT (f : (cand * cand) -> bool),
-      f (d, c) = true /\ coclosed (k + 1) f))%type.
+     f (d, c) = true /\ coclosed (k + 1) f))%type.
 
-  Definition loses_type (c : cand) := existsT (k : Z) (d : cand),
+  Definition loses_type (c : cand) := 
+    existsT (k : Z) (d : cand),
     ((PathT k d c) * (existsT (f : (cand * cand) -> bool),
       f (c, d) = true /\ coclosed k f))%type.
-\end{verbatim}
+\end{minted}
 
 \noindent
 We have two definitions of winning, \texttt{wins\_prop} which is easier for a human to inspect; 
@@ -500,15 +523,19 @@ on the other hand, \texttt{wins\_type} which is useful for the machine.
 We close the gap by formally establishing that type level winning and prop level winning 
 (dually, not winning) are in fact equivalent. 
 
-\begin{verbatim}
- Lemma wins_type_prop : forall c, wins_type c -> wins_prop c.
+\begin{minted}{coq}
+ Lemma wins_type_prop : 
+    forall c, wins_type c -> wins_prop c.
 
- Lemma wins_prop_type : forall c, wins_prop c -> wins_type c.
+ Lemma wins_prop_type : 
+   forall c, wins_prop c -> wins_type c.
  
- Lemma loses_type_prop : forall c, loses_type c -> loses_prop c.
+ Lemma loses_type_prop : 
+   forall c, loses_type c -> loses_prop c.
  
- Lemma loses_prop_type : forall c, loses_prop c -> loses_type c.
-\end{verbatim}
+ Lemma loses_prop_type : 
+   forall c, loses_prop c -> loses_type c.
+\end{minted}
 
 \noindent
 The different nature of the two propositions does not allow
@@ -547,10 +574,12 @@ example in
 \citep{Carre:1971:ANR} that is based on cutting out segments of paths
 between repeated nodes and so reaches a fixed point.
 
-\begin{verbatim}
+\begin{minted}{coq}
+
  Lemma iterated_marg_fp: forall (c d : cand) (n : nat),
       M n c d <= M (length cand_all) c d.
-\end{verbatim}
+      
+\end{minted}
 
 
 \noindent
@@ -563,36 +592,43 @@ implies that the generalised margin between this candidate and any
 other candidate $d$ is at least as large as the generalised margin between $d$
 and $c$.
 
-\begin{verbatim}
+\begin{minted}{coq}
+
   Lemma wins_prop_iterated_marg (c : cand) : wins_prop c ->
-      forall d, M (length cand_all) d c <= M (length cand_all) c d.
-\end{verbatim}
+     forall d, M (length cand_all) d c <=  
+     M (length cand_all) c d.
+                   
+\end{minted}
 
 \noindent
 This condition on iterated margins can in turn be used to establish the
 type-level winning condition, thus closing the loop to the type
 level winning condition.
 
-\begin{verbatim}
+\begin{minted}{coq}
+
   Lemma iterated_marg_wins_type (c : cand) : (forall d,
-      M (length cand_all) d c <= M (length cand_all) c d) ->
-      wins_type c.
-\end{verbatim}
+      M (length cand_all) d c <= M (length cand_all) c d) 
+      -> wins_type c.
+      
+\end{minted}
 
 Similarly, we connect the propositional losing to type level losing via generalized margin. We show that 
 candidate $c$ is losing then there is a candidate $d$ and generalized margin between candidate $d$ and 
 $c$ is more that generalized margin between $c$ and $d$.  Using this fact, we can prove the 
 type level losing condition. 
 
-\begin{verbatim} 
+\begin{minted}{coq} 
   Lemma loses_prop_iterated_marg (c : cand):
       loses_prop c ->
-      (exists d, M (length cand_all) c d < M (length cand_all) d c).
+      (exists d, M (length cand_all) c d < 
+      M (length cand_all) d c).
 
   Lemma iterated_marg_loses_type (c : cand) :
-      (exists d, M (length cand_all) c d < M (length cand_all) d c) 
+      (exists d, M (length cand_all) c d < 
+      M (length cand_all) d c) 
       -> loses_type c.
-\end{verbatim}
+\end{minted}
 
 
 The proof of lemma  $iterated\_marg\_loses\_type$ is not straight forward because
@@ -607,11 +643,13 @@ the list of candidates is  finite we would eventually terminate and find one.
 This completes our loop of prop level loser to type level loser. 
 
 
-\begin{verbatim}
+\begin{minted}{coq}
 Corollary reify_opponent (c: cand):
-  exists  d, M  (length cand_all) c d < M (length cand_all) d c ->
-  existsT d, M  (length cand_all) c d < M (length cand_all) d c.
-\end{verbatim}
+  exists  d, 
+  M (length cand_all) c d < M (length cand_all) d c ->
+  existsT d, 
+  M (length cand_all) c d < M (length cand_all) d c.
+\end{minted}
 
 
 
@@ -721,9 +759,9 @@ ballots as functions $b: C \to 1 + Nat$ (with $1$ being the unit
 type) but it would add little to our analysis.
 %
 %
-\begin{verbatim}
+\begin{minted}{coq}
   Definition ballot := cand -> nat.
-\end{verbatim}
+\end{minted}
 
 \noindent
 The count of an individual election is then parameterised by the list
@@ -732,13 +770,14 @@ More precisely, we have a type \texttt{State} that represents either
 an
 intermediate stages of constructing the margin function or the
 determination of the final election result:
-\begin{verbatim}
+\begin{minted}{coq}
 
   Inductive State: Type :=
-  | partial: (list ballot * list ballot)  -> (cand -> cand -> Z) -> State
+  | partial: (list ballot * list ballot)  -> 
+    (cand -> cand -> Z) -> State
   | winners: (cand -> bool) ->  State.
 
-\end{verbatim}
+\end{minted}
 
 \noindent
 The interpretation of this type is that a state either consists of
@@ -763,27 +802,30 @@ of the margin function, with the exception of the final step where
 the election winners are being determined. The inductive type takes
 the following shape:
 
-\begin{verbatim}
-  Inductive Count (bs : list ballot) : State -> Type :=
-  | ax us m : us = bs -> (forall c d, m c d = 0) -> 
-    Count bs (partial (us, []) m)         (* zero margin      *)
-  | cvalid u us m nm inbs : Count bs (partial (u :: us, inbs) m) -> 
-    (forall c, (u c > 0)%nat) ->          (* u is valid       *)
-    (forall c d : cand, 
-      ((u c < u d) -> nm c d = m c d + 1) (* c preferred to d *) /\
-      ((u c = u d) -> nm c d = m c d)     (* c, d rank equal  *) /\
-      ((u c > u d) -> nm c d = m c d - 1))(* d preferred to c *) ->
+\begin{minted}{coq}
+Inductive Count (bs : list ballot) : State -> Type :=
+| ax us m : us = bs -> (forall c d, m c d = 0) -> 
+  Count bs (partial (us, []) m)         (* zero margin      *)
+| cvalid u us m nm inbs : 
+  Count bs (partial (u :: us, inbs) m) -> 
+  (forall c, (u c > 0)%nat) ->          (* u is valid       *)
+  (forall c d : cand, 
+    ((u c < u d) -> nm c d = m c d + 1) (* c preferred to d *) /\
+    ((u c = u d) -> nm c d = m c d)     (* c, d rank equal  *) /\
+    ((u c > u d) -> nm c d = m c d - 1))(* d preferred to c *) ->
     Count bs (partial (us, inbs) nm)
-  | cinvalid u us m inbs : Count bs (partial (u :: us, inbs) m) -> 
-    (exists c, (u c = 0)%nat)             (* u is invalid     *) ->
-    Count bs (partial (us, u :: inbs) m)
-  | fin m inbs w (d : (forall c, (wins_type m c) + (loses_type m c))):
-    Count bs (partial ([], inbs) m)       (* no ballots left  *) ->
-    (forall c, w c = true <-> (exists x, d c = inl x)) ->
-    (forall c, w c = false <-> (exists x, d c = inr x)) ->
-    Count bs (winners w).
+| cinvalid u us m inbs : 
+  Count bs (partial (u :: us, inbs) m) -> 
+  (exists c, (u c = 0)%nat)   (* u is invalid     *) ->
+  Count bs (partial (us, u :: inbs) m)
+| fin m inbs w 
+  (d : (forall c, (wins_type m c) + (loses_type m c))) :
+  Count bs (partial ([], inbs) m)  (*no ballots left*) ->
+  (forall c, w c = true <-> (exists x, d c = inl x)) ->
+  (forall c, w c = false <-> (exists x, d c = inr x)) ->
+  Count bs (winners w).
  
-\end{verbatim}
+\end{minted}
 
 \noindent
 The intuition here is simple: the first constructor, \texttt{ax},
@@ -838,10 +880,10 @@ boolean function that determines the election winners, together with
 an inhabitant of the type \texttt{Count} that witnesses the
 correctness of the execution of the count. 
 
-\begin{verbatim}
+\begin{minted}{coq}
   Theorem schulze_winners: forall (bs : list ballot),
     existsT (w: cand -> bool) (p : Count bs (winners w)), True.
-\end{verbatim}
+\end{minted}
 
 
 \noindent
@@ -851,12 +893,12 @@ no more uncounted ballots, i.e. the margin function has been
 fully constructed.
 
 
-\begin{verbatim}
+\begin{minted}{coq}
 
   Lemma all_ballots_counted: forall (bs : list ballot), 
      existsT i m, (Count bs (partial ([], i) m)).
         
-\end{verbatim}
+\end{minted}
     
    
    
@@ -900,7 +942,9 @@ certificate can be verified independently. In the literature on
 electronic voting, this is known as (tallied-as-cast) \emph{verifiability} and has
 been recognised as one of the cornerstones for building trust in
 election outcomes by electronic voting research community \citep{Chaum:2004:SBR}
- \citep{5958051}, \citep{Benaloh:1994:RSE:195058.195407},  \citep{Delaune:2010:VPT}, \citep{Bernhard:2017:PES}.
+ \citep{5958051}, \citep{Benaloh:1994:RSE:195058.195407},  
+ \citep{Delaune:2010:VPT}, \citep{Bernhard:2017:PES}.
+ 
 %and is the only answer to
 %key questions such as the possibility of hardware malfunctions, or
 %indeed running the very software that has been claimed to count
@@ -945,7 +989,7 @@ election outcomes by electronic voting research community \citep{Chaum:2004:SBR}
 
 
 Coq's extraction mechanism then allows us to turn our main theorem, 
-\linebreak
+%\linebreak
 \texttt{schulze\_winners}, into a
 provably correct program. When extracting, all purely propositional
 information is erased and given a set of incoming ballots, the ensuing program produces an inhabitant
@@ -960,21 +1004,26 @@ the transcript of a Schulze election where we have added wrappers
 to pretty-print the information content. This is the (full) scrutiny
 sheet promised in Section \ref{sec:prop-type}.
 %
-\newpage
-\begin{footnotesize}
+%\newpage
+%\begin{footnotesize}
 \begin{verbatim}
-V: [A3 B1 C2 D4,..], I: [], M: [AB:0 AC:0 AD:0 BC:0 BD:0 CD:0]
---------------------------------------------------------------
-V: [A1 B0 C4 D3,..], I: [], M: [AB:-1 AC:-1 AD:1 BC:1 BD:1 CD:1]
-----------------------------------------------------------------
-V: [A3 B1 C2 D4,..], I: [A1 B0 C4 D3], M: [AB:-1 AC:-1 AD:1 BC:1 BD:1 CD:1]
----------------------------------------------------------------------------
+V: [A3 B1 C2 D4,..], I: [],
+M: [AB:0 AC:0 AD:0 BC:0 BD:0 CD:0]
+-------------------------------------------------------
+V: [A1 B0 C4 D3,..], I: [],
+M: [AB:-1 AC:-1 AD:1 BC:1 BD:1 CD:1]
+-------------------------------------------------------
+V: [A3 B1 C2 D4,..], I: [A1 B0 C4 D3],
+M: [AB:-1 AC:-1 AD:1 BC:1 BD:1 CD:1]
+-------------------------------------------------------
                      . . .
-----------------------------------------------------------------------
-V: [A1 B3 C2 D4], I: [A1 B0 C4 D3], M: [AB:2 AC:2 AD:8 BC:5 BD:8 CD:8]
-----------------------------------------------------------------------
-V: [], I: [A1 B0 C4 D3], M: [AB:3 AC:3 AD:9 BC:4 BD:9 CD:9]
------------------------------------------------------------
+-------------------------------------------------------
+V: [A1 B3 C2 D4], I: [A1 B0 C4 D3],
+M: [AB:2 AC:2 AD:8 BC:5 BD:8 CD:8]
+-------------------------------------------------------
+V: [], I: [A1 B0 C4 D3],
+M: [AB:3 AC:3 AD:9 BC:4 BD:9 CD:9]
+-------------------------------------------------------
 winning: A
   for B: path A --> B of strenght 3, 4-coclosed set: 
     [(B,A),(C,A),(C,B),(D,A),(D,B),(D,C)]
@@ -984,16 +1033,18 @@ winning: A
     [(D,A),(D,B),(D,C)]
 losing: B
   exists A: path A --> B of strength 3, 3-coclosed set:
-    [(A,A),(B,A),(B,B),(C,A),(C,B),(C,C),(D,A),(D,B),(D,C),(D,D)]
+    [(A,A),(B,A),(B,B),(C,A),(C,B),(C,C),
+     (D,A),(D,B),(D,C),(D,D)]
 losing: C
   exists A: path A --> C of strength 3, 3-coclosed set:
-    [(A,A),(B,A),(B,B),(C,A),(C,B),(C,C),(D,A),(D,B),(D,C),(D,D)]
+    [(A,A),(B,A),(B,B),(C,A),(C,B),(C,C),
+     (D,A),(D,B),(D,C),(D,D)]
 losing: D
   exists A: path A --> D of strength 9, 9-coclosed set:
-    [(A,A),(A,B),(A,C),(B,A),(B,B),(B,C),(C,A),(C,B),(C,C),(D,A),(D,B),
-     (D,C),(D,D)]  
+    [(A,A),(A,B),(A,C),(B,A),(B,B),(B,C),
+     (C,A),(C,B),(C,C),(D,A),(D,B),(D,C),(D,D)]  
 \end{verbatim}
-\end{footnotesize}
+%\end{footnotesize}
 
 \noindent
 Here, we assume four candidates, \texttt{A}, \texttt{B}, \texttt{C}
@@ -1034,10 +1085,13 @@ ballots, our scrutiny sheet provides an \emph{orthogonal}
 perspective on the data and how it was used to determine the
 election result.
 
+
+
 We have evaluated our approach by extracting the entire Coq
 development into Haskell, with all types defined by Coq extracted as
 is, i.e. in particular using Coq's unary representation of natural
-numbers. The results are displayed in Figure \ref{fig:test}
+numbers, and Haskell native integer representation. The results are displayed in Figure \ref{fig:straightslowu}, 
+and Figure \ref{fig:straightslown}
 using a logarithmic scale. 
 
 
@@ -1060,35 +1114,28 @@ using a logarithmic scale.
 %\end{figure}
 
 
-\begin{figure}
-\centering     %%% not \center
-\subfigure[Direct Extraction]{\label{fig:straightslow}\includegraphics[width=60mm]{1.png}}
-\subfigure[Extraction using Haskell Integers]{\label{fig:nativeslow}\includegraphics[width=60mm]{2.png}}
-\caption{Experimental Results (Slow)}
-\label{fig:test}
+\begin{figure}[!htb]
+        \center{\includegraphics[width=\textwidth]
+        {1.png}}
+        \caption{\label{fig:straightslowu} Experimental Result (Coq Unary Natural Number, Slow)}
+      \end{figure}
+      
+      
+\begin{figure}[!htb]
+        \center{\includegraphics[width=\textwidth]
+        {2.png}}
+        \caption{\label{fig:straightslown} Experimental Result (Haskell Native Integer, Slow)}
 \end{figure}
-
-%
+%      
 %\begin{figure}
-%\centering
-%\begin{subfigure}
-%  \centering
-%  {\includegraphics[width=.95\textwidth]{1.png}}
-%  \caption{Direct Extraction}
-%  \label{fig:straight}
-%\end{subfigure}%
-%\end{figure}
-%\begin{figure}
-%\begin{subfigure}
-%  \centering
-%  {\includegraphics[width=.95\textwidth]{2.png}}
-%  \caption{Extraction using Haskell Integers}
-%  \label{fig:native}
-%\end{subfigure}
-%\caption{Experimental Results}
+%\centering     %%% not \center
+%\subfigure[Direct Extraction]{\label{fig:straightslow}\includegraphics[width=60mm]{1.png}}
+%\subfigure[Extraction using Haskell Integers]{\label{fig:nativeslow}\includegraphics[width=60mm]{2.png}}
+%\caption{Experimental Results (Slow)}
 %\label{fig:test}
 %\end{figure}
-  
+
+
  \section{Counting Millions of Ballots}
  \label{sec:count_million}
  The previous extracted Haskell code was very slow  and was not 
@@ -1108,22 +1155,34 @@ free, and we had to pay the cost in terms of (almost all) broken proofs.
 We had to redo all the proofs all over again\footnote{Redoing these proofs were trivial,
  but time consuming. I wished if there was a 
 tool to automate this process}}.
-Below (Figure \ref{fig:fast}), we include our timing graphs,
+Below (Figure \ref{fig:straightfastlw}, Figure \ref{fig:straightfastlv}), we include our timing graphs,
 based on randomly generated ballots while keeping number of candidates
 constant i.e. 4 (The reason we kept it to 4 candidate to show the speed up compared to 
- \ref{fig:test}. During the experimentation, we ran an election with 21 candidate, and 
+ \ref{fig:straightslowu} and \ref{fig:straightslown} . During the experimentation, we ran an election with 21 candidate, and 
  we were able to count 2 million randomly generated ballots
  before running out of memory.)
 
 
+\begin{figure}[!htb]
+        \center{\includegraphics[width=\textwidth]
+        {without-cert.png}}
+        \caption{\label{fig:straightfastlw} Computation of Winner (Without Certificate, Fast)}
+  \end{figure}
+      
+   
+ \begin{figure}[!htb]
+        \center{\includegraphics[width=\textwidth]
+        {with-cert.png}}
+        \caption{\label{fig:straightfastlv} Computation of Winner (With Certificate, Fast)}
+\end{figure}   
 
-\begin{figure}[htb]
-\centering     %%% not \center
-\subfigure[Computation of Winners]{\label{fig:straightfast}\includegraphics[width=60mm]{without-cert.png}}
-\subfigure[Computation of Winners and Certificate]{\label{fig:nativefast}\includegraphics[width=60mm]{with-cert.png}}
-\caption{Experimental Results (Fast)}
-\label{fig:fast}
-\end{figure}
+%\begin{figure}[htb]
+%\centering     %%% not \center
+%\subfigure[Computation of Winners]{\label{fig:straightfast}\includegraphics[width=60mm]{without-cert.png}}
+%\subfigure[Computation of Winners and Certificate]{\label{fig:nativefast}\includegraphics[width=60mm]{with-cert.png}}
+%\caption{Experimental Results (Fast)}
+%\label{fig:fast}
+%\end{figure}
 
 
 %\begin{figure}
@@ -1144,8 +1203,8 @@ constant i.e. 4 (The reason we kept it to 4 candidate to show the speed up compa
 %\end{figure}
 
 \noindent
-On the left, we report timings (in seconds) for the computation of
-winners, whereas on the right, we include the time to additionally
+In the Figure \ref{fig:straightfastlw}, we report timings (in seconds) for the computation of
+winners, whereas in the Figure \ref{fig:straightfastlv}, we include the time to additionally
 compute a universally verifiable certificate that attests  to the
 correctness of the count. This is consistent with complexity of Schulze 
 counting i.e. linear in no of ballots and cubic in candidates. 
@@ -1272,7 +1331,7 @@ certificate verifier, possibly in a language such as CakeML
 be correct to the machine level. 
 
  In the next chapter, we will try to solve privacy and coercion problem, using encryption, and to keep 
- it verifiable, we will use zero-knowledge-proof. However, solution for privacy comes at cost, e.g. 
+ it verifiable, we will use zero-knowledge-proof. However, solution for privacy comes at a cost, e.g. 
  a loss in the pool of scrutineers because auditing a certificate generated by counting encrypted ballot 
  would requires intricate knowledge of cryptography.
  
