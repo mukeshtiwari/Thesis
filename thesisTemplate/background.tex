@@ -19,9 +19,9 @@
   iii) Discussion and concrete plans for Internet voting (Orange Area),
   iv) Ballot scanners, Electronic Voting Machines, and Internet Voting (Green and Dark Green),
   v) Withdrawn voting technology because of public concern (Red Area) 
-    \begin{figure}[htb]
+    \begin{figure}[!htb]
 	\begin{center}
-	\includegraphics[scale=0.5]{e-voting_worldmap_2015.pdf}
+	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{e-voting_worldmap_2015.pdf}
 	\caption{World map of Electronic Voting}
 	\label{fig:world_electronic_voting_map}
 	\end{center}
@@ -613,7 +613,7 @@
 
  \noindent	
   The same certificate (augmented with rules and variables instantiated) from certificate-checker perspective.
-    \begin{verbatim}
+    \begin{minted}[fontsize=\footnotesize]{coq}
      gcd 34 21 = gcd 21 13 Rule-inductive: x := 34, y := 21, mod 34 21 = 13
      ---------------------------------------------------------------------
      gcd 21 13  = gcd 13 8 Rule-inductive: x := 21, y := 13, mod 21 13 = 8
@@ -621,7 +621,7 @@
           .
      ---------------------------------------------------------------------
      gcd 1 0 = 1   Rule-zero: x := 0 
-   \end{verbatim}
+   \end{minted}
    
    
    Unfortunately, the example we gave,  greatest common divisor, is very simple, and 

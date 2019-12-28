@@ -512,7 +512,7 @@ refine
               return (forall m : nat, n0 + m = m + n0) with
         | 0 => fun m : nat => 
            eq_ind_r (fun n0 : nat => m = n0) 
-                     eq_refl (Nat.add_0_r m)
+                     	eq_refl (Nat.add_0_r m)
         | S n' =>
           fun m : nat =>
             eq_ind_r (fun n0 : nat => S n0 = m + S n')
