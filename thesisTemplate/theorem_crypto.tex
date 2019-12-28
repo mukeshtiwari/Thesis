@@ -307,7 +307,7 @@ the discussion of Co-Inductive types is not very relevant for this thesis.
   
   
   
-  \begin{verbatim}
+  \begin{minted}{coq}
 Require Import Coq.Lists.List.
 Import ListNotations.
 
@@ -345,7 +345,7 @@ Proof.
   firstorder.
 Defined. 
 
-  \end{verbatim}
+  \end{minted}
     
     
     
@@ -398,7 +398,7 @@ are interested in format string. Additionally, the \textit{format\_string} funct
 and returns the abstract syntax tree, and the type level, \textit{interp\_format}, takes the 
 abstract syntax tree and returns the function type corresponding to format string.
 
-\begin{verbatim}
+\begin{minted}{coq}
 (* abstract syntax tree *)
 Inductive format :=
 | Fend : format
@@ -426,7 +426,7 @@ Fixpoint interp_format (f : format) : Type :=
   | Fother c f => interp_format f
   | Fend => string
   end.
-\end{verbatim}
+\end{minted}
 
 
 \noindent
@@ -434,18 +434,18 @@ The \textit{interp\_format} function returns a function type
 (\texttt{Z -> string -> string -> string})  on the (abstract syntax tree of) 
 format string "\%d \%s \%s" 
 
-\begin{verbatim}
+\begin{minted}{coq}
 Eval compute in interp_format (format_string "%d %s %s").
 (* = Z -> string -> string -> string
      : Type *)
-\end{verbatim}
+\end{minted}
 
 Now, we construct a value level function, \textit{interp\_value}, whose type 
 is constructed by type level function, and it will take the values to be printed as input.
 The type of values to print should match the type constructed by type level 
 function for successful type checking otherwise it will be type error. 
 
-\begin{verbatim}
+\begin{minted}{coq}
 (* value level function whose type is constructed on fly by interp_format 
     function *)
 Fixpoint interp_value (f : format) (acc : string) : interp_format f :=
@@ -455,13 +455,13 @@ Fixpoint interp_value (f : format) (acc : string) : interp_format f :=
   | Fother c f' => interp_value f' (acc ++ String c EmptyString)
   | Fend => acc
   end.
-\end{verbatim}
+\end{minted}
 
 \noindent
 Finally, we define the printf function, and evaluate it on two inputs: 
 i)  printf "\%d \%s" "hello Coq" 42, and ii)  printf "\%d \%s" 42 "hello Coq".
 
-\begin{verbatim}
+\begin{minted}{coq}
 Definition printf s := interp_value (format_string s) "".           
 
 Eval compute in  printf "\%d \%s" "hello Coq"%string 42.
@@ -471,7 +471,7 @@ while it is expected to have type "Z". *)
 Eval compute in  printf "\%d \%s" 42 "hello Coq"%string. 
 (*  "\0b101010 \hello Coq"%string. The number 
 42 is printed in binary *)                            
-\end{verbatim}
+\end{minted}
 The first input, printf "\%d \%s" "hello Coq" 42, is type error because 
 printf "\%d \%s" returns a value level function whose  type is Z -> string -> string, but 
 the type of first argument, "hello Coq", is string which does not unifies with Z,
@@ -502,14 +502,17 @@ while second one is successfully printed as string.
  can be used to write programs with dependent types (which we have done during this
  formalization).
  
-\begin{verbatim}
+\begin{minted}{coq}
 (* proof written using Gallina *)
-Lemma addition_commutative_gallina : forall (n m : nat), n + m = m + n.
+Lemma addition_commutative_gallina : 
+    forall (n m : nat), n + m = m + n.
 refine
       (fix Fn (n : nat) : forall m : nat, n + m = m + n :=
-        match n as n0 return (forall m : nat, n0 + m = m + n0) with
+        match n as n0 
+              return (forall m : nat, n0 + m = m + n0) with
         | 0 => fun m : nat => 
-           eq_ind_r (fun n0 : nat => m = n0) eq_refl (Nat.add_0_r m)
+           eq_ind_r (fun n0 : nat => m = n0) 
+                     eq_refl (Nat.add_0_r m)
         | S n' =>
           fun m : nat =>
             eq_ind_r (fun n0 : nat => S n0 = m + S n')
@@ -519,10 +522,11 @@ refine
 Qed.
 
 (* proof written using tactics *)
-Lemma addition_commutative_tactics : forall (n m : nat), n + m = m + n.
+Lemma addition_commutative_tactics :
+  forall (n m : nat), n + m = m + n.
   induction n; intro m; simpl; try omega.
 Qed.
-\end{verbatim}
+\end{minted}
 
 
 
@@ -701,7 +705,7 @@ Qed.
 		$m*h^{r}$ and $c_{1}$ with $g^{r}$ in $c_{2} * c_{1}^{-x}$. This substitution leads to 
 		$m * h ^ {r} * g^{-rx}$ which upon further simplification by replacing the $h$ with $g^{x}$
 		leads to $m * g^{xr} * g^{-rx}$. Using the same base rule, the term $m * g^{xr} * g^{-rx}$ can be 
-		written as $m * g^{xr - rx}$. Since, the underlying group, $G$, is a abelian group, i.e. $x \cdot r = r \cdot x$ , so we 
+		written as $m * g^{xr - rx}$. Since $x  r = r x$, so we 
 		can replace $m * g^{xr - rx}$ with $m * g^{0}$. The term $g^{0}$  = $e$ (the identity of group $G$) and using 
 		the right identity group law, we can replace $m * e$ by $m$. 
 		
