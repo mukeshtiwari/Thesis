@@ -50,17 +50,17 @@ In symbols:
   
 	 
   Now we define the \textit{Condorcet winner} in Coq as:
- \begin{verbatim}
+ \begin{minted}{coq}
 Definition condorcet_winner (c : cand) 
   (marg : cand -> cand -> Z) := forall d, marg c d >= 0.
-\end{verbatim}
+\end{minted}
 
   Informally, the definition, \textit{condorcet\_winner}, states that 
   if a candidate $c$  is \textit{condorcet winner}, then she has been ranked higher against
   every other candidate.  Having the definition of  condorcet winner, our goal is to concluded that if there is 
  	a condorcet winner, the Schulze methods always elects it as a winner.  
  	
-\begin{verbatim}
+\begin{minted}{coq}
 (* if candidate c is condorcet winner then it's winner of election *)
  Lemma condorcet_winner_implies_winner (c : cand) 
     (marg : cand -> cand -> Z) :  condorcet_winner c marg ->
@@ -73,7 +73,7 @@ Proof.
       pose proof (H c d (length cand_all) marg Hc).
       auto.
 Qed.
-\end{verbatim}
+\end{minted}
  		
  The proof of this theorem hinges on the two key facts:
  \begin{enumerate}
@@ -105,7 +105,7 @@ nodes, i.e.
    
  We capture these two facts in Coq:
  
- \begin{verbatim}
+ \begin{minted}{coq}
  Lemma gen_marg_gt0 :
    forall c d n marg, 
    condorcet_winner c marg -> 
@@ -121,7 +121,7 @@ Lemma gen_marg_lt0 :
 Proof.
    (* Coq terms omitted *)
 Qed.
-\end{verbatim}   
+\end{minted}   
  
  Using these two key facts, we concluded that for any condorcet winner candidate $c$, 
  the generalized margin between her and every other opponent is greater than or equal 
@@ -129,24 +129,24 @@ Qed.
  in Coq we prove the following theorem on which  the proof of 
  \textit{condorcet\_winner\_implies\_winner} hinges. 
  
-\begin{verbatim}
+\begin{minted}{coq}
  Lemma condorcet_winner_genmarg :
       forall c d n marg, 
       condorcet_winner c marg -> 
       M marg n d c <= M marg n c d.  
-\end{verbatim}
+\end{minted}
    
 \section{Reversal Symmetry}
  The \textit{Reversal symmetry} is a voting method criterion which states that if the voting method has produced a unique 
  winner, say $c$, based on the cast ballots, then $c$ should not be elected if the individual choices were 
  reversed. In context of Schulze method, we first need to define the unique winner, and ballot reversal. 
  
- \begin{verbatim}
+ \begin{minted}{coq}
  Definition unique_winner 
  (marg : cand -> cand -> Z) (c : cand) :=
   c_wins marg c = true /\
   (forall d, d <> c -> c_wins marg d = false).
-\end{verbatim}  
+\end{minted}  
 
 Informally, our definition of \textit{unique\_winner} states that the candidate $c$ is a unique winner
 if it wins the election with respect to computed margin function, $marg$, and every other candidate 
@@ -185,18 +185,18 @@ After reversing the original ballot, we get $CBA$ and the margin function is:
 
 We capture this notion formally in Coq as:
 
-\begin{verbatim}
+\begin{minted}{coq}
 Definition rev_marg 
    (marg : cand -> cand -> Z) (c d : cand) :=
    -marg c d.
-\end{verbatim}
+\end{minted}
 
 Based on the our definition of $rev\_marg$, we can formally state the reversal symmetry as:
-\begin{verbatim}
+\begin{minted}{coq}
 Lemma winner_reversed :
       forall marg c, unique_winner marg c ->
       c_wins (rev_marg marg) c = false.
-\end{verbatim}
+\end{minted}
 
 The lemma, $winner\_reversed$, expresses that if a candidate $c$ is a unique winner 
 with respect to $marg$ (computed from some ballot set $P$), then she is not a winner with respect 
@@ -214,11 +214,11 @@ $\forall d$, $M \text{ rev\_marg } (c, d)$ <  $M \text{ rev\_marg } (d, c)$.
 One key observation is that the graph we get after computing the generalized margin with respect to $rev\_marg$ is 
 simply a mirror image, every path is reversed, of the graph we get after computing the generalize margin with respect to $marg$. 
 In terms of Coq, it is:
-\begin{verbatim}
+\begin{minted}{coq}
 Lemma path_with_rev_marg :
   forall k marg c d,
   Path marg k c d <->  Path (rev_marg marg) k d c.
-\end{verbatim}
+\end{minted}
 
 Using the lemma $path\_with\_rev\_marg$, we can conclude that if the strength of 
 a path going from $c$ to $d$ with respect to $marg$ is greater than or equal to $k$ 

@@ -688,12 +688,12 @@ Qed.
      \begin{enumerate}
 		\item \textbf{Key Generation:}   
 		The user, say Alice, first chooses a finite-cyclic group $G$ of order $p$ ($p$ is a large prime) and a group group generator $g$.
-		She randomly selects a an element $x$ from group the group $G$ as a private key, computes her public key $h = g^{x}$. 
+		She randomly selects a an element $x$ from $\{1, \ldots, p-1\}$ as a private key, computes her public key $h = g^{x}$. 
 		Subsequently, she publishes 
 		the <$G$, $g$, $p$, $h$> and keeps $x$ private. 
 		\item \textbf{Encryption:}
 		If any party, say Bob, wants to send a encrypted message $m$ to Alice, then he would randomly select an element 
-		r  (1 <= r < p) from the group $G$, computes $c_{1} := g^{r}$ and $c_{2} := m * h^{r}$, and send the pair ($c_{1}, c_{2}$) to 
+		r, where 1 < r < p, computes $c_{1} := g^{r}$ and $c_{2} := m * h^{r}$, and send the pair ($c_{1}, c_{2}$) to 
 		Alice. 
 		\item \textbf{Decryption:}
 		Upon receiving any pair ($c_{1}, c_{2}$), Alice would compute $c_{2} * c_{1}^{-x}$. A basic simplification of $c_{2} * c_{1}^{-x}$
@@ -701,7 +701,7 @@ Qed.
 		$m*h^{r}$ and $c_{1}$ with $g^{r}$ in $c_{2} * c_{1}^{-x}$. This substitution leads to 
 		$m * h ^ {r} * g^{-rx}$ which upon further simplification by replacing the $h$ with $g^{x}$
 		leads to $m * g^{xr} * g^{-rx}$. Using the same base rule, the term $m * g^{xr} * g^{-rx}$ can be 
-		written as $m * g^{xr - rx}$. Since, the underlying group, $G$, is a abelian group, so we 
+		written as $m * g^{xr - rx}$. Since, the underlying group, $G$, is a abelian group, i.e. $x \cdot r = r \cdot x$ , so we 
 		can replace $m * g^{xr - rx}$ with $m * g^{0}$. The term $g^{0}$  = $e$ (the identity of group $G$) and using 
 		the right identity group law, we can replace $m * e$ by $m$. 
 		
@@ -826,7 +826,7 @@ Qed.
       Similarly, we can prove that $((y^{-1} \cdot x^{-1}) \cdot   (x \cdot y) = e $.
       We can also formalize it inside theorem prover and prove it more formally (below is a proof in Coq theorem prover).
       
-      \begin{verbatim}
+      \begin{minted}{coq}
       Lemma inv_distr : forall a b, inv (f a b) = f (inv b) (inv a).
       Proof.
         intros a b. symmetry. 
@@ -838,7 +838,7 @@ Qed.
         rewrite (id_l b).
         rewrite (inv_l b). auto.
       Qed.
-      \end{verbatim}
+      \end{minted}
      
      If a verifier wants to verify the correctness of our proof, then he would simply check that if the group rules are applied correctly. 
      Moreover, these proofs 

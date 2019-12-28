@@ -30,7 +30,7 @@ scenarios.
 
 \textbf{Chapter Outline:} In the section \ref{sec:verifiable_homomorphic}, 
 we discuss the technique to achieve verifiable tally. In order to do so, 
-we discuss why do need our ballot to have a matrix representation 
+we discuss why do we need our ballot to have a matrix representation 
 and not a ranking function. Moreover, we discuss the concept 
 of validity ballot, which comes naturally with matrix representation, 
 steps of homomorphic counting, and cryptographic primitives needed 
@@ -402,7 +402,8 @@ The first part of our formalisation concerns the cryptographic
 primitives that we collect in a separate module. Below is an example
 of the generation / verification primitives for decryption, together
 with coherence axioms.
-\begin{lstlisting}[frame=single,basicstyle=\ttfamily\footnotesize]
+
+\begin{minted}{coq}
 Variable decrypt_message: 
   Group -> Prikey -> ciphertext ->  plaintext.
 
@@ -424,7 +425,7 @@ Axiom verify_honest_decryption_zkp (group: Group):
   = true.
   
 
-\end{lstlisting}
+\end{minted}
   
 \noindent
 The difference between the keyword \texttt{Variable} and \texttt{Axiom}
@@ -432,9 +433,9 @@ is purely syntactic, and in our case, used as a convenience for
 extraction (The keyword  \texttt{Variable} is used if want that variable of function 
 to be lambda abstracted otherwise keyword \texttt{Axiom}). In
 the above, the first two functions, \texttt{decrypt\_message} and
-\texttt{construct\_zero\_knowledge} \texttt{\_decryption\_proof} are
+\texttt{construct\_zero} \texttt{\_knowledge} \texttt{\_decryption} \texttt{\_proof} are
 \emph{generation} primitives, whereas the function 
-\texttt{verify\_zero} \texttt{\_knowledge\_decryption\_proof} is a
+\texttt{verify\_zero} \texttt{\_knowledge} \texttt{\_decryption} \texttt{\_proof} is a
 \emph{verification} primitive. We have two coherence axioms. The
 first says that if the verification of a zero knowledge proof of
 honest decryption succeeds, then the ciphertext indeed decrypts to
@@ -444,10 +445,10 @@ knowledge proofs indeed verify.
 For ballots, we assume a type \texttt{cand} of candidates, and
 represent plaintext and encrypted ballots as two-argument functions
 that take plaintext, and ciphertexts, as values. 
-\begin{lstlisting}[frame=single,basicstyle=\ttfamily\footnotesize]
+\begin{minted}{coq}
     Definition pballot := cand -> cand -> plaintext.
     Definition eballot := cand -> cand -> ciphertext.
-\end{lstlisting}
+\end{minted}
 
 
  We now turn to the representation of certificates, and indeed to the
@@ -458,10 +459,10 @@ that take plaintext, and ciphertexts, as values.
   rise to a (inductive dependent) type \texttt{ECount}, parameterised
   by the ballots being counted.
 
-  \begin{lstlisting}[frame=single,basicstyle=\ttfamily\footnotesize]
+  \begin{minted}{coq}
   Inductive ECount (group : Group) (bs : list eballot) : 
     EState -> Type
-  \end{lstlisting}
+  \end{minted}
 
   \noindent
   Given a list \texttt{bs} of ballots, \texttt{ECount bs} is a
@@ -483,13 +484,13 @@ where
 \end{itemize}
 This is readily translated to the following Coq code:
  
-\begin{lstlisting}[frame=single,basicstyle=\ttfamily\footnotesize]
+\begin{minted}{coq}
 Inductive EState : Type :=
  | epartial : (list eballot * list eballot) ->
               (cand -> cand -> ciphertext) -> EState
  | edecrypt : (cand -> cand -> plaintext) -> EState
  | ewinners : (cand -> bool) -> EState.
-\end{lstlisting}
+\end{minted}
 
 
 % \includegraphics[width=\textwidth]{inductive.png}
@@ -533,17 +534,19 @@ verification data is that the former can be simply be inspected
 (here by comparing lists) whereas the latter requires additional
 data (here  in the form of a zero knowledge proof).
 
-\begin{lstlisting}[frame=single,basicstyle=\ttfamily\footnotesize]
- Inductive ECount (grp : Group) (bs : list eballot) : EState -> Type :=
-  | ecax (us : list eballot) (encm : cand -> cand -> ciphertext)
-           (decm : cand -> cand -> plaintext)
-           (zkpdec : cand -> cand -> DecZkp) :
-        us = bs ->
-        (forall c d : cand, decm c d = 0) -> 
-        (forall c d, verify_zero_knowledge_decryption_proof 
-                  grp (decm c d) (encm c d) (zkpdec c d) = true) ->
-        ECount grp bs (epartial (us, []) encm)
-\end{lstlisting}
+\begin{minted}{coq}
+ Inductive ECount (grp : Group) (bs : list eballot) : 
+  EState -> Type :=
+  | ecax (us : list eballot) 
+      (encm : cand -> cand -> ciphertext)
+      (decm : cand -> cand -> plaintext)
+      (zkpdec : cand -> cand -> DecZkp) :
+      us = bs ->
+      (forall c d : cand, decm c d = 0) -> 
+      (forall c d, verify_zero_knowledge_decryption_proof 
+          grp (decm c d) (encm c d) (zkpdec c d) = true) ->
+    ECount grp bs (epartial (us, []) encm)
+\end{minted}
 
 
 
@@ -565,24 +568,31 @@ evidenced. As before, we have:
   ballot is indeed valid.
 \end{description}
 
-\begin{lstlisting}[frame=single,basicstyle=\ttfamily\footnotesize]
+\begin{minted}{coq}
   | ecvalid (u : eballot) (v : eballot) (w : eballot)
-              (b : pballot) (zkppermuv : cand -> ShuffleZkp)
-              (zkppermvw : cand -> ShuffleZkp) (zkpdecw : cand -> cand -> DecZkp)
-              (cpi : Commitment) (zkpcpi : PermZkp)
-              (us : list eballot) (m nm : cand -> cand -> ciphertext)
-              (inbs : list eballot) :
-        ECount grp bs (epartial (u :: us, inbs) m) ->
-        matrix_ballot_valid b ->
-        (* commitment proof *)
-        verify_permutation_commitment grp (List.length cand_all) cpi zkpcpi = true ->
-        (forall c, verify_row_permutation_ballot grp u v cpi zkppermuv c = true)  ->
-        (forall c, verify_col_permutation_ballot grp v w cpi zkppermvw c = true)  ->
-        (forall c d, verify_zero_knowledge_decryption_proof 
-                  grp (b c d) (w c d) (zkpdecw c d) = true)  ->
-        (forall c d, nm c d = homomorphic_addition grp (u c d) (m c d)) -> 
-        ECount grp bs (epartial (us, inbs) nm)
-       \end{lstlisting}
+     (b : pballot) (zkppermuv : cand -> ShuffleZkp)
+     (zkppermvw : cand -> ShuffleZkp) 
+     (zkpdecw : cand -> cand -> DecZkp)
+     (cpi : Commitment) (zkpcpi : PermZkp)
+     (us : list eballot) 
+     (m nm : cand -> cand -> ciphertext)
+     (inbs : list eballot) :
+     ECount grp bs (epartial (u :: us, inbs) m) ->
+     (* valid ballot *)
+     matrix_ballot_valid b ->
+     (* commitment proof *)
+     verify_permutation_commitment grp 
+         (List.length cand_all) cpi zkpcpi = true ->
+     (forall c, verify_row_permutation_ballot grp 
+         u v cpi zkppermuv c = true)  ->
+     (forall c, verify_col_permutation_ballot grp 
+         v w cpi zkppermvw c = true)  ->
+     (forall c d, verify_zero_knowledge_decryption_proof 
+          grp (b c d) (w c d) (zkpdecw c d) = true)  ->
+     (forall c d, nm c d = homomorphic_addition
+          grp (u c d) (m c d)) -> 
+     ECount grp bs (epartial (us, inbs) nm)
+       \end{minted}
  
   
 
@@ -592,23 +602,28 @@ when an invalid ballot is being encountered (the only
 difference is that the margin matrix is not being updated and ballot is moved to 
 list of invalid ballots). 
 
-\begin{lstlisting}[frame=single,basicstyle=\ttfamily\footnotesize]
+\begin{minted}{coq}
   | ecinvalid (u : eballot) (v : eballot) (w : eballot)
-              (b : pballot) (zkppermuv : cand -> ShuffleZkp)
-              (zkppermvw : cand -> ShuffleZkp) (zkpdecw : cand -> cand -> DecZkp)
-              (cpi : Commitment) (zkpcpi : PermZkp)
-              (us : list eballot) (m : cand -> cand -> ciphertext)
-              (inbs : list eballot) :
-        ECount grp bs (epartial (u :: us, inbs) m) ->
-        ~matrix_ballot_valid b ->
-        (* commitment proof *)
-        verify_permutation_commitment grp (List.length cand_all) cpi zkpcpi = true ->
-        (forall c, verify_row_permutation_ballot grp u v cpi zkppermuv c = true) ->
-        (forall c, verify_col_permutation_ballot grp v w cpi zkppermvw c = true) ->
-        (forall c d, verify_zero_knowledge_decryption_proof 
-                  grp (b c d) (w c d) (zkpdecw c d) = true) ->
-        ECount grp bs (epartial (us, (u :: inbs)) m)
-\end{lstlisting}
+     (b : pballot) (zkppermuv : cand -> ShuffleZkp)
+     (zkppermvw : cand -> ShuffleZkp)
+     (zkpdecw : cand -> cand -> DecZkp)
+     (cpi : Commitment) (zkpcpi : PermZkp)
+     (us : list eballot) (m : cand -> cand -> ciphertext)
+     (inbs : list eballot) :
+     ECount grp bs (epartial (u :: us, inbs) m) ->
+     (* invalid ballot *)
+     ~matrix_ballot_valid b ->
+     (* commitment proof *)
+     verify_permutation_commitment grp
+        (List.length cand_all) cpi zkpcpi = true ->
+     (forall c, verify_row_permutation_ballot grp
+        u v cpi zkppermuv c = true) ->
+     (forall c, verify_col_permutation_ballot grp
+        v w cpi zkppermvw c = true) ->
+     (forall c d, verify_zero_knowledge_decryption_proof 
+        grp (b c d) (w c d) (zkpdecw c d) = true) ->
+     ECount grp bs (epartial (us, (u :: inbs)) m)
+\end{minted}
 
  
 
@@ -627,15 +642,16 @@ Also here, we have
   of the (last) homomorphically computed margin matrix.
 \end{description} 
 
- \begin{lstlisting}[frame=single,basicstyle=\ttfamily\footnotesize]
-  | ecdecrypt inbs (encm : cand -> cand -> ciphertext)
-                (decm : cand -> cand -> plaintext)
-                (zkp : cand -> cand -> DecZkp) :
-        ECount grp bs (epartial ([], inbs) encm) ->
-        (forall c d, verify_zero_knowledge_decryption_proof
-                  grp (decm c d) (encm c d) (zkp c d) = true) ->
-        ECount grp bs (edecrypt decm)
- \end{lstlisting}
+ \begin{minted}{coq}
+  | ecdecrypt inbs 
+      (encm : cand -> cand -> ciphertext)
+      (decm : cand -> cand -> plaintext)
+      (zkp : cand -> cand -> DecZkp) :
+      ECount grp bs (epartial ([], inbs) encm) ->
+      (forall c d, verify_zero_knowledge_decryption_proof
+          grp (decm c d) (encm c d) (zkp c d) = true) ->
+      ECount grp bs (edecrypt decm)
+ \end{minted}
  
  
  
@@ -655,14 +671,16 @@ and we have:
 This last part is same as the previous chapter's 
 scrutiny sheet (section \ref{sec:scrunity_sheet}).
 
- \begin{lstlisting}[frame=single,basicstyle=\ttfamily\footnotesize]
-  | ecfin dm w (d : (forall c, (wins_type dm c) + (loses_type dm c))) :
-        ECount grp bs (edecrypt dm) ->
-        (forall c, w c = true <-> (exists x, d c = inl x)) ->
-        (forall c, w c = false <-> (exists x, d c = inr x)) ->
-        ECount grp bs (ewinners w).  
+ \begin{minted}{coq}
+  | ecfin dm w 
+      (d : (forall c, (wins_type dm c) + 
+                      (loses_type dm c))) :
+      ECount grp bs (edecrypt dm) ->
+      (forall c, w c = true <-> (exists x, d c = inl x)) ->
+      (forall c, w c = false <-> (exists x, d c = inr x)) ->
+      ECount grp bs (ewinners w).  
 
-\end{lstlisting}
+\end{minted}
 
 
 
@@ -702,11 +720,11 @@ our main theorem formally states that all elections can be
 counted according to the Schulze Method (with encrypted ballots),
 i.e. a winner can always be found. Formally, our main theorem takes
 the following form:
-\begin{lstlisting}[frame=single,basicstyle=\ttfamily\footnotesize]
+\begin{minted}{coq}
 Lemma encryption_schulze_winners (group : Group) 
  (bs : list eballot) : existsT (f : cand -> bool), 
  ECount group bs (ewinners f).
-\end{lstlisting}
+\end{minted}
 
 \noindent
 The proof proceeds by successively building an inhabitant of
@@ -734,13 +752,14 @@ two lists of ballots that are the encryption (resp. decryption) of
 one another. 
 
 
-The first theorem, \texttt{plaintext\_schulze\_to\_homomorphic}, reproduced below shows
+The first theorem, \texttt{plaintext\_} \texttt{schulze\_to} \texttt{\_homomorphic}, 
+reproduced below shows
 that every winner that can be determined using plaintext counting
 can also be evidenced on the basis of corresponding encrypted ballots. The
 converse of this is established by 
-Theorem \texttt{homomorphic\_schulze\_to\_plaintext}.
+Theorem \texttt{homomorphic} \texttt{\_schulze} \texttt{\_to\_plaintext}.
 
-\begin{lstlisting}[frame=single,basicstyle=\ttfamily\footnotesize]
+\begin{minted}{coq}
   Lemma plaintext_schulze_to_homomorphic 
    (group : Group) (bs : list ballot): 
    forall (pbs : list pballot) (ebs : list eballot) 
@@ -756,7 +775,7 @@ Theorem \texttt{homomorphic\_schulze\_to\_plaintext}.
    decrypt_message group privatekey (x c d))) ebs) ->
    (mapping_ballot_pballot bs pbs) ->
    ECount grp ebs (ewinners w) -> Count bs (winners w).
-\end{lstlisting}
+\end{minted}
 
 \noindent
 The theorems above feature a third type of ballot that is the basis
@@ -781,7 +800,7 @@ proofs that verify indeed evidence shuffle and/or honest decryption.
 
 As already mentioned, we are using  the Coq extraction
 mechanism\citep{Letouzey:2003:NEC}  to extract programs from
-existence proofs. 
+existence proofs\footnote{https://github.com/mukeshtiwari/EncryptionSchulze/tree/master/code/Workingcode}.
 In particular, we extract the proof of the Theorem
 \texttt{pschulze\_winners}, given in Section \ref{sec:correct} to a
 program that delivers not only provably correct counts, but also
@@ -998,8 +1017,9 @@ Java data structures.  After instantiating the
 \begin{figure}
 \centering
 %\vspace*{-1cm}
-\includegraphics[scale=0.50]{PlotVer3.png}
-%\vspace*{-1cm}
+\includegraphics[scale=0.80]{PlotVer3.png}
+\caption{Experimental Result}
+  \label{fig:experimental_result}
 \end{figure}
  We note that the schematic presentation of the certificate above is
  nothing but a representation of the data contained in the extracted
@@ -1013,8 +1033,8 @@ Java data structures.  After instantiating the
 
 To demonstrate proof of concept, 
 we have run our experiment on an  Intel  i7  2.6  GHz  Linux  desktop  computer
-with  16GB  of  RAM for three candidates and randomly generated ballots. The 
-largest  amount of ballot we counted was 10,000 (not included in
+with  16GB  of  RAM for three candidates and randomly generated ballots (Figure \ref{fig:experimental_result}). 
+The largest  amount of ballot we counted was 10,000 (not included in
 graph), with a runtime of 25 hours. A more detailed analysis reveals
 that the bottleneck are the bindings between OCaml and Java. More
 specifically, producing the cryptographic evidence using the
@@ -1073,7 +1093,8 @@ the cryptographic primitives, in particular the zero knowledge
 proofs, we assumed properties which in reality only hold with
 very high probability. As a
 consequence our correctness assertions only hold to the level
-of probability that is guaranteed by zero knowledge proofs.
+of probability that is guaranteed by zero knowledge proofs (sigma 
+protocols).
 
 \smallskip\noindent\emph{Scalability.} We have analysed the
 feasibility of the extracted code by counting an increasing number
@@ -1122,12 +1143,13 @@ In a nutshell, the achieved and missed part of this formalization:
 
 Our formalization leaves some gaps which needed to be filled:
 \begin{itemize}
-\item A formally verified cryptographic library to fill the \texttt{correctness gap}.
-\item A formally verified checker to ease the auditing of election to fill the \texttt{Scrutineers} gap
+\item A formally verified cryptographic library to fill the \textit{correctness gap}.
+\item A formally verified checker to ease the auditing of election to fill the \textit{Scrutineers} gap
 \end{itemize}
 
 
 Developing a formally verified library to fill the correctness gap would have taken more time,
+specifically the commitment consistent shuffle, 
 so we chose to formally verify the certificate checker to ease the auditing of election to 
 increase the number of scrutineers gap. 
  
@@ -1137,4 +1159,4 @@ However, due to time constraint and complex nature of our certificate, we could 
 formalize every cryptographic primitive needed to verify our certificate. Rather, 
 we have developed a proof of concept formally verified certificate checker for 
  International Association for Cryptologic Research 2018 election, a simpler 
- scrutiny sheet than ours.  
+ scrutiny sheet than ours which does not involve any shuffle. 

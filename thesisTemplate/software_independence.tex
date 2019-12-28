@@ -1,4 +1,4 @@
-\chapter{Scrutiny Sheet : Software Independence}
+	\chapter{Scrutiny Sheet : Software Independence}
 \label{cha:software_independence}
 
 \epigraph{Somewhere inside of all of us is the power to change the world.} 
@@ -8,8 +8,8 @@
 
 
 One of the major disadvantage of introducing cryptography 
-to achieve privacy and verifiability, encryption to make the 
-content of ballot private and zero-knowledge-proof for verification of claims, makes the verification 
+to achieve privacy, encryption to make the 
+content of ballot private,  and verifiability, zero-knowledge-proof for verification of claims, makes the verification 
 process cumbersome. As a consequence, the verification process (checking the scrutiny sheet) is only accessible 
 to tiny fraction of representative population, cryptographers, results into a sharp decrease in number of scrutineers. 
 While it is not very difficult to find cryptographers to verify the election, 
@@ -90,7 +90,7 @@ A group is a set $G$, with a binary operator $* : G \rightarrow G \rightarrow G$
     If the group is commutative, i.e. $\forall$ a b $\in  G,$  $a * b = b * a$, then we call it abelian group.  We can represent the abelian group in Coq by using the 
     record data type. 
  
- \begin{verbatim}
+ \begin{minted}{Coq}
 
 Record AbelGroup (G : Type) 
     (Hdec : forall x y : G, {x = y} + {x <> y}) 
@@ -105,7 +105,7 @@ Record AbelGroup (G : Type)
     commutative : forall x y, dot x y = dot y x
   }.
   
-\end{verbatim}    
+\end{minted}
 
 \noindent
 Our Coq encoding is slight different from the definition of the group we gave above, mainly that \textit{G : Type} "read it as A has the type Type" and 
@@ -113,12 +113,12 @@ Our Coq encoding is slight different from the definition of the group we gave ab
 hence we need to explicitly state the type of term $G$, and we assume a decidable equality $Hdec$ on the elements of $G$.  
 
 \begin{definition}[Field] 
-A field  is a set $F$, with two binary operator $+ : F \rightarrow F \rightarrow F$,  and $\cdot : F \rightarrow F \rightarrow F$, 
-two identity element $0$ and $1$, and two unary operator $- : F \rightarrow F$, $1/ : F \rightarrow F$  such that:
+A field  is a set $\mathbb{F}$, with two binary operator $+ : \mathbb{F} \rightarrow \mathbb{F} \rightarrow \mathbb{F}$,  and $\cdot : \mathbb{F} \rightarrow \mathbb{F} \rightarrow \mathbb{F}$, 
+two identity element $0$ and $1$, and two unary operator $- : \mathbb{F} \rightarrow \mathbb{F}$, $1/ : \mathbb{F} \rightarrow \mathbb{F}$  such that:
 \end{definition} 
  \begin{itemize}
- \item (F, +, 0, -) forms an abelian group.
- \item (F - $\lbrace 0 \rbrace$, $\cdot$, 1, 1/) forms an abelian group.
+ \item ($\mathbb{F}$, +, 0, -) forms an abelian group.
+ \item ($\mathbb{F}$ - $\lbrace 0 \rbrace$, $\cdot$, 1, 1/) forms an abelian group.
  \item $\cdot$ distributes over +.
  \end{itemize}
  
@@ -171,7 +171,7 @@ $\text{Pedersen\_generalized g hs ms r := } g^r \cdot \prod_{i = 1}^n  h_{i}^{m_
 The $\prod_{i = 1}^n  h_{i}^{m_{i}}$ function can be written in Coq as 
 (this program is written using Equation library \citep{Sozeau:2019:ERH:3352468.3341690}):
 
-\begin{verbatim}
+\begin{minted}{coq}
 
 Equations prod {F G n}  
    (f : G -> F -> G) (g : G -> G -> G)
@@ -180,7 +180,7 @@ Equations prod {F G n}
   prod  (n := S n) f g (vcons h hs) (vcons m ms)  := 
      g (f h m) (prod f g hs ms).
 
-\end{verbatim}
+\end{minted}
 
 Finally, to commit a matrix of size $N \times N$, we need to call 
 $Pedersen\_generalized$ on each column of matrix. Consequently, 
@@ -206,7 +206,7 @@ in general, is a three step protocol:
 Upon receiving the response $z$, $V$ either accepts the proof or rejects the proof.  Now we define the sigma protocol in 
 Coq by using record data type.
 
-\begin{verbatim}
+\begin{minted}{coq}
 Record SigmaProtocol (Statement : Type) (* Statement x *)
        (Witness : Type) (* witness w *)
        (Rel : Statement -> Witness -> bool) (* decidable relation *)
@@ -214,38 +214,39 @@ Record SigmaProtocol (Statement : Type) (* Statement x *)
        (Commitment : Type) (* commitments *)
        (Challenge : Type) (* challenges *) 
        (Response : Type) (* response *) :=
-  MkSigma 
-    {
-      (* initial commitment send by the Prover *)
-      initial : RandCoin -> Commitment;
-      (* Randomness send by the verifier.  *) 
-      challenge : Challenge;
-      (* response generate by prover *)
-      response : Statement -> Witness ->
-                 RandCoin -> Challenge ->
-                 Response;
-      (* verify the response *)
-      verify : Statement * Commitment * Challenge * Response -> bool;
-      (* Simulator *)
-      simulator : Statement -> Challenge -> Response ->
-                  Statement * Commitment * Challenge * Response;
-      (* Extractor *)
-      extractor : Challenge -> Response -> Challenge -> Response -> Witness;
+  MkSigma {
+  (* initial commitment send by the Prover *)
+  initial : RandCoin -> Commitment;
+  (* Randomness send by the verifier.  *) 
+  challenge : Challenge;
+  (* response generate by prover *)
+  response : Statement -> Witness ->
+     RandCoin -> Challenge ->
+     Response;
+  (* verify the response *)
+  verify : Statement * Commitment * Challenge * Response
+  -> bool;
+  (* Simulator *)
+  simulator : Statement -> Challenge -> Response ->
+     Statement * Commitment * Challenge * Response;
+  (* Extractor *)
+  extractor : Challenge -> Response -> Challenge -> 
+     Response -> Witness;
   
 
-      (* Completness *)
-      Completness : forall (s : Statement) (w : Witness) (r : RandCoin)
-                      (e : Challenge),
-          Rel s w = true -> verify (s, initial r, e, response s w r e) = true;
+  (* Completness *)
+  Completness : forall (s : Statement) (w : Witness)
+    (r : RandCoin) (e : Challenge),vRel s w = true -> 
+    verify (s, initial r, e, response s w r e) = true;
 
-      (* Special Soundness *)
-      Special_Soundness : forall s c e1 e2 r1 r2,
-          e1 <> e2 ->
-          verify (s, c, e1, r1) = true ->
-          verify (s, c, e2, r2) = true ->
-          Rel s (extractor e1 r1 e2 r2) = true;
+ (* Special Soundness *)
+  Special_Soundness : forall s c e1 e2 r1 r2,
+    e1 <> e2 ->
+    verify (s, c, e1, r1) = true ->
+    verify (s, c, e2, r2) = true ->
+    Rel s (extractor e1 r1 e2 r2) = true;
   }.
-\end{verbatim}
+\end{minted}
 
 
 \noindent
@@ -288,29 +289,29 @@ proof just by using $s$ and $e$, it uses a concept call rewinding.)
 If we were doing probabilistic reasoning, we could have represent the real view and 
 simulator's view as following (not a real code, but inspired by Certicrypt):
 
-\begin{verbatim}
+\begin{minted}{coq}
 Real_view (s : Statement) (w : Witness) (e : Challenge) := do
   r <- G (* generate a random value from some group G *)
   let a := g^r (* commitment *)
   let z := r + e * w  (* compute the response *)
   return (s, a, e, z)
-\end{verbatim}
+\end{minted}
 
 
-\begin{verbatim}
+\begin{minted}{coq}
 Simulator_view (s : Statement) (e : Challenge) := do
  z <- G (* random element from some group G *)
  return (s, g^z * s^(-e), e, z)
-\end{verbatim}
+\end{minted}
 
-\begin{verbatim}
+\begin{minted}{coq}
 
  Special_Honest_Verifier_ZKP  (s : Statement) (w : Witness) 
   (e : Challenge) (H : Rel s w = true) := 
   Pr [Real_view  s w e] = 
   Pr [Simulator_view s e]
 
-\end{verbatim}
+\end{minted}
 
 \noindent
 Based on these two probabilistic view, we could have shown that two are equal. Intuitively, 
@@ -326,21 +327,21 @@ explicit parameter. Consequently, our probabilistic program would turn into
 a deterministic Coq program. 
 
 
-\begin{verbatim}
+\begin{minted}{coq}
 Real_view (s : Statement) (w : Witness) (e : Challenge) 
   (r : RandCoin):=
   let a := g^{r} in (* commitment *)
   let z := r + e * w in  (* compute the response *)
   (s, a, e, z)
-\end{verbatim}
+\end{minted}
 
 
-\begin{verbatim}
+\begin{minted}{coq}
 Simulator_view (s : Statement) (e : Challenge) 
  (z : Response) :=
  (s, g^z s^(-e), e, z)
 
-\end{verbatim}
+\end{minted}
 
 
 
@@ -350,15 +351,17 @@ by showing a bi-implication  between  the real view and simulated view.
 We show that real view and simulator's view align with each other. 
 In terms of Coq, it is expressed as:
 
-\begin{verbatim}
+\begin{minted}{coq}
  (* Probablistic Reasoning could have made it nicer *)
  Special_Honest_Verifier_ZKP  (s : Statement) 
   (w : Witness) (e : Challenge) 
   (Rel : Statement -> Witness -> bool) (H: Rel s w = true),
-  forall (r : RandCoin), verify (Real_view s w e r) = true <->
-  forall (z : Response), verify (Simulator_view s e z) = true;
+  forall (r : RandCoin), 
+  verify (Real_view s w e r) = true <->
+  forall (z : Response), 
+  verify (Simulator_view s e z) = true;
 
-\end{verbatim}
+\end{minted}
 
 The axiom $Special\_Honest\_Verifier\_ZKP$ says that for any  given 
 fixed statement $s$, witness $w$, challenge $e$, relation $Rel$, and assumption that $Rel$ $s$ $w$ holds, 
@@ -467,7 +470,7 @@ is additive ElGamal, and recall that our ballot is matrix of ciphertext:
  \end{pmatrix}
 
 
-To compute the finally tally, all we have to do is stack all the "valid" 
+To compute the finally tally, all we have to do is stack all the valid
 ballots (matrices) together and multiply the corresponding ciphertexts 
 together to get the final tally matrix (point wise matrix multiplication). 
 The final computed tally can be 
@@ -574,7 +577,7 @@ IACR used Schnorr group to avoid attacks various attacks on solving the discrete
 logarithm problem.  A Schnorr group is a multiplicative Abelian subgroup of prime order q of the field of 
 integers modulo a prime p, where p = k * q + 1 for some integer.   In IACR election, 
 the primes used were:
-\begin{lstlisting}[frame=single,basicstyle=\ttfamily\scriptsize]
+\begin{minted}[fontsize=\footnotesize]{coq}
 
 Definition P : Z := 16328632084933010002384055033805457329601614771
 1859553897391673090862148004064657990385836349537529416756455621824
@@ -592,7 +595,7 @@ Definition Q : Z := 61329566248342901292543872769978950870633559608
 669337131139375508370458778917.
 
 
-\end{lstlisting}
+\end{minted}
 
 Since theorem provers are known for proving mathematical statements, but not for being good at running 
 computation inside their environment. Naturally, proving any mathematical statement, e.g. number 
@@ -603,13 +606,13 @@ To begin with we utilise the CoqPrime
 library\footnote{https://github.com/thery/coqprime} to prove in Coq that the
 numbers used to define the Schnorr group are
 in fact prime.
-\begin{lstlisting}[frame=single,basicstyle=\ttfamily\scriptsize]
+\begin{minted}{coq}
 
 Lemma P_prime : prime P.
 
 Lemma Q_prime : prime Q.
 
-\end{lstlisting}
+\end{minted}
 
 
 Finally, we extracted the Coq code as a OCaml and wrote a main file to glue the 
