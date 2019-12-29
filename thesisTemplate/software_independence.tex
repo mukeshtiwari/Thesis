@@ -193,7 +193,7 @@ we  would get a vector of commitments of size N.
 
 \section{Sigma Protocol: Efficient Zero-Knowledge-Proof}
 \label{sec:sigma_coq}
-A sigma protocol is a two party protocol, a prover $P$ and a verified $V$, where prover $P$ try to convince the $V$ that he 
+A sigma protocol is a two party protocol, a prover $P$ and a verified $V$, where prover $P$ try to convince the $V$ that she 
 holds a private input $x$ for some public input $w$ such that a binary relation $R$ holds, i.e. $(x, w) \in R$.  Sigma protocol, 
 in general, is a three step protocol:
 \begin{enumerate}
@@ -380,7 +380,7 @@ EQ composition, OR composition, etc.
 One of the most basic sigma protocol is proof of knowledge of 
 discrete logarithm, i.e. given two elements$g$ and $h$ of 
 a group $G$, prover convinces the verifier that 
-he knows the discrete logarithm ($\log_g h$) in zero 
+she knows the discrete logarithm ($\log_g h$) in zero 
 knowledge. In mathematical 
 notation of zero knowledge proof, it is represented as:
 $ZKPoK \lbrace w \text{ | } h = g^w \rbrace$. We can show 
@@ -568,7 +568,7 @@ three things. First, all the ballots included in final tally are indeed the encr
 zero or one, and any ballot containing any other value has been discarded. 
 Second, the scrutineer reruns the (multiplication)
 computation and checks that the resulting ciphertexts matches the published one.
-Finally, he checks that the transcripts are valid for the decryption of these
+Finally, she checks that the transcripts are valid for the decryption of these
 combined ciphertexts with respect to the announced result.  These  three checks
 suffice to ensure that the ballots were counted-as-collected. 
 
