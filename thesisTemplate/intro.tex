@@ -206,8 +206,8 @@ of cryptographic primitives for future work (work in progress).}
  but there are very few, to the best of my knowledge, 
  that have used theorem provers to implement the voting protocol (counting algorithm)
  and verify its correctness properties. 
- \citep{10.1007/978-3-540-31987-0_14}, and  \citep{Delaune2010} have used pi-calculus to model 
- and analyse various properties, such as fairness, eligibility, vote-privacy, receipt-freeness and 
+ \citep{10.1007/978-3-540-31987-0_14}, and  \citep{Delaune2010} have used pi-calculus, a formalism for describing concurrent systems,
+ to model and analyse various properties, such as fairness, eligibility, vote-privacy, receipt-freeness and 
  coercion-resistant,  
  of the protocol FOO developed by \citep{10.1007/3-540-57220-1_66}.  \citep{Backes:2008:AVR:1380848.1381255}
  presented a general technique to model  remote electronic 
@@ -221,9 +221,26 @@ of cryptographic primitives for future work (work in progress).}
  Dolev-Yao model or  complexity-theoretic model, whereas our work is 
  more focused on verified implementation and  verifiability  aspect of vote counting.
 
- The closest to our work is \citep{DeYoung:2012:LLV}, \citep{Pattinson:2015:VCM}, \citep{Pattinson:2016:MSP},
- \citep{Verity:2017:FVI:3014812.3014845}, and \citep{Ghale:2017:FVS}.  \citep{DeYoung:2012:LLV} 
- used linear logic \citep{GIRARD19871} to model the different entity in electronic voting as a resource. 
+ The closest to our work is \citep{Cochran:2010:VFS} \citep{DeYoung:2012:LLV}, \citep{Pattinson:2015:VCM}, \citep{Pattinson:2016:MSP},
+ \citep{Verity:2017:FVI:3014812.3014845}, and \citep{Ghale:2017:FVS}. \citep{Cochran:2010:VFS} have used
+ Business Object Notation (BON) and Java Modelling Language (JML) to formally specify their 
+ Java implementation of  Irish Proportional  Representation  by  Single  Transferable  Vote  (PR-STV) 
+ method.  They relied on Extended Static Checking to validate the correctness of their 
+ implementation. Upon further investigation \citep{Cochran:2013:FMB}, they improved it 
+ by writing formal specification of  candidate, ballot, and ballot box datatypes 
+ using the Alloy model checker \citep{10.1145/505145.505149}. However, they themselves pointed that:
+ \begin{displayquote}
+ Note that this automated consistency checking is not the same as providing a 
+ full interactive proof of a soundness theorem in a higher-order logical framework.
+ Such formalization is an interesting and useful exercise, but we did not do it for this 
+ case study. Instead, checking the dozens of theorem stipulated in law text is more 
+ akin to the kind of validation that we are advocating in this work. 
+ It gives us high confidence, but not a proof, that the mechanical formalization is
+  sound and complete.
+  \end{displayquote}
+ 
+ \noindent
+ \citep{DeYoung:2012:LLV} used linear logic \citep{GIRARD19871} to model the different entity in electronic voting as a resource. 
  The use of linear logic makes it very natural to capture the different entities in electronic voting,  
  depending on their usage, by means of modality e.g. a voter can cast only one vote, but she might 
  need to show her photo id to multiple times at counting booth. \citep{Pattinson:2015:VCM} treated 
