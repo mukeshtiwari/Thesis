@@ -66,7 +66,7 @@ certificate checker for IACR election.
  how to make a concrete instance of sigma protocol by giving an example of discrete logarithm. In addition, 
  we show the protocol needed for honest decryption (section $\ref{sec:dec_sigma}$). Section $\ref{sec:homo_tally}$ sketches 
  the homomorphically tally based on additive ElGamal scheme. Finally, we discuss the IACR scrutiny sheet in section $\ref{sec:election_iacr}$, 
- and we summarize the chapter in the section $\ref{sec:summary}$
+ and we summarize the chapter in the section $\ref{sec:summary_software}$
 
 
 \section{Algebraic Structures: Building Blocks}
@@ -80,10 +80,10 @@ because multiplying a group element by a field element can be abstracted over sc
 A group is a set $G$, with a binary operator $* : G \rightarrow G \rightarrow G$, identity element $e$, and inverse operator $inv : G \rightarrow G$ such 
     that the following laws hold:  \end{definition} 
     \begin{itemize}
-     \item \texit{Associativity}: $\forall$  a b c $\in G,$  $a * (b * c) = (a * b) * c$
-    \item \texit{Closure}: $\forall$ a b $\in G,$  $a * b \in G$
-    \item \texit{Inverse Element}: $\forall$ a $\in G$ $\exists$ $a^{-1} \in G$, such that $a * a^{-1} = a^{-1} * a = e$. $a^{-1}$ is called inverse of $a$ ($inv$ a).
-    \item \texit{Identity}: $\forall$ a $\in G,$  $a * e = e * a  = a$
+     \item \textit{Associativity}: $\forall$  a b c $\in G,$  $a * (b * c) = (a * b) * c$
+    \item \textit{Closure}: $\forall$ a b $\in G,$  $a * b \in G$
+    \item \textit{Inverse Element}: $\forall$ a $\in G$ $\exists$ $a^{-1} \in G$, such that $a * a^{-1} = a^{-1} * a = e$. $a^{-1}$ is called inverse of $a$ ($inv$ a).
+    \item \textit{Identity}: $\forall$ a $\in G,$  $a * e = e * a  = a$
     \end{itemize}
   
     \noindent
@@ -621,7 +621,7 @@ yes, which asserts that the result produced were correct.
 
 
 \section{Summary}
-\label{sec:summary}
+\label{sec:summary_software}
 In this chapter, we have sketched the ideas for developing a formally verified certificate checker
 for the certificate we produced in the last chapter. However, due to time constraint and 
 complexity of shuffle primitive, 
