@@ -1,4 +1,4 @@
-	\chapter{Scrutiny Sheet : Software Independence}
+\chapter{Scrutiny Sheet : Software Independence}
 \label{cha:software_independence}
 
 \epigraph{Somewhere inside of all of us is the power to change the world.} 
@@ -245,6 +245,18 @@ Record SigmaProtocol (Statement : Type) (* Statement x *)
     verify (s, c, e1, r1) = true ->
     verify (s, c, e2, r2) = true ->
     Rel s (extractor e1 r1 e2 r2) = true;
+  
+ (* Probablistic Reasoning could have made it nicer *)
+  Special_Honest_Verifier_ZKP  (s : Statement) 
+    (w : Witness) (e : Challenge): 
+    Rel s w = true -> forall (r : RandCoin), 
+    verify (s, initial r, e, response s w r e) = true <->
+    forall (z : Response), verify (simulator s e z) = true;
+  
+ (* simulator correct *)
+  Simulator_correct : forall (s : Statement) 
+   (e : Challenge) (r : Response),
+   verify (simulator s e r) = true;
   }.
 \end{minted}
 
@@ -263,18 +275,16 @@ to reflect the three steps of sigma protocol with two auxiliary
 functions \textit{simulator} and \textit{extractor}.  The 
 reason for having \textit{simulator} and \textit{extractor} 
 to prove the property of special honest verifier zero knowledge proof 
-(still not mentioned in the record) and special soundness of 
-sigma protocol. Finally, we have two property \textit{Completeness}, 
-which states that if $P$ and $V$ follow the protocol, then 
-verifier would accept the proof and \textit{Special\_Soundness},
-which states that if $P$ is able to convince $V$ with two 
-accepting transcript for the same commitment, then $V$ can extract the witness. 
-
-
-\noindent
-Our definition of sigma protocol is almost complete except we have not given 
-the special honest verifier zero knowledge proof axiom.  Recall that special honest 
-verifier zero knowledge proof amounts to a probabilistic polynomial time simulator 
+and special soundness of 
+sigma protocol. Finally, we have four property \textit{Completeness}, 
+\textit{Special\_Soundness}, \textit{Special\_Honest\_Verifier\_ZKP}
+and \textit{Simulator\_correct}. 
+\textit{Completeness} states that if $P$ and $V$ follow the protocol, then 
+verifier would accept the proof. \textit{Special\_Soundness},
+expresses that if $P$ is able to convince $V$ with two 
+accepting transcript for the same commitment, then $V$ can extract the witness.
+Recall that \textit{special honest 
+verifier zero knowledge proof} amounts to a probabilistic polynomial time simulator 
 $S$ which would generate a proof transcript for some statement 
 $s$  with same probability distribution as if there were a real 
 conversation between a prover $P$ and a verifier $V$ 
@@ -284,94 +294,118 @@ and challenge $e$,
 while the simulated proof transcript depends on statement $s$ and challenge $e$. 
 (simulator does have not access to witness $w$, so to generate a accepting 
 proof just by using $s$ and $e$, it uses a concept call rewinding.)
-
-
-If we were doing probabilistic reasoning, we could have represent the real view and 
-simulator's view as following (not a real code, but inspired by Certicrypt):
-
-\begin{minted}{coq}
-Real_view (s : Statement) (w : Witness) (e : Challenge) := do
-  r <- G (* generate a random value from some group G *)
-  let a := g^r (* commitment *)
-  let z := r + e * w  (* compute the response *)
-  return (s, a, e, z)
-\end{minted}
-
-
-\begin{minted}{coq}
-Simulator_view (s : Statement) (e : Challenge) := do
- z <- G (* random element from some group G *)
- return (s, g^z * s^(-e), e, z)
-\end{minted}
-
-\begin{minted}{coq}
-
- Special_Honest_Verifier_ZKP  (s : Statement) (w : Witness) 
-  (e : Challenge) (H : Rel s w = true) := 
-  Pr [Real_view  s w e] = 
-  Pr [Simulator_view s e]
-
-\end{minted}
-
-\noindent
-Based on these two probabilistic view, we could have shown that two are equal. Intuitively, 
-in $Real\_view$, statement $s$, witness $w$, and the challenge $e$ is fixed, so the only thing that vary is the
-random coin drawn uniformly from some group $G$. The probability of drawing an element uniformly 
-from a given set $S$ is 1/|S| (| | represent the cardinality of a set), so the value of Pr [Real\_view  s w e] = 1/|G|. 
-By the same token of reasoning, Pr [Simulator\_view s e] = 1/|G| which concludes that 
-both probabilities are equal. However, the only problem is that we are not doing probabilistic reasoning, 
-but not all all hope is lost.
-One key observation to escape this probabilistic reasoning is 
-that we can make the randomness $r$ and response $z$ as 
-explicit parameter. Consequently, our probabilistic program would turn into 
-a deterministic Coq program. 
-
-
-\begin{minted}{coq}
-Real_view (s : Statement) (w : Witness) (e : Challenge) 
-  (r : RandCoin):=
-  let a := g^{r} in (* commitment *)
-  let z := r + e * w in  (* compute the response *)
-  (s, a, e, z)
-\end{minted}
-
-
-\begin{minted}{coq}
-Simulator_view (s : Statement) (e : Challenge) 
- (z : Response) :=
- (s, g^z s^(-e), e, z)
-
-\end{minted}
-
-
-
-Now that our views are deterministic, we need to find a way to model 
-the probability distribution of the two views. We solve this problem 
-by showing a bi-implication  between  the real view and simulated view.
-We show that real view and simulator's view align with each other. 
-In terms of Coq, it is expressed as:
-
-\begin{minted}{coq}
- (* Probablistic Reasoning could have made it nicer *)
- Special_Honest_Verifier_ZKP  (s : Statement) 
-  (w : Witness) (e : Challenge) 
-  (Rel : Statement -> Witness -> bool) (H: Rel s w = true),
-  forall (r : RandCoin), 
-  verify (Real_view s w e r) = true <->
-  forall (z : Response), 
-  verify (Simulator_view s e z) = true;
-
-\end{minted}
-
-The axiom $Special\_Honest\_Verifier\_ZKP$ says that for any  given 
-fixed statement $s$, witness $w$, challenge $e$, relation $Rel$, and assumption that $Rel$ $s$ $w$ holds, 
+In our definition of \textit{Special\_Honest\_Verifier\_ZKP}, we eschew the 
+probabilistic reasoning by making randomness explicit, and it
+states that for any  given 
+fixed statement $s$, witness $w$, challenge $e$ and assumption that $Rel$ $s$ $w$ holds, 
 then for every random coin $r$  and a accepting real transcript, simulator can construct 
 an accepting transcript from all random response drawn from response space. 
-We add this axiom to the record data type $SigmaProtocol$ to make it 
-complete. 
+The \textit{Correct\_simulator} property states that the simulator is correct, i.e.
+any transcript created by simulator checks out. 
 
-Finally, we can compose different  
-sigma protocol using our definition. For example, 
+
+
+%\noindent
+%Our definition of sigma protocol is almost complete except we have not given 
+%the special honest verifier zero knowledge proof axiom.  Recall that special honest 
+%verifier zero knowledge proof amounts to a probabilistic polynomial time simulator 
+%$S$ which would generate a proof transcript for some statement 
+%$s$  with same probability distribution as if there were a real 
+%conversation between a prover $P$ and a verifier $V$ 
+%for the statement $s$ and witness $w$ such that $(s, w) \in  R$.
+%Informally, the real proof transcript depends on statement $s$, witness $w$,  
+%and challenge $e$, 
+%while the simulated proof transcript depends on statement $s$ and challenge $e$. 
+%(simulator does have not access to witness $w$, so to generate a accepting 
+%proof just by using $s$ and $e$, it uses a concept call rewinding.)
+%
+%
+%If we were doing probabilistic reasoning, we could have represent the real view and 
+%simulator's view as following (not a real code, but inspired by Haskell):
+%
+%\begin{minted}{coq}
+%Real_view (s : Statement) (w : Witness) (e : Challenge) := do
+%  r <- G (* generate a random value from some group G *)
+%  let a := g^r (* commitment *)
+%  let z := r + e * w  (* compute the response *)
+%  return (s, a, e, z)
+%\end{minted}
+%
+%
+%\begin{minted}{coq}
+%Simulator_view (s : Statement) (e : Challenge) := do
+% z <- G (* random element from some group G *)
+% return (s, g^z * s^(-e), e, z)
+%\end{minted}
+%
+%\begin{minted}{coq}
+%
+% Special_Honest_Verifier_ZKP  (s : Statement) (w : Witness) 
+%  (e : Challenge) (H : Rel s w = true) := 
+%  Pr [Real_view  s w e] = 
+%  Pr [Simulator_view s e]
+%
+%\end{minted}
+%
+%\noindent
+%Based on these two probabilistic view, we could have shown that two are equal. Intuitively, 
+%in $Real\_view$, statement $s$, witness $w$, and the challenge $e$ is fixed, so the only thing that vary is the
+%random coin drawn uniformly from some group $G$. The probability of drawing an element uniformly 
+%from a given set $S$ is 1/|S| (| | represent the cardinality of a set), so the value of Pr [Real\_view  s w e] = 1/|G|. 
+%By the same token of reasoning, Pr [Simulator\_view s e] = 1/|G| which concludes that 
+%both probabilities are equal. However, the only problem is that we are not doing probabilistic reasoning, 
+%but not all all hope is lost.
+%One key observation to escape this probabilistic reasoning is 
+%that we can make the randomness $r$ and response $z$ as 
+%explicit parameter. Consequently, our probabilistic program would turn into 
+%a deterministic Coq program. 
+%
+%
+%\begin{minted}{coq}
+%Real_view (s : Statement) (w : Witness) (e : Challenge) 
+%  (r : RandCoin):=
+%  let a := g^r in (* commitment *)
+%  let z := r + e * w in  (* compute the response *)
+%  (s, a, e, z)
+%\end{minted}
+%
+%
+%\begin{minted}{coq}
+%Simulator_view (s : Statement) (e : Challenge) 
+% (z : Response) :=
+% (s, g^z s^(-e), e, z)
+%
+%\end{minted}
+%
+%
+%
+%Now that our views are deterministic, we need to find a way to model 
+%the probability distribution of the two views. We solve this problem 
+%by showing a bi-implication  between  the real view and simulated view.
+%We show that real view and simulator's view align with each other. 
+%In terms of Coq, it is expressed as:
+%
+%\begin{minted}{coq}
+% (* Probablistic Reasoning could have made it nicer *)
+%Special_Honest_Verifier_ZKP  (s : Statement) 
+%(w : Witness) (e : Challenge): 
+%Rel s w = true -> forall (r : RandCoin), 
+%verify (s, initial r, e, response s w r e) = true <->
+%forall (z : Response), verify (simulator s e z) = true;
+%
+%\end{minted}
+
+%
+%The axiom $Special\_Honest\_Verifier\_ZKP$ says that for any  given 
+%fixed statement $s$, witness $w$, challenge $e$ and assumption that $Rel$ $s$ $w$ holds, 
+%then for every random coin $r$  and a accepting real transcript, simulator can construct 
+%an accepting transcript from all random response drawn from response space. 
+%We add this axiom to the record data type $SigmaProtocol$ to make it 
+%complete. 
+
+Finally, we can use our construction, \textit{SigmaProtocol}, as building block 
+for composing different sigma protocols, which we are not explaining 
+here.  For example, 
 we can define parallel composition, AND composition,
 EQ composition, OR composition, etc.
 

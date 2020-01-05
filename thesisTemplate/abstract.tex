@@ -5,34 +5,27 @@
 
 Since the introduction of secret ballot by Australians in 1855, 
 paper (ballots) are widely used around the world to record 
-the preferences of eligible voters.
-The reason is that they provide two important ingredient: privacy and verifiability. 
-However, the paper ballot election poses various challenges, e.g.  
-slow for large democracies like India, error prone for complex voting method like 
-single transferable vote, and operational challenge for big countries like Australia.  
-Moreover,  they are environmental hazard because it produces 
-a lot paper waste.  In order to solve these problems and various other, 
-many countries are introducing electronic voting. But electronic voting 
-has a whole new set of problems. In most cases, the software program used 
-to conduct the election has numerous problems, including, but no limited to, 
-counting bugs, hard coded password, ballot identification, etc. Moreover, 
+the preferences of eligible voters. Paper ballots provide three 
+important ingredient: correctness, privacy, and verifiability. 
+However, the paper ballot election poses various  other challenges, e.g. 
+slow for large democracies like India,  error prone for complex voting method 
+like single transferable vote, and poses operational challenges for 
+massive countries like Australia. In order to solve these problems and various others, 
+many countries are adopting electronic voting. However, 
+electronic voting has a whole new set of problems. In most cases, the software 
+program used to conduct the election has numerous problems, including, but no limited to, 
+counting bugs, ballot identification, etc. Moreover, 
 these software programs are treated as commercial in confidence and 
 are not allowed to be inspected by general member of public. 
-As a consequence, the result produced these software programs 
-can not be substantiated. 
+As a consequence, the result produced by these software programs 
+can not be substantiated.
 
-In this thesis, we address the three main concerns, privacy, verifiability, 
-and correctness, posed by electronic voting. We show that privacy can be achieved 
-by  
-
-This thesis builds on and contributes to work in the areas of electronic voting. 
-The original contribution of my thesis is achieving correctness, privacy and verifiability in 
-electronic voting. Although studies in electronic voting has examined verifiability and correctness, 
-there has not been privacy.   As such, this study provides additional insight into correctness with 
-emphasis on verifiability by generating a proof certificate (additional piece of data for auditing) . 
-This study is important to my discipline because it bridges the gap between electronic voting 
-and paper ballot election. But what excites me the most about this study is making the democracy accessible to everyone
-and making there voice heard. 
+In this thesis, we address the three main concerns posed by electronic voting, i.e. 
+correctness, privacy, and verifiability. We address the correctness concern by using 
+theorem prover to implement the vote counting algorithm, 
+privacy concern by means using homomorphic encryption, and verifiability concern 
+by means of generating a independently checkable certificate.  Our work 
+has been carried out in Coq theorem prover.
 
 %%% Local Variables: 
 %%% mode: latex
