@@ -1,6 +1,7 @@
 \chapter{Theorem Prover and Cryptography}
 \label{cha:theorem_crypto}
- 
+ \setlength{\parindent}{2em}
+\setlength{\parskip}{1em}
 
 \epigraph{All our knowledge begins with the senses, proceeds then to the understanding, and
  ends with reason. There is nothing higher than reason.} 
@@ -709,15 +710,15 @@ Qed.
 		can replace $m * g^{xr - rx}$ with $m * g^{0}$. The term $g^{0}$  = $e$ (the identity of group $G$) and using 
 		the right identity group law, we can replace $m * e$ by $m$. 
 		
-		
+	\end{enumerate}	
     
     \subsection{Homomorphic Encryption}
     \label{sec:homomorphic-enc}
-	     Homomorphic encryption  is a encryption scheme which allows us to perform useful operation on 
+	 Homomorphic encryption  is a encryption scheme which allows us to perform useful operation on 
 	     encrypted data without decrypting the data.
 	     It was first posed by Rivest, Adleman and Dertouzos in \citep{rivest1978data}: 
-	     \begin{displayquote}
-	     
+      
+       \begin{displayquote}  
 	     Consider a small loan company which uses a commercial time-sharing service to store its records.  
 	     The loan company’s "data bank" obviously contains sensitive information which should be kept private.  
 	     On the other hand, suppose that the information protection techniques employed by the time sharing 
@@ -725,10 +726,10 @@ Qed.
 	     presumably have access to the sensitive information.  The loan company therefore decides to encrypt all 
 	     of its data kept in the data bank and to maintain a policy of only decrypting data at the home office -- data 
 	     will never be decrypted by the time-shared computer.
-	     
-	     \end{displayquote}  
-	     
-		A encryption scheme is homomorphic if for any two plaintext $x$ and $y$:
+	   \end{displayquote}  
+
+ \noindent	     
+ A encryption scheme is homomorphic if for any two plaintext $x$ and $y$:
 		\begin{displayquote}
 		
 		 $Enc_{pk}(x) \bigotimes Enc_{pk}(y) = Enc_{pk} (x \bigoplus y)$  where 
