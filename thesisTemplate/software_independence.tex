@@ -462,7 +462,7 @@ the protocol for our purpose.
 
 \textbf{Diffie Hellman Tuple:} a tuple $(g, h, u, v)$ is 
  a \textit{Diffie Hellman} tuple if there exists a $w$ such that 
- $u = g^w$ and $v = g^v$.  The protocol to prove it is:
+ $u = g^w$ and $v = h^w$.  The protocol to prove it is:
  
  \begin{itemize}
  \item $P$ chooses a random $r$ and sends $a=g^r$ and $b = h^r$.
@@ -480,7 +480,7 @@ this tuple can be written as $(g, h, g^r, g^m \cdot h^r \cdot g^{-m})$ for some
 random $r$. A further simplification leads to $(g, h, g^r, h^r)$, and 
 this tuple is clearly a \textit{Diffie Hellman} tuple, where $u = g^r$ and $v = h^r$. 
 We could not have been able to construct a  \textit{Diffie Hellman} tuple and proved 
-the equality of discrete log if some would have claimed otherwise. For example, 
+the equality of discrete log if we had claimed otherwise. For example, 
 suppose a cheating prover  claims that $m$ is the honest decryption of $(c_{1}, c_{2})$,
 while it is not. 
 If $m$ is not the honest decryption of $(c_{1}, c_{2})$, then we would end up with 
