@@ -81,7 +81,7 @@ thousands of man hours, 11,000 working days, by using electronic voting \citep{E
 
 In this thesis, we focus on privacy, correctness, coercion-resistance, and tallied-as-cast, the third part of end-to-end verifiability, property 
 of an election. Furthermore, we assume that the first two properties of end-to-end verifiability, \textit{cast-as-intended} and 
-\textit{collected-as-cast}, hold for an election. \textit{Cast-as-intended} is a verification method that is is used to audit the 
+\textit{collected-as-cast}, hold for an election. \textit{Cast-as-intended} is a verification method that is used to audit the 
 front end voting software, 
 also known as voting client software, to make sure that it is not modifying the options of voters. In a nutshell, 
 the cast-as-intended is assurance to a voter that front-end software is transparent and her vote 
@@ -161,10 +161,15 @@ electronic voting. We achieve the following:
 
 
 
+In addition to demonstrating correctness, privacy and verifiability, we have also developed a formally verified certificate 
+checker. Moreover, we have shown that our implementation adheres to the various properties established by Schulze in 
+his original paper. 
+
+\noindent 
 \textit{Formally Verified Checker:} Third party independent election audit based on scrutiny sheet data is a crucial step towards 
-establishing the trust in the system.   However, auditing scrutiny sheet of a election involving encrypted ballots
-is not straight forward in comparison to  a election with plain-text ballots. 
-In general, auditing scrutiny sheet of a election involving 
+establishing the trust in the system.   However, auditing the scrutiny sheet of an election involving encrypted ballots
+is not straight forward in comparison to an election with plain-text ballots. 
+In general, auditing the scrutiny sheet of an election involving 
 plain-text ballot simply requires the knowledge of basic arithmetic, e.g. addition, subtraction and multiplication, 
 and virtually anyone can audit the election based on the data produced in the scrutiny sheet by
 using a calculator or by writing a simple program in her preferred language. 
@@ -178,7 +183,8 @@ primitives involved would be fairly time consuming, so we have developed a proof
 formally verified certificate checker for International Association of Cryptographic Research 2018 election
 scrutiny sheet, relatively simple than ours. 
 
-\textit{Properties of Schulze Method:} We have proved couple of the properties, Condercet winner, and Reversal symmetry, 
+\noindent
+\textit{Properties of Schulze Method:} We have proved couple of the properties, Condercet winner and Reversal symmetry, 
 of the Schulze method inside Coq theorem prover (ongoing work).
  
 
