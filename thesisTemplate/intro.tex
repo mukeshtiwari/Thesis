@@ -288,13 +288,29 @@ of cryptographic primitives for future work (work in progress).}
  \citep{Ghale:2017:FVS} have formalized single transferable vote in Coq and 
  extracted Haskell code from the formalization. The extracted Haskell code produces the result 
  and a certificate for a given set of input ballots. This certificate can be used by any third party to verify 
- or audit the outcome of election result.  Upon further investigation, \citep{10.1007/978-3-030-03592-1_5} 
- developed a formally verified certificate checker by using the theorem prover HOL4 \citep{Slind:2008:BOH:1459784.1459792}. 
+ or audit the outcome of election result.  In further research, \citep{10.1007/978-3-030-03592-1_5} 
+ developed a formally verified certificate checker using the theorem prover HOL4 \citep{Slind:2008:BOH:1459784.1459792}. 
  Moreover, they connected the HOL4 proofs to the formally verified compiler CakeML \citep{Kumar:2014:CVI} 
- to get a executable which was correctly with respect to the formal specification of the protocol down to machine level. 
+ to get a executable which was correct with respect to the formal specification of the protocol
+ down to machine level. 
  However, none of these work considers privacy and coercion resistance as a key 
  issue in electronic voting, and their method simply works for plaintext ballots which are  susceptible to 
- italian attack  \citep{Otten}   \citep{Benaloh:2009:SSC}. 
+ italian attack  \citep{Otten}   \citep{Benaloh:2009:SSC}.  In a nutshell the italian attack can be described 
+ as follows: 
+ \begin{displayquote}
+ a full disclosure of 
+ ballots in preferential voting system carries the potential danger of  ballot identification of 
+ a particular voter if the number of candidates participating in election are large. Suppose
+ if there are 40 candidates are participating in a election, then there are \textit{40!
+ (815915283247897734345611269596115894272000000000)} complete 
+ preference options and many more incomplete  preference options  (if it is allowed) for a voter to 
+ fill her ballot. Since the number of options are very large, if a candidate and a voter want 
+ to collude, then the candidate would ask the voter to mark her first and every other candidate 
+ in a certain order (a unique permutation). Later, once the ballots are published 
+ on a bulletin board, then the unique permutation can be used by the candidate to 
+ identify the vote of each voter (possibly colluded with her).  
+ \end{displayquote}
+ 
 
 \section{Outline of the Chapters}
 \begin{itemize}

@@ -5,7 +5,7 @@
 
 \epigraph{People shouldn't be afraid of their government. Governments should be afraid of their people.} 
 {\textit{Alan Moore, V for Vendetta }}
-  Counting ballots by hand is tedious, error prone, slow, and costly process. 
+  Counting ballots by hand is a tedious, error prone, slow, and costly process. 
   For example, the Senate election conducted in Western Australia in September 2013 was 
   declared void by the high court because of the loss of 1370 votes. It was 
   re-conducted in April 2014 at the cost of 20 Million 
@@ -14,7 +14,7 @@
   As a consequence, many countries 
   are now adopting electronic voting to alleviate the problems introduced by hand counting. 
   The world can be divided into five broad categories according to 
-  the usage of electronic voting \citep{Evoting} \ref{fig:world_electronic_voting_map}: i) No electronic 
+  the usage of electronic voting \citep{Evoting} (Figure \ref{fig:world_electronic_voting_map}): i) No electronic 
   voting (Grey Area), ii)
   Discussion and/or voting technology pilots (Yellow Area), 
   iii) Discussion and concrete plans for Internet voting (Orange Area),
@@ -30,14 +30,14 @@
  
  
 \textbf{Chapter Outline:}
- In the section \ref{secback:electronic_voting}, we discuss 
- the major concern in electronic voting, software/hardware 
- bug used in the election process, by high lighting the 
+ In the Section \ref{secback:electronic_voting}, we discuss 
+ the major concern in electronic voting, bugs in the software/hardware, 
+ by high lighting the 
  state of electronic voting in Australia, Germany, India, 
- and Netherlands. In the following section \ref{secback:correctness_formal}, we  give 
+ and Netherlands. In the following Section \ref{secback:correctness_formal}, we  give 
  two anecdotes that how formal verification helped in achieving 
- the correctness and eliminating bug in \textit{CompCert}, 
- and \textit{Athelon} with 
+ the correctness and eliminating bug in \textit{CompCert}, a formally verified C compiler, 
+ and \textit{Athelon}, a microprocessor designed by AMD, with 
  the emphasis that we should formally verify the software programs
  used in electronic voting to alleviate the concerns of 
  software/hardware bug. Section \ref{secback:varifiability} 
@@ -45,7 +45,7 @@
  to establish the trust and puts forward the concept of 
  scrutiny sheet (\ref{secback:scruntiny_sheet}), which 
  can be used independently to attest the result of election, 
- to achieve verifiability. Finally, we summarize in the section \ref{secback:summary_back}
+ to achieve verifiability. Finally, we summarize in the Section \ref{secback:summary_back}
  by emphasizing that formal verification and verifiability both are needed 
  to ensure the trust in electronic voting. 
  
@@ -60,7 +60,7 @@
   national election, India saves about 10,000 tonnes of the ballot 
   paper by using electronic voting machines). 
   There is no doubt that electronic voting has many advantages 
-  over paper ballot, but it is certainly not flawless.  
+  over paper ballots, but it is certainly not flawless.  
   Electronic voting makes 
   the process faster, but it has its own layer of added complexities 
   which creates trust issues amongst voters. For this reason, some countries 
@@ -123,9 +123,10 @@
   the voting machines used in elections were susceptible to many attacks,
   and the results of elections conducted using these machines 
   were not publicly verifiable.  Besides, a Dutch public foundation, Wij vertrouwen stemcomputers niet
-  (We do not trust voting computers), demonstrated that e-voting machines 
+  (We do not trust voting computers), demonstrated that the e-voting machines 
   used in election leaks enough information to guess the choice of a voter 
-  from distance of 20 to 30 meters  \citep{NetherlandsYouTube}. 
+  at a distance of 20 to 30 meters from 
+  the polling booths  \citep{NetherlandsYouTube}.
   
   
   
@@ -202,53 +203,71 @@
    There are various factors for these debacles, but one of the most 
    common denominator among all these debacles,
    which contributed significantly,  is the software/hardware used in the election process 
-   were buggy. But, this begs the question: why various governments 
-   were (Germany, Netherlands)/are (Australia, India) using buggy software in the first place for 
-   conducting elections? 
+   had numerous  bugs. 
+   But, this begs the question: why various governments 
+   were (Germany, Netherlands)/are (Australia, India) using such poor quality software programs
+   in the first place for conducting elections? 
    In general, no entity related to government or electoral commission develops the software programs 
    for electronic voting, and predominantly it is outsourced 
-   to the companies having experience in electronic voting software development.    
-   Most of these companies do not follow the rigours methodology leading 
-   to buggy software programs production.
-   Moreover, these software programs
+   to companies having experience in electronic voting software development.   
+   Most of these companies produce poor quality software because 
+   of unrealistic schedule, lack of proper software testing practices, 
+   lack of technical knowledge, etc. In the report, \citep{TSwiss} stated 
+   in the source of the problem of SwissPost debacle as:
+   
+   \begin{displayquote}
+    Nothing in our analysis suggests that this problem was introduced deliberately.  
+    It is entirely consistent with a naive implementation of a complex cryptographic
+    protocol by well-intentioned people who lacked a full understanding of its security
+    assumptions and other important details.  Of course,  if someone did want to 
+    introduce an opportunity for manipulation, the best method would be one that 
+    could be explained away as an accident if it was found.  
+    We simply do not see any evidence either way.
+    \end{displayquote}
+   
+   \noindent 
+   Moreover, more often than not, these software programs
    are closely guarded secrets and their source 
    code in not open for public scrutiny because of commercial 
    interests of companies \citep{AEC:2013:LMM} involved in the 
    process.  Overall, the whole process lacks transparency, which 
    violates the fundamental principals of democracy, i.e. openness. 
   
-   The process  of turning a vague idea into a 
+   The process  of turning a  idea into a 
    concrete software, also known as software development process, involves 
    requirement gathering, software design, implementation, testing, and maintenance. 
-   During this whole process of software development, software testing is the only 
-   mechanism for quality assurance. However, testing is not enough for 
+   During this whole process of software development, there are various factors 
+   which affects the quality of software.  However, 
+   throughout this entire software development (and maintenance life) cycle,
+   software testing is the only mechanism for quality assurance, but
+   it is not enough for 
    instilling the confidence in software that it is bug free 
    as stated by Edsger W. Dijkstra \citep{Dijkstra:1972:HP:355604.361591}:
    \begin{displayquote}
    Program testing can be used to show the presence of bugs, 
     but never to show their absence!
    \end{displayquote}
-   Additionally, most of these companies have poor testing practices which 
-   exacerbate the software quality problem.
+  
    
-   In the next section, given the mission critical importance of electronic voting software 
+   In the next section, given the mission critical importance of electronic voting software, 
    we will discuss that software testing 
-   in not sufficient for these software,  and we should 
+   in not sufficient to achieve the software trustworthiness \citep{10.1007/978-3-642-35795-4_5},  and we should 
    prove the  correctness of these software
    by using formal verification techniques \citep{BECKERT2014115}.
-   Furthermore, we will argue that  having a formal verification software development methodology would alleviate 
-	the bug problem with few case studies as a supporting evidence. The success of these 
-	case studies should be a good motivation for us to 
-	adopt formal method for electronic voting software development. 
+   Furthermore, we will argue that  having a formal verification software development methodology \citep{10.1007/978-3-319-95582-7_38}
+    would alleviate 
+	the bug problem with two case studies, \textit{CompCert} and \textit{Athelon}, as a supporting evidence. The success of these 
+	case studies should be a good motivation for us to adopt formal method for electronic voting software development. 
    
    
    \section{Correctness: Formal Method Approach}
    \label{secback:correctness_formal}
 
-	Formal verification has been successfully applied in many areas ranging 
-	from verified C compilers CompCert \citep{DBLP:conf/popl/Leroy06}, verified ML compiler
-	CakeML \citep{Kumar:2014:CVI}, Vellvm: Verifying the LLVM 
-	\citep{10.1007/978-3-642-35308-6_6}, verified cryptography 
+	Formal verification has been successfully applied in many areas, and 
+	some of the notable software programs are 
+	verified C compiler CompCert \citep{DBLP:conf/popl/Leroy06}, verified ML compiler
+	CakeML \citep{Kumar:2014:CVI}, verified LLVM 
+	Vellvm \citep{10.1007/978-3-642-35308-6_6}, verified cryptography 
 	Fiat-crypto \citep{DBLP:conf/sp/ErbsenPGSC19}, verified 
 	operating system CertiKOS \citep{DBLP:conf/apsys/GuVFSC11} and 
 	SeL4 \citep{DBLP:conf/sosp/KleinEHACDEEKNSTW09}, verified theorem 
@@ -259,19 +278,18 @@
 	Four Color Theorem \citep{10.1007/978-3-540-87827-8_28}, 
 	Fundamental Theorem of 
 	Algebra \citep{10.1007/3-540-45842-5_7}, and Kepler Conjecture \citep{hales-kepler}.
-	One thing I would like to emphasize 
-	is that none of these are toy project, and it has taken years 
+	None of these are toy projects, and it has taken years 
 	to develop and verify them. Also, some of these products 
-	are used commercially e.g CompCert is used by AIRBUS, and MTU
+	are used commercially e.g CompCert is used by the AIRBUS, and the MTU
 	\footnote{https://www.absint.com/compcert/} and Fiat-crypto is used 
-	in Google's BoringSSL library for elliptic-curve arithmetic 
+	in the Google's BoringSSL library for elliptic-curve arithmetic 
 	\footnote{https://deepspec.org/entry/Project/Cryptography}. 
 	Based on the cost and efforts of these project, 
 	the very basic question to ponder about using formal method to develop 
-	software:  does it achieve the goal, produces bug free software?
+	software:  does formal verification produce bug free software?
 	
 	
-	We would give two anecdote to answer this question. 
+	We give two anecdotes to answer this question. 
 	One of the most basic way to 
 	break the software is generating random tests and throwing it to 
 	the software under consideration \citep{Miller:1990:ESR:96267.96279}.
@@ -372,7 +390,7 @@
    \noindent
    Formal verification is certainly a necessary thing in electronic voting because 
    it helps in achieving the correctness of software, but it is not sufficient because
-   it has no mechanism to provide  verifiability.
+   it does not provide  verifiability.
    Combing both \emph{verification} of the
 	computer software that counts votes, and
 	\emph{verifiability} of individual counts are critical for
