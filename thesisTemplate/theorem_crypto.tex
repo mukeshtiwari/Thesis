@@ -26,33 +26,33 @@ The Automath project can be seen as the precursor of
 
 
 \textbf{Chapter overview:}
- This chapter is overview of Coq theorem prover and Cryptographic primitives. 
- In the section \ref{sec:problemstatement}, we will give a brief overview of 
+ This chapter is an overview of the Coq theorem prover and cryptographic primitives. 
+ In the Section \ref{sec:problemstatement}, we will give a brief overview of 
  theoretical foundation, calculus of construction and calculus of inductive 
- construction, of Coq.  In the section \ref{sec:typeprop}, we will discuss about 
- \texttt{Type} and \texttt{Prop}
- which is very crucial from program extraction point of view.  Our goal during 
- this course of formalization was not only proving the correctness of 
- Schulze method, but extracting a executable OCaml/Haskell code to count 
- ballots.  In the section \ref{sec:deplambda}, we will focus 
+ construction, of Coq.  In the Section \ref{sec:typeprop}, we will discuss
+ the difference between \texttt{Type} and \texttt{Prop}
+ which is very crucial from program extraction point of view.  The goal of 
+ our formalization was not only proving the correctness of 
+ Schulze method, but extracting  OCaml/Haskell code to count 
+ ballots.  In the Section \ref{sec:deplambda}, we will focus 
  on dependent types and  how it leads to correct by construction paradigm
  by designing a  type safe printf function. 
  Section \ref{sec:gallina} focuses on Coq specification language 
- \texttt{Gallina} with a example showing that why writing proofs using  
+ \texttt{Gallina} with an example showing that why writing proofs using  
  \texttt{Gallina} is difficult and cumbersome, and how it can be eased by 
- using tactics. Finally, in the section  \ref{sec:coqproof}, we will take 
+ using tactics. Finally, in the Section  \ref{sec:coqproof}, we will take 
  philosophical route to justify that why should we trust in Coq proofs 
  even though they do not appear anywhere near to a proof written by 
- a human.  In section \ref{sec:cryptography}, we give some historical 
- context and modern day usage of Cryptography.  In the following section 
- \ref{sec:group}, we describe the  Group which is the underlying 
+ a human.  In the Section \ref{sec:cryptography}, we give some historical 
+ context and modern day usage of cryptography.  In the following Section 
+ \ref{sec:group}, we describe \textit{Group} which is the underlying 
  algebraic structure for Diffie-Hellman construction (\ref{sec:diffie-hellman}). 
  In the next two sections, we describe the ElGamal encryption (\ref{sec:elgamal}) 
  and Homomorphic Encryption (\ref{sec:homomorphic-enc}). In addition, 
  we show the both homomorphic property, multiplicative and additive, 
  of ElGamal encryption. We explain the concept of Zero-Knowledge-Proof 
- and Zero-Knowledge-Proof  of knowledge in section (\ref{sec:zkp}). 
- In the next two sections, we discuss Sigma protocol (\ref{sec:sigma}), 
+ and Zero-Knowledge-Proof  of knowledge in Section \ref{sec:zkp}. 
+ In the next two sections, we discuss Sigma protocols (\ref{sec:sigma}), 
  an efficient way to achieve zero knowledge proof, and Commitment schemes
  (\ref{sec:commscheme}), a cryptographic protocol to force two mutually 
  distrusting parties to behave honestly with the explanation of Pedersen 
@@ -266,19 +266,19 @@ the discussion of Co-Inductive types is not very relevant for this thesis.
 \subsection{Type vs. Prop: Code Extraction}
 \label{sec:typeprop}
  Every term in Coq has
- a type, and proofs
- are constructive in nature, so
- we can extract a computational program from 
- a suitable proof.  Moreover, every proof in Coq 
- has two parts: (i) computational part, and (ii) logical 
- proposition.
+ a type, and the term could be either a logical proposition 
+ or computational term. 
  The type of logical propositions are \textit{Prop}, while the type of 
- computational parts are \textit{Type}. During the extraction process \citep{Letouzey:2008:ECO}, 
- every term of sort Prop is removed and no longer exists in extracted 
- code, and only the terms of sort Type are translated into target language
+ computational parts are \textit{Type}. This distinction between 
+ the type of logical propositions (Prop) and the type of computational 
+ parts  (Type) provides a mechanism to extract 
+ functional programs directly from Coq proof scripts.
+ During the extraction process \citep{Letouzey:2008:ECO}, 
+ every term of type Prop is removed and no longer exists in extracted 
+ code, and only the terms of type Type are translated into target language
  (OCaml/Haskell/Scheme). Because of this, Coq in general does not allow
  the case analysis on
- the terms (logical objects) of sort Prop   when the goal is in not in Prop, 
+ the terms (logical objects) of sort Prop   when the goal is in not in Prop,
  but in certain cases it can be achieved (we call this special 
  case reification and explained next). 
  
@@ -287,15 +287,10 @@ the discussion of Co-Inductive types is not very relevant for this thesis.
   \subsubsection{Reification}
   \label{sec:reification}
   Sometimes it is very natural to express certain properties/definitions
-  in the Prop than the Type. Moreover, the definitions/terms in the Prop are very 
-  intuitive for human inspection 
-  and understanding. The only problem is that the terms of the sort Prop do not carry any 
+  in the Prop than the Type. Moreover, the definitions/terms in the Prop are self contained and 
+  very intuitive for human understanding. The only problem is that the terms of the type Prop do not carry any 
   computational content but only the proof part. However, 
-  we can escape this situation if the term of sort Prop is decidable and its domain is finite (in this 
-  case Prop is equivalent to bool, but this is not the case 
-  in general in \textit{Constructive Logic} compared to 
-  \textit{Higher Order Logic} 
-  with the law of excluded middle). 
+  we can escape this situation if the term of type Prop is decidable predicate (boolean predicate) and its domain is finite. 
   In the case of decidable predicate in Prop over a finite domain,  we can extract 
   the witness constructively by using 
   a program of linear search that tries the decidable predicate on 
@@ -525,7 +520,7 @@ Qed.
 (* proof written using tactics *)
 Lemma addition_commutative_tactics :
   forall (n m : nat), n + m = m + n.
-  induction n; intro m; simpl; try omega.
+  intros n m; try omega.
 Qed.
 \end{minted}
 
@@ -543,7 +538,7 @@ Qed.
   The logic has already been reviewed by many peers and proved correct 
   using some meta-logic, therefore the answer of our question about trusting Coq proof 
   hinges on the implementation. 
-  Coq implementation (written in OCaml)  has two parts, the type checker (small kernel), 
+  The Coq implementation (written in OCaml)  has two parts, the type checker (small kernel), 
   and tactic language to build the proofs.
   We lay our trust in type checker, because it is a small kernel and can be 
   manually inspected. Furthermore, if there
@@ -583,38 +578,36 @@ Qed.
 	and \textit{Diffie-Hellman Algorithm}. Data Encryption Standard, developed at IBM in 1970, is a symmetric 
 	key encryption algorithm which uses the same key for encryption and decryption. Since its inception, Data Encryption Standard
 	amassed a bad reputation because of \textit{National Security Agency (NSA)} involvement; however, it had a 
-	practicality issue, key management (sort of chicken egg problem). If two parties wanted to communicate
-	securely over insecure channel using Data Encryption Standard, then they needed to agree on a common key. 
-	In order to agree on common key, they needed a secure channel where they can securely communicate the key. 
+	practicality issue: key management. If the two parties wanted to communicate
+	securely over insecure channel using  the Data Encryption Standard, then they needed to agree on a common key. 
+	In order to agree on the common key, they needed a secure channel where they can securely communicate the key. 
     The solution to this problem came from \textit{Diffie-Hellman} key exchange where two parties can exchange the 
     key securely over insecure channel. Moreover, the advent of \textit{Diffie-Hellman} key exchange started the 
     whole new area of public key cryptography where encryption and decryption key are different. 
     Although \textit{Diffie-Hellman} key exchange suffers from  man-in-the-middle (MITM)  attack if used for keys exchange in its 
-    naivety, e.g. Logjam \citep{Adrian:2015:IFS:2810103.2813707}, nonetheless, 
-    it is a building block for many other algorithm, e.g. ElGamal Encryption \citep{elgamal1985public}. 
+    naivety, e.g. Logjam \citep{Adrian:2015:IFS:2810103.2813707}. Nonetheless, 
+    it is a building block ElGamal Encryption \citep{elgamal1985public}. 
     
     
     
-    In this thesis, we are mostly concern about public key cryptography and will no longer discuss or explain 
-    symmetric key cryptography, hence any mention of cryptography hereafter should be assumed as
-    public key cryptography. 
-    The basic working principals of modern day cryptography is based on 
-    mathematical principal than vanilla symbol replacement. 
+    In this thesis, we are mostly concern about public key cryptography.
+    The basic working principles of modern day cryptography is based on 
+    mathematical principle than vanilla symbol replacement. 
     In addition, it is no longer just 
     used to achieving confidentiality, but various other things, e.g. integrity,  authentication, non-repudiation 
     protocol, digital signature, digital cash, etc.
-    These mathematical principal involves 
+    These mathematical principle involves 
     various algebraic structures and algorithm to manipulate the object from these structures.
     For example, the underlying mathematical principal of \textit{Diffie-Hellman}  algorithm 
-    is hardness of computing discrete logarithm in finite field.
+    is hardness of computing discrete logarithms in finite fields.
     
     
   
     
-    Now we  describe the workings of \texttt{Diffie-Hellman} \citep{Diffie:2006:NDC:2263321.2269104}
-    algorithm, because all the constructions we have used  are based on \texttt{Diffie-Hellman} construction. 
+    Now we  describe the workings of Diffie-Hellman \citep{Diffie:2006:NDC:2263321.2269104}
+    algorithm, because all the constructions we have used  are based on Diffie-Hellman construction. 
     Before we describe the algorithm, we briefly sketch the algebraic structure Group because it is underlying algebraic structure of 
-    \texttt{Diffie-Hellman}  construction  (typically, the underlying 
+    Diffie-Hellman  construction  (typically, the underlying 
     structure is multiplicative group of a finite field). Also, note that our definition is influenced theorem-provers/type-theory because 
     we have  written the type signature of group operator $*$ and inverse operator $inv$. 
     
@@ -649,7 +642,7 @@ Qed.
 		 Alice goes first):
 		 \begin{enumerate}
 		   \item Alice selects a random number $a$, where 1 < $a$ < $p$, computes $g^{a}$ ( $g * g * g ... * g$  $a$ times), and shares 
-		   $g^{a}$ to Bob. 
+		   $g^{a}$ with Bob. 
 		   \item Similarly, Bob selects are random number $b$, where 1 < $b$ < $p$, computes $g^{b}$, and shares  $g^{b}$
 		   with Alice.
 		   \item Finally, Alice computes the key $(g^{b})^{a}$, and Bob computes the key $(g^{a})^{b}$.  A basic 
@@ -798,7 +791,7 @@ Qed.
 	      Multiplying these two ciphers pairwise would give us,  ($g^{r_{1} + r_{2}}$, $g^{m_{1} + m_{2}} * h^{r_{1} + r_{2}}$) which would decrypt as 
 	      $g^{m_{1} + m_{2}}$. In this case, $\bigtimes$ is multiplication and $\bigoplus$ is addition.  We can calculate the value 
 	      of $m_{1} + m_{2}$ by using linear search algorithm, or more efficient one 
-	      Pohlig–Hellman algorithm. 
+	      Pohlig–Hellman algorithm \citep{10.1109/TIT.1978.1055817}. 
 	      However, the downside 
 	      of this scheme is that if the values of $m_{1} + m_{2} + \dotsb + m_{n}$ (assuming n values) is very large, then calculating it from 
 	      $g^{m_{1} + m_{2} + \dotsb  + m_{n}}$ is 
@@ -807,7 +800,7 @@ Qed.
      \subsection{Zero Knowledge Proof}
      \label{sec:zkp}
       In conventional mathematics, a proof of mathematical statement is collection of basic axioms combined according to rules of 
-      the system. For example, we want to prove that in for any group (G, *), for any two elements x y $\in$ G, we have:
+      the system. For example, we want to prove that in for any group G with group operation *, for any two elements x y $\in$ G, we have:
       \begin{displayquote}
 		 
 		 $(x * y)^{-1}$ = $y^{-1} * x^{-1}$
@@ -828,8 +821,9 @@ Qed.
 \end{align}
 
      \noindent
-      Similarly, we can prove that $((y^{-1} \cdot x^{-1}) \cdot   (x \cdot y) = e $.
-      We can also formalize it inside theorem prover and prove it more formally (below is a proof in Coq theorem prover).
+      Similarly, we can prove that $((y^{-1} * x^{-1}) *   (x * y) = e $.
+      We can also formalize it inside theorem prover and prove it more formally (below is a proof in Coq theorem prover where 
+      $*$, the group operation, is represented as $f$ and $^{-1}$, the inverse operation, is represented as $inv$).
       
       \begin{minted}{coq}
       Lemma inv_distr : forall a b, inv (f a b) = f (inv b) (inv a).
@@ -880,7 +874,7 @@ Qed.
     $g^x = h$. 
     This is trivial because we know that there always exists such $x$ (discrete logarithm problem); however, the challenge is to show that
     the prover knows the witness $x$.
-    Formally, zero-knowledge-proof of knowledge is defines as: let $R = {(x, w) \subset L x W$ is a binary relation such that     
+    Formally, zero-knowledge-proof of knowledge is defines as: let $R = {(x, w) \subset L \times W$ is a binary relation such that     
     $x \in L$ is common string between prover $P$ and verifier $V$ and $w \in W$, also known as witness, is private to 
     the prover $P$.  Moreover, the goal of prover $P$ is to convince verfier $V$ that $(x, w) \in R$ in zero-knowledge.  
     
@@ -888,9 +882,9 @@ Qed.
    
     \subsection{Sigma Protocol}
     \label{sec:sigma}
-     Sigma protocols are efficient way to achieve zero-knowledge-proof of a knowledge.   Sigma protocol is 
+     Sigma protocols are efficient way to achieve zero-knowledge-proof of knowledge.   Sigma protocol is 
      a three step communication between a prover $P$ and a verifier $V$ where goal of the prover is to convince the verifier that 
-     she knows witness w for common input x such that  $(x, w) \in R$.   
+     she knows witness $w$ for common input $x$ such that  $(x, w) \in R$: 
      
      \begin{enumerate}
      \item $P$ sends a message $r$
