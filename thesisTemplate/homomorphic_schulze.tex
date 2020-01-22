@@ -7,13 +7,13 @@
 \section{Introduction}
 As we stated in the  summary of last chapter that plaintext could lead to 
 privacy problems, e.g. ballot identification (italian attack) \cite{Otten}. 
-In this chapter, we will try to achieve: privacy by using encryption, (tallied-as-cast) 
+In this chapter, we will try to achieve privacy by using encryption, (tallied-as-cast) 
 verifiability by using zero knowledge proof, and correctness of implementation 
-by proving the correctness properties inside Coq theorem prover. 
-One important point to note that we did not formalize any cryptographic primitive inside the Coq, but 
+by proving the correctness properties inside the Coq theorem prover. 
+One important point to note that we do not formalize any cryptographic primitive inside the Coq, but 
 took an axiomatic approach, i.e. we assumed the existence of cryptographic 
-primitive and correctness property about their behaviour (axiomatisation of 
-cryptographic primitives). The reason we took the axiomatic approach 
+primitives and postulated their correctness property (axiomatisation of 
+cryptographic primitives). We took the axiomatic approach 
 because our goal was not to formalize cryptographic primitives, but use these primitives
 to conduct an election which has all three ingredient privacy, verifiability, 
 and correctness. We then obtain, via program extraction, a
@@ -28,11 +28,11 @@ scenarios.
 
 
 
-\textbf{Chapter Outline:} In the section \ref{sec:verifiable_homomorphic}, 
-we discuss the technique to achieve verifiable tally. In order to do so, 
+\textbf{Chapter Outline:} In the Section \ref{sec:verifiable_homomorphic}, 
+we discuss the technique to achieve verifiable homomorphic tally. In order to do so, 
 we discuss why do we need our ballot to have a matrix representation 
 and not a ranking function. Moreover, we discuss the concept 
-of validity ballot, which comes naturally with matrix representation, 
+of validity of a ballot, which comes naturally with matrix representation, 
 steps of homomorphic counting, and cryptographic primitives needed 
 to achieve all the required functionality. Section \ref{sec:realisation} 
 takes a step forward and makes every concept from the previous section
@@ -40,19 +40,19 @@ concrete using the Coq theorem prover. One important point
 in this section is our inductive data type \textit{ECount}
 augmented with verification data in form of zero-knowledge-proof 
 for various claims made during the counting 
-($ECount$ is conceptually similar as $Count$ (section \ref{sec:inductive_type}), but 
+($ECount$ is conceptually similar to the $Count$ (Section \ref{sec:inductive_type}), but 
 in terms of data, $ECount$ has state data related to counting and verification data
 in form of zero-knowledge proof related to claims made by us, while $Count$ 
-has just state data).  In the section \ref{sec:correct}, we have demonstrated 
+has just state data).  In the Section \ref{sec:correct}, we present
 our main theorem which states that for any set of given encrypted ballots, 
-winner can always be found. Apart from the main theorem, this section 
+a winner can always be found. Apart from the main theorem, this section 
 also incorporates the proof of correctness by stating 
 the winners produced by encrypted ballots are same as 
- the plain-text ballots (section \ref{sec:all_winners}) if 
+ the plain-text ballots (Section \ref{sec:all_winners}) if 
  encrypted ballots are aligned (decrypt) with plain-text ballot. 
  Section \ref{sec:extract} focuses on extraction, instantiating 
  the cryptographic primitives with UniCrypt library, and 
- experimental results. Finally, section \ref{sec:summary_homomorphic} 
+ experimental results. Finally, Section \ref{sec:summary_homomorphic} 
  highlights our assumptions, scalability issues, the 
  goals we achieved and the goals we missed. 
 
@@ -90,7 +90,7 @@ and it is required to be zero-knowledge against the honest verifier).
  \section{Verifiable Homomorphic Tallying}
 \label{sec:verifiable_homomorphic}
 The realisation of verifiable homomorphic tallying that we are about to
-describe follows the same two phases as the algorithm (Chapter \ref{sec:schulze_algorithm}): 
+describe follows the same two phases as the algorithm (Section \ref{sec:schulze_algorithm}): 
 We first homomorphically compute the margin matrix from encrypted ballots, and then compute
 winners on the basis of the (decrypted) margin. Moreover, the computation also
 produces a verifiable certificate that leaks no information about
@@ -112,7 +112,7 @@ where $B$ is the multi-set of ballots, and each $b \in B$ is a
 ranking function $b: C \to Nat$ over a (finite) set $C$ of
 candidates. 
 
-Ideally, we could have copied the same ballot structure in homomorphic Schulze method, 
+Ideally, we could have copied the same ballot structure in a homomorphic Schulze method, 
 but encrypting the choices, i.e. the ballot would have been represented as $b: C \to EncryptedNaturalNumber$
 where $EncryptedNaturalNumber$ is the encrypted representation of a choice (natural number).
 However, we note that this representation of ballots is not well suited for
@@ -120,7 +120,7 @@ homomorphic computation of the margin matrix as practically feasible
 homomorphic encryption schemes do not support comparison operators
 and case distinctions as used in the formula above (to the best of our knowledge).
 
-We instead represent ballots as matrices
+We instead represent ballots as candidate indexed matrices
 $b(x, y)$ where $b(x, y) = +1$ if $x$ is preferred
 over $y$, $b(x, y) = -1$ if $y$ is preferred over $x$ and $b(x, y) =
 0$ if $x$ and $y$ are equally preferred. The downside of this representation 
@@ -128,7 +128,7 @@ is that it takes $O(n^2)$ space to represent a ballot where $n$ is the number
 of candidate participating in election. 
 
 While the advantage of the first representation is that each ranking
-function is necessarily a valid ranking and linear space ($O(n))$) in number 
+function is necessarily a valid ranking and is linear space ($O(n))$) in the number 
 of candidates, $n$, the advantage of the matrix 
 representation is that the computation of
 the margin matrix is simple, that is
@@ -191,11 +191,12 @@ of a ciphertext ballot $encb$ by
 \end{itemize}
 
 \noindent
-We use zero-knowledge proofs in the style of \citep{DBLP:conf/africacrypt/TereliusW10}
+We use zero-knowledge proofs (ZKP) in the style of \citep{DBLP:conf/africacrypt/TereliusW10}
 to evidence the correctness of the shuffle, and zero-knowledge
 proofs of honest decryption \citep{DBLP:conf/crypto/ChaumP92} to evidence
 correctness of decryption. This achieves ballot secrecy as
 the (secret) permutation is never revealed.
+
 
 In summary, the evidence of correct (homomorphic) counting starts
 with an encryption of the zero margin $encm$, and for each
@@ -214,11 +215,11 @@ ballot is not valid.
 \end{enumerate}
 Once all ballots have been processed in this way, the certificate
 determines winners and contains
-winners by
+winners by exhibiting
 \begin{enumerate}
-\setcounter{enumi}{\value{mycnt}}
+\setcounter{enumi}{4}
 \item \label{it:pub-dm} the fully constructed margin, together with its decryption  
-  and ZKP of honest decryption after counting all the ballots     
+  and a ZKP of honest decryption after counting all the ballots     
 \item publishes the winner(s), together with evidence to substantiate the
     claim
 \end{enumerate}
@@ -332,7 +333,7 @@ Dual to the above, to generate (valid) certificates, we need the
 ability to
 \begin{itemize}
   \item generate permutation commitments and accompanying zero
-  knowledge proofs that evidence commitment to a permutation
+  knowledge proofs that evidence commitment to this permutation
   \item generate shuffles relative to a commitment, and zero
   knowledge proofs that evidence the correctness of shuffles.
 \end{itemize}
@@ -360,7 +361,7 @@ cryptosystem that implements the following:
 Once all ballots are counted, the computed margin is decrypted, and
 winners (together with evidence of winning) are computed using 
 plaintext counting. We discuss this part only briefly, for sake of completeness,
- as it is identical to the previous (chapter \ref{cha:schulze_method}).
+ as it is identical to the Section \ref{sec:evidence}.
  For each of the winners $w$ and each
 candidate $x$ we publish
 \begin{itemize}
@@ -378,11 +379,11 @@ node $y$ and then (transitively) to $z$ that is of strength $\geq
 k$.
 
 
-\section{Formalization in a Theorem Prover} \label{sec:realisation}
+\section{Formalization in Coq} \label{sec:realisation}
 
 
 
-As we stated in the beginning of this chapter that the purpose of this work was 
+As we stated in the beginning of this chapter that the purpose of this work is
 not to verify cryptographic primitives, 
 but use them as a tool to construct evidence which can be used 
 to audit and verify the outcome during different phase 
@@ -428,14 +429,15 @@ Axiom verify_honest_decryption_zkp (group: Group):
 \end{minted}
   
 \noindent
-The difference between the keyword \texttt{Variable} and \texttt{Axiom}
-is purely syntactic, and in our case, used as a convenience for 
-extraction (The keyword  \texttt{Variable} is used if want that variable of function 
-to be lambda abstracted otherwise keyword \texttt{Axiom}). In
+The different keywords \texttt{Variable} and \texttt{Axiom}
+are used as a convenience for 
+extraction. The keyword  \texttt{Variable} is used if we want it
+to be lambda abstracted otherwise keyword \texttt{Axiom}. In
 the above, the first two functions, \texttt{decrypt\_message} and
 \texttt{construct\_zero} \texttt{\_knowledge} \texttt{\_decryption} \texttt{\_proof} are
 \emph{generation} primitives, whereas the function 
-\texttt{verify\_zero} \texttt{\_knowledge} \texttt{\_decryption} \texttt{\_proof} is a
+\texttt{verify\_zero} \texttt{\_knowledge} \linebreak
+\texttt{\_decryption} \texttt{\_proof} is a
 \emph{verification} primitive. We have two coherence axioms. The
 first says that if the verification of a zero knowledge proof of
 honest decryption succeeds, then the ciphertext indeed decrypts to
@@ -503,8 +505,8 @@ correctness of the count. The different states during the
 counting represented by $ECount$ is tagged by five constructors: 
 \begin{itemize}
 \item \texttt{ecax}: marks the beginning of counting
-\item \texttt{ecvalid}: take a ballot from cast-ballots pile, and the ballot is a valid ballot
-\item \texttt{ecinvalid}: take a ballot from cast-ballot pile, and the ballot is a invalid ballot
+\item \texttt{ecvalid}: process a ballot from cast-ballots pile, and the ballot is a valid ballot
+\item \texttt{ecinvalid}: process a ballot from cast-ballot pile, and the ballot is a invalid ballot
 \item \texttt{ecdecrypt}: decryption of fully constructed homomorphic margin from the cast-ballot
 \item \texttt{ecfin}: declaration of winner and loser based on the decrypted margin
 \end{itemize}
@@ -532,7 +534,8 @@ the count and ensures that
 The main difference between the correctness condition, and the
 verification data is that the former can be simply be inspected
 (here by comparing lists) whereas the latter requires additional
-data (here  in the form of a zero knowledge proof).
+data (here  in the form of a zero knowledge proof). In Coq, 
+this constructor can be encoded as:
 
 \begin{minted}{coq}
  Inductive ECount (grp : Group) (bs : list eballot) : 
@@ -565,7 +568,7 @@ evidenced. As before, we have:
   \item[correctness constraints:] all the zero knowledge proofs
   verify, the new margin is the homomorphic addition of the previous
   margin and the counted ballot, and the decrypted (shuffled)
-  ballot is indeed valid.
+  ballot is indeed valid. 
 \end{description}
 
 \begin{minted}{coq}
@@ -746,7 +749,7 @@ given proof of this. Rather than scrutinising the details of the
 construction of this data type, we follow a different approach: we
 demonstrate that homomorphic counting always yields the same results
 as plaintext counting, where plaintext counting is already verified
-against its specification (chapter \ref{cha:schulze_method}). 
+against its specification (Chapter \ref{cha:schulze_method}). 
 This correspondence has two directions, and both assume that we are given
 two lists of ballots that are the encryption (resp. decryption) of
 one another. 
@@ -760,21 +763,21 @@ converse of this is established by
 Theorem \texttt{homomorphic} \texttt{\_schulze} \texttt{\_to\_plaintext}.
 
 \begin{minted}{coq}
-  Lemma plaintext_schulze_to_homomorphic 
-   (group : Group) (bs : list ballot): 
-   forall (pbs : list pballot) (ebs : list eballot) 
-   (w : cand -> bool), (pbs = map (fun x => (fun c d => 
-   decrypt_message group privatekey (x c d))) ebs) ->
-   (mapping_ballot_pballot bs pbs) -> 
-   Count bs (winners w) -> ECount group ebs (ewinners w).
+Lemma plaintext_schulze_to_homomorphic 
+ (group : Group) (bs : list ballot): 
+ forall (pbs : list pballot) (ebs : list eballot) 
+ (w : cand -> bool), (pbs = map (fun x => (fun c d => 
+ decrypt_message group privatekey (x c d))) ebs) ->
+ (mapping_ballot_pballot bs pbs) -> 
+ Count bs (winners w) -> ECount group ebs (ewinners w).
       
-  Lemma homomorphic_schulze_to_plaintext 
-   (group : Group) (bs : list ballot):
-   forall (pbs : list pballot) (ebs : list eballot) 
-   (w : cand -> bool) (pbs = map (fun x => (fun c d => 
-   decrypt_message group privatekey (x c d))) ebs) ->
-   (mapping_ballot_pballot bs pbs) ->
-   ECount grp ebs (ewinners w) -> Count bs (winners w).
+Lemma homomorphic_schulze_to_plaintext 
+ (group : Group) (bs : list ballot):
+ forall (pbs : list pballot) (ebs : list eballot) 
+ (w : cand -> bool) (pbs = map (fun x => (fun c d => 
+ decrypt_message group privatekey (x c d))) ebs) ->
+ (mapping_ballot_pballot bs pbs) ->
+ ECount grp ebs (ewinners w) -> Count bs (winners w).
 \end{minted}
 
 \noindent
@@ -785,7 +788,7 @@ ballots ensure that the encrypted ballots (\texttt{ebs}) are in fact
 in alignment with the rank-ordered ballots (\texttt{bs}) that are
 used in plaintext counting. The proof, and indeed the formulation, 
 relies on an inductive data
-type \texttt{Count}  (section \ref{sec:inductive_type}) that can best be 
+type \texttt{Count}  (Section \ref{sec:inductive_type}) that can best be 
 thought of as a plaintext
 version of the inductive type  \texttt{ECount} given here.
 Crucially, \texttt{Count} is verified against a formal specification
@@ -798,7 +801,8 @@ proofs that verify indeed evidence shuffle and/or honest decryption.
 
 \section{Extraction and Experiments} \label{sec:extract}
 
-As already mentioned, we are using  the Coq extraction
+As discussed in the Section \ref{sec:typeprop}, 
+we are using  the Coq extraction
 mechanism\citep{Letouzey:2003:NEC}  to extract programs from
 existence proofs\footnote{https://github.com/mukeshtiwari/EncryptionSchulze/tree/master/code/Workingcode}.
 In particular, we extract the proof of the Theorem
@@ -845,7 +849,7 @@ in the type structure between Java and OCaml, mainly in the context
 of sub-typing, this was done in the form of an OCaml wrapper around
 Java data structures.  After instantiating the  
  cryptographic primitives in the extracted OCaml code with wrapper
- code that calls UniCrypt
+ code that calls UniCrypt,
  we tested the executable on a three candidate elections between
  candidates \texttt{A}, \texttt{B} and \texttt{C}.
  The computation produces a tally sheet that is schematically given
@@ -946,72 +950,74 @@ Java data structures.  After instantiating the
 
  \mbox{}\\[-5ex]
  where the notion of evidence for winning and losing is as in the
- plaintext version of the protocol (\ref{cha:schulze_method}).  
+ plaintext version of the protocol (Chapter \ref{cha:schulze_method}).  
  
-% Below is a glimpse of a concrete certificate for an election, and, in other words, 
-% it is a trace of the computation which can be used as a checkable record to verify
-% the outcome of election. For the space consideration, we have stripped off 
-%the trailing digits in the tally sheet which is marked by $..$, and rather 
-% than representing an entry of a matrix as ($i$, $j$), it is represented as 
-% $ij$
-%
-%\begin{lstlisting}[frame=single,basicstyle=\ttfamily\scriptsize]
-%M: AA(13.., 10..) AB(90.., 14..)  AC(11.., 23..) BA(16.., 13..) 
-%BB(79.., 46..) BC(12.., 14..) CA(50.., 53..) CB(70.., 68..) CC(23.., 82..), 
-%D: [AA: 0 AB: 0 AC: 0 BA: 0 BB: 0 BC: 0 CA: 0 CB: 0 CC: 0], 
-%Zero-Knowledge-Proof-of-Honest-Decryption: [..]
-%------------------------------------------------------------------------------
-%V: [AA(42.., 15..) AB(63.., 32..) AC(70, 44..) BA(47.., 34..) BB(16.., 28..)
-%BC(39.., 16..) CA(19.., 13..) CB(57.., 12..) CC(19.., 89..),..], I:  [], 
-%M: AA(12.., 11..) AB(13.., 66..) AC(16.., 14.) BA(48.., 31..) BB(15.., 52..)
-%BC(15.., 68..) CA(39.., 69..) CB(12.., 78..) CC(10.., 40..),
-%Row-Permuted-Ballot: AA(53.., 16..) AB(23.., 44..) AC(72.., 47..) 
-%BA(10.., 19..) BB(74.., 16..) BC(20.., 60..) CA(44.., 10..) CB(12.., 16..)
-%CC(59.., 98..),
-%Column-Permuted-Ballot: AA(81.., 41..) AB(17.., 14..) AC(10.., 14..) 
-%BA(37.., 12..) BB(14.., 66..) BC(10.., 13..) CA(12.., 13..) CB(14.., 16..)
-%CC(12.., 10..),
-%Decryption-of-Permuted Ballot: AA0 AB-1 AC1 BA1 BB0 BC1 CA-1 CB-1 CC0,
-%Zero-Knowledge-Proof-of-Row-Permutation: [Tuple[...]], 
-%Zero-Knowledge-Proof-of-Column-Permutation: [Tuple[..]], 
-%Zero-Knowledge-Proof-of-Decryption: [Triple[..]], 
-%Permutation-Commitment: Triple[..]
-%Zero-Knowledge-Proof-of-Commitment: Tuple[..]
-%------------------------------------------------------------------------------
-%.
-%.
-%.
-%------------------------------------------------------------------------------
-%V: [AA(36.., 10..) AB(20.., 13..) AC(75.., 43..) BA(13.., 31..) BB(27.., 82..)
-%BC(31.., 50..) CA(16.., 11..) CB(74.., 15..) CC(26.., 36..)], I: [],
-%M: AA(86.., 38..) AB(21.., 14..) AC(16.., 25..) BA(16.., 22..) BB(18.., 15..)
-%BC(11.., 63..) CA(15.., 34..) CB(76.., 18..) CC(11.., 10..), 
-%Row-Permuted-Ballot: .., Column-Permuted-Ballot: .., 
-%Decryption-of-Permuted-Ballot: AA0 AB-10 AC1 BA10 BB0 BC1 CA-1 CB-1 CC0,
-%Zero-Knowledge-Proof-of-Row-Permutation: [..],
-%Zero-Knowledge-Proof-of-Column-Permutation: [..], 
-%Zero-Knowledge-Proof-of-Decryption: [..], 
-%Permutation-Commitment: Triple[..], 
-%Zero-Knowledge-Proof-of-Commitment: Tuple[..]
-%------------------------------------------------------------------------------
-%V: [], I: [AA(36.., 10..) AB(20.., 13..) AC(75.., 43..) BA(13.., 31..) 
-%BB(27.., 82..) BC(31.., 50..) CA(16.., 11..) CB(74.., 15..) CC(26.., 36..)], 
-%M: .., D: [AA: 0 AB: 4 AC: 4 BA: -4 BB: 0 BC: 4 CA: -4 CB: -4 CC: 0],
-%Zero-Knowledge-Proof-of-Decryption: [..]
-%------------------------------------------------------------------------------
-%D: [AA: 0 AB: 4 AC: 4 BA: -4 BB: 0 BC: 4 CA: -4 CB: -4 CC: 0]
-%winning: A
-%   for B: path A --> B of strength 4, 5-coclosed set: 
-%       [(B,A),(C,A),(C,B)]
-%   for C: path A --> C of strength 4, 5-coclosed set:
-%       [(B,A),(C,A),(C,B)] 
-%losing: B
-%   exists A: path A --> B of strength 4, 4-coclosed set: 
-%     [(A,A),(B,A),(B,B),(C,A),(C,B),(C,C)]
-%losing: C
-%   exists A: path A --> C of strength 4, 4-coclosed set: 
-%     [(A,A),(B,A),(B,B),(C,A),(C,B),(C,C)]
-%\end{lstlisting}
+ \noindent
+ \textit{Concrete Certificate:} Below is a glimpse of a concrete certificate for an election. 
+We have stripped off 
+the trailing digits in the tally sheet which is marked by $..$, and rather 
+ than representing an entry of a matrix as ($i$, $j$), it is represented as 
+ $ij$
+
+\begin{lstlisting}[frame=none, numbers=none, basicstyle=\ttfamily\scriptsize]
+
+M: AA(13.., 10..) AB(90.., 14..)  AC(11.., 23..) BA(16.., 13..) 
+BB(79.., 46..) BC(12.., 14..) CA(50.., 53..) CB(70.., 68..) CC(23.., 82..), 
+D: [AA: 0 AB: 0 AC: 0 BA: 0 BB: 0 BC: 0 CA: 0 CB: 0 CC: 0], 
+Zero-Knowledge-Proof-of-Honest-Decryption: [..]
+------------------------------------------------------------------------------
+V: [AA(42.., 15..) AB(63.., 32..) AC(70, 44..) BA(47.., 34..) BB(16.., 28..)
+BC(39.., 16..) CA(19.., 13..) CB(57.., 12..) CC(19.., 89..),..], I:  [], 
+M: AA(12.., 11..) AB(13.., 66..) AC(16.., 14.) BA(48.., 31..) BB(15.., 52..)
+BC(15.., 68..) CA(39.., 69..) CB(12.., 78..) CC(10.., 40..),
+Row-Permuted-Ballot: AA(53.., 16..) AB(23.., 44..) AC(72.., 47..) 
+BA(10.., 19..) BB(74.., 16..) BC(20.., 60..) CA(44.., 10..) CB(12.., 16..)
+CC(59.., 98..),
+Column-Permuted-Ballot: AA(81.., 41..) AB(17.., 14..) AC(10.., 14..) 
+BA(37.., 12..) BB(14.., 66..) BC(10.., 13..) CA(12.., 13..) CB(14.., 16..)
+CC(12.., 10..),
+Decryption-of-Permuted Ballot: AA0 AB-1 AC1 BA1 BB0 BC1 CA-1 CB-1 CC0,
+Zero-Knowledge-Proof-of-Row-Permutation: [Tuple[...]], 
+Zero-Knowledge-Proof-of-Column-Permutation: [Tuple[..]], 
+Zero-Knowledge-Proof-of-Decryption: [Triple[..]], 
+Permutation-Commitment: Triple[..]
+Zero-Knowledge-Proof-of-Commitment: Tuple[..]
+------------------------------------------------------------------------------
+.
+.
+.
+------------------------------------------------------------------------------
+V: [AA(36.., 10..) AB(20.., 13..) AC(75.., 43..) BA(13.., 31..) BB(27.., 82..)
+BC(31.., 50..) CA(16.., 11..) CB(74.., 15..) CC(26.., 36..)], I: [],
+M: AA(86.., 38..) AB(21.., 14..) AC(16.., 25..) BA(16.., 22..) BB(18.., 15..)
+BC(11.., 63..) CA(15.., 34..) CB(76.., 18..) CC(11.., 10..), 
+Row-Permuted-Ballot: .., Column-Permuted-Ballot: .., 
+Decryption-of-Permuted-Ballot: AA0 AB-10 AC1 BA10 BB0 BC1 CA-1 CB-1 CC0,
+Zero-Knowledge-Proof-of-Row-Permutation: [..],
+Zero-Knowledge-Proof-of-Column-Permutation: [..], 
+Zero-Knowledge-Proof-of-Decryption: [..], 
+Permutation-Commitment: Triple[..], 
+Zero-Knowledge-Proof-of-Commitment: Tuple[..]
+------------------------------------------------------------------------------
+V: [], I: [AA(36.., 10..) AB(20.., 13..) AC(75.., 43..) BA(13.., 31..) 
+BB(27.., 82..) BC(31.., 50..) CA(16.., 11..) CB(74.., 15..) CC(26.., 36..)], 
+M: .., D: [AA: 0 AB: 4 AC: 4 BA: -4 BB: 0 BC: 4 CA: -4 CB: -4 CC: 0],
+Zero-Knowledge-Proof-of-Decryption: [..]
+------------------------------------------------------------------------------
+D: [AA: 0 AB: 4 AC: 4 BA: -4 BB: 0 BC: 4 CA: -4 CB: -4 CC: 0]
+winning: A
+   for B: path A --> B of strength 4, 5-coclosed set: 
+       [(B,A),(C,A),(C,B)]
+   for C: path A --> C of strength 4, 5-coclosed set:
+       [(B,A),(C,A),(C,B)] 
+losing: B
+   exists A: path A --> B of strength 4, 4-coclosed set: 
+     [(A,A),(B,A),(B,B),(C,A),(C,B),(C,C)]
+losing: C
+   exists A: path A --> C of strength 4, 4-coclosed set: 
+     [(A,A),(B,A),(B,B),(C,A),(C,B),(C,C)]
+
+\end{lstlisting}
 
 
 \begin{figure}
@@ -1106,7 +1112,7 @@ parts are practically efficient by themselves, scalability is merely
 the question of engineering a more efficient coupling. 
 
 
-In a nutshell, the achieved and missed part of this formalization:
+In a nutshell, the achieved and failed part of this formalization:
 
 \begin{itemize}
 \item Achieved
@@ -1120,31 +1126,30 @@ In a nutshell, the achieved and missed part of this formalization:
          there is no possibility of anyone knowing the choices of a voter other than the voter herself.
                  
 \item Verifiability: The outcome of any election can be verified by any third party because 
-          of the generated certificates. However, certificates are only accessible to someone 
-          having specialized  knowledge of cryptography. 
-
-\end{itemize}
-\item Missed
-\begin{itemize}
- \item Verifiability:  The nature of certificates in this case is very complex, and they can only be scrutinize 
+          of the generated certificates. However,
+          the nature of certificates in this case is very complex, and they can only be scrutinize 
           by someone having specialized knowledge of cryptography which decreases the pool of potential 
           scrutinizers dramatically.
-              
- \item Correctness: We used external unverified libraries for cryptographic code.  In general, these libraries 
- 		  could be buggy and 
-          may produce a wrong result. This, per say, is not a problem because it will be caught during the 
-          certificate checking by any independent party, but, it may create a atmosphere of distrust among 
-          voters about electronic voting.  
+
+\end{itemize}
+\item Failed
+\begin{itemize}
+ \item Correctness: We use an external unverified library for cryptographic code.  In general, this library 
+ 		  could have bugs and 
+          may produce a wrong result. This is not a problem per say because it will be caught during the 
+          certificate checking by any independent party, but it may create a atmosphere of distrust among 
+          voters.  
  
  
 \end{itemize}
 \end{itemize}
 
 
+\noindent
 Our formalization leaves some gaps which needed to be filled:
 \begin{itemize}
 \item A formally verified cryptographic library to fill the \textit{correctness gap}.
-\item A formally verified checker to ease the auditing of election to fill the \textit{Scrutineers} gap
+\item A formally verified checker to ease the auditing of election to fill the \textit{scrutineers} gap
 \end{itemize}
 
 
@@ -1155,7 +1160,7 @@ increase the number of scrutineers gap.
  
 In the next chapter, we will focus on all the details needed to 
 develop formally verified certificate checker for the certificate we produced in this chapter. 
-However, due to time constraint and complex nature of our certificate, we could not 
+However, we did not 
 formalize every cryptographic primitive needed to verify our certificate. Rather, 
 we have developed a proof of concept formally verified certificate checker for 
  International Association for Cryptologic Research 2018 election, a simpler 

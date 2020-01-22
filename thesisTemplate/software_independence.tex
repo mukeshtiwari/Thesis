@@ -8,41 +8,32 @@
 \section{Introduction}
 
 
-One of the major disadvantage of introducing cryptography 
-to achieve privacy, encryption to make the 
-content of ballot private,  and verifiability, zero-knowledge-proof for verification of claims, makes the verification 
-process cumbersome. As a consequence, the verification process (checking the scrutiny sheet) is only accessible 
-to tiny fraction of representative population, cryptographers, results into a sharp decrease in number of scrutineers. 
+One of the major disadvantage of using cryptography 
+to achieve privacy (using encryption to make the 
+content of ballot private)  and verifiability (using zero-knowledge-proof for verification of claims) makes the verification 
+process cumbersome. As a consequence, the verification process (checking the scrutiny sheet) is only viable for
+tiny fraction of general population, cryptographers, results into a sharp decrease in number of scrutineers. 
 While it is not very difficult to find cryptographers to verify the election, 
-they are, off course, not the representative population of any democracy. 
+they are, off course, not the representative population in any democracy. 
 In order to increase the number of scrutineers and subsequently confidence in electronic voting, we follow the 
 route of providing a formally verified open-source 
-reference certificate checker, which anyone can inspect and run on the election data. 
+reference certificate checker which anyone can inspect and run on the election data. 
   The rationale behind formally verifying the certificate checker is \emph{correctness}
-  and open sourcing is to gain the public trust  via scrutiny or openness.  
+  and open sourcing is to gain the public trust  via careful examination.  
   For example, consider a scenario where we do not provide the reference checker,
   then how 
   likely would it be for community/voters to develop the 
   verified checker? Moreover, assuming that we publish one unverified certificate checker,
   what would happen if it returns false on a valid certificate because of its own bug? 
-  Both situations, off course, would be a devastating situation, so not only we 
-  should provide a reference certificate checker, but it should be a formally verified one. 
+  Both situations, of course, would be a devastating situation, so not only 
+  should we provide a reference certificate checker, but it should be a formally verified one. 
   Additionally, a formally verified reference certificate checker would open the gate for
   debate in case of someone's implementation for checking certificate diverges from the reference checker.
-In the case of diverging situation, there are two possibility, either the reference checker is verified 
+In the case of a diverging situation, there are two possibility, either the reference checker is verified 
 using wrong assumptions,  or the implementation itself is wrong.  The first situation is certainly 
 not very pleasant because it would deteriorate the public trust in the system, but nonetheless, it is always
 good to  have openness in democracy to make it more strong. 
-  
-  
-  
-  At this point of time, the astute reader can criticize us that the source code of formally verified certificate checker should be 
-  inspected by someone having the expertise of cryptography and formal verification (logic) 
-  to see if the verification has been carried out diligently. We sincerely accept the criticism of the 
-  reader that this is indeed the case, but what makes this effort  worthwhile is 
-  the increased ability of voters to verify the election by themselves by 
-  simply running the checker, which has been checked by a community having the 
-  expertise of cryptography and logic. 
+ 
 
 
 In this chapter, we will discuss all the concepts required to develop a verified certificate checker for the certificate we generated 

@@ -26,25 +26,25 @@ co-operation of all on board it can be safely brought to part.}
  
  
  
- \textbf{Chapter overview:} In this chapter, we explain the Schulze method in section \ref{sec:schulze_algorithm}, 
- and its formal specification in the section \ref{sec:spec}. The  corner stone of our formalization is 
+ \textbf{Chapter overview:} In this chapter, we explain the Schulze method in Section \ref{sec:schulze_algorithm}, 
+ and its formal specification in the Section \ref{sec:spec}. The  corner stone of our formalization is 
  a correct by construction dependent inductive data type 
  that represents all correct executions (\ref{sec:inductive_type}) with the formal proof of
  that every Schulze election have winners (\ref{sec:all_winners}).  Every inhabitant of 
  this dependent inductive data type not only produces a final result, but also all the 
- intermediate steps which lead to the notion of evidence or scrutiny sheet (section 
-  \ref{sec:scrunity_sheet}).  In the section \ref{sec:count_million}, we discuss the optimization techniques
+ intermediate steps which lead to the notion of evidence or scrutiny sheet (Section 
+  \ref{sec:scrunity_sheet}).  In the Section \ref{sec:count_million}, we discuss the optimization techniques
    to overcome the deficiencies in extracted Haskell code from Coq formalization. Based on 
    these optimizations, the extracted Haskell code was able to count millions of ballots in few 
    minutes. 
-   Finally, we conclude the chapter in the section \ref{sec:discussion} with 
+   Finally, we conclude the chapter in the Section \ref{sec:discussion} with 
    the achievements and drawbacks of our work on the scale of \textit{Correctness},
    \textit{Privacy}, and \textit{Verifiability}.
  
 
 
 
-\section{Schulze Algorithm}
+\section{Schulze Method}
 \label{sec:schulze_algorithm}
 The Schulze Method \citep{Schulze:2011:NMC} is a vote counting scheme
 that elects a single winner, based on preferential votes. 
@@ -108,7 +108,7 @@ nodes, i.e.
 
 \end{itemize}
 
-The Schulze method
+In other words, the Schulze method
 stipulates that a candidate $c \in C$ is a \emph{winner} of the
 election with margin function $m$ if, for all other candidates $d \in
 C$, there exists a number $k \in Z$ such that
@@ -124,10 +124,12 @@ beaten by any (other) candidate.
 
 
 	\subsection{An Example}
-	For some given set of ballots (the actual set of ballots are not very important because we want to demonstrate the Condercet Paradox), we have computed 
+	Suppose that for some given set of ballots (the actual set of ballots are not very important because we want to demonstrate the Condercet Paradox) for 
+	a given set of candidates $\lbrace A, B, C \rbrace$, 
+	we have computed 
 	the margin function $m$ such that $m$ ($A, B$) = 3, $m$ ($B, A$) = -3, $m$ ($A, C$) = -1, 
 	$m$ ($C, A$) = 1, $m$ ($B, C$) = 5, and $m$ ($C, B$) = -5. We have drawn the graph below (Figure \ref{marginfn}), and 
-	it shows that collective can be cyclic, even if the preferences of individual voters are not cyclic. This phenomena 
+	it shows that collective preferences can be cyclic, even if the preferences of individual voters are not cyclic. This phenomena 
 	is known as Condercet paradox and first observed by french philosopher Marquis de Condorcet in late 18th century \footnote{https://gallica.bnf.fr/ark:/12148/bpt6k417181}.
 	   
 	   
@@ -145,10 +147,10 @@ A \ar@/^/[rr]^{3} \ar@/_/[dr]_{-1} & & B \ar@/^/[ll]^{-3}
 
 
 The main idea of the method is to resolve cycles by considering \emph{transitive preferences} or a generalised notion of margin. 
-Figure \ref{generalizemargin} is the graph interpretation of generalised 
-margin, $M$, after running the Schulze method on margin function $m$ (the 
+Figure \ref{generalizemargin} shows the graph interpretation of the generalised 
+margin, $M$, after running the Schulze method on the margin function $m$ (the 
 word margin function is used interchangeably with margin matrix).  In order to 
-compute $M(A, B)$, we first compute all the path from candidate $A$ to $B$. Well, we have just two path from $A$ to $B$, a direct path between them and 
+compute $M(A, B)$, we first compute all the paths from candidate $A$ to $B$. Here we have just two path from $A$ to $B$, a direct path between them and 
 a intermediate path via candidate $C$.  Now that we two paths, we compute the path strength $st$ for each path, $st(A, B) = min \lbrace m (A, B) \rbrace $ 
 and $st (A, C, B)$ = $min \lbrace m (A, C), m (C, B) \rbrace$.  Simply these expression:
 
@@ -393,7 +395,7 @@ win. This is a re-emphasis on \emph{Correctness},
 and convincing to all, specifically to losers, leaving  no ground for speculation. 
 As we stated earlier that in the context of
 electronic vote counting, this is known as a
-\emph{scrutiny sheet, or certification}: a tabulation of all relevant data that allows
+\emph{scrutiny sheet, or certificate}: a tabulation of all relevant data that allows
 us to verify the election outcome.
 Again drawing on an already computed margin function, to
 demonstrate that a candidate $c$ wins, we need to exhibit an integer
@@ -671,7 +673,7 @@ to check.
 
 We note that the difference between the type-level and the
 propositional definition of winning 
-is in fact more than a mere reformulation. As remarked before, one
+is in fact more than a mere reformulation. As remarked before (\ref{sec:typeprop}), one
 difference is that purely propositional evidence is erased during
 program extraction so that using just the propositional definitions,
 we would obtain a determination of election winners, but no
@@ -682,6 +684,7 @@ finite (and small) amount of data, whereas the fact that \emph{all} paths
 between two candidates don't exceed a certain strength is impossible
 to ascertain, given that there are infinitely many paths.
 
+\label{sec:evidence}
 In summary, determining that a particular candidate wins an election
 based on the \texttt{wins\_type} notion of winning, the extracted
 program will \emph{additionally} deliver, for all other candidates,
@@ -740,11 +743,12 @@ preorder over the set of candidates.
    \begin{center}
     {\includegraphics[width=0.37\textwidth]{bal-cropped.pdf}}
     \caption{Ballot Representation}
+    \label{fig:ballot}
     \end{center}
 \end{figure}
 In practice, ballots are
 implemented by asking voters to put numerical preferences against
-the names of candidates as represented by the image on the right.
+the names of candidates as represented by the Figure $\ref{fig:ballot}$ .
 The most natural representation of a ballot is therefore a function
 $b: C \to Nat$ that assigns a natural number (the preference) for
 each candidate, and we recover a strict linear preorder $<_b$ on candidates
@@ -805,22 +809,29 @@ the following shape:
 \begin{minted}{coq}
 Inductive Count (bs : list ballot) : State -> Type :=
 | ax us m : us = bs -> (forall c d, m c d = 0) -> 
-  Count bs (partial (us, []) m)         (* zero margin      *)
+   (* zero margin *)
+  Count bs (partial (us, []) m) 
 | cvalid u us m nm inbs : 
   Count bs (partial (u :: us, inbs) m) -> 
-  (forall c, (u c > 0)%nat) ->          (* u is valid       *)
+   (* u is valid  *)
+  (forall c, (u c > 0)%nat) ->         
   (forall c d : cand, 
-    ((u c < u d) -> nm c d = m c d + 1) (* c preferred to d *) /\
-    ((u c = u d) -> nm c d = m c d)     (* c, d rank equal  *) /\
-    ((u c > u d) -> nm c d = m c d - 1))(* d preferred to c *) ->
+    (* c preferred to d *)
+    ((u c < u d) -> nm c d = m c d + 1)  /\
+    (* c, d rank equal  *)
+    ((u c = u d) -> nm c d = m c d)     /\
+    (* d preferred to c *)
+    ((u c > u d) -> nm c d = m c d - 1))  ->
     Count bs (partial (us, inbs) nm)
 | cinvalid u us m inbs : 
-  Count bs (partial (u :: us, inbs) m) -> 
-  (exists c, (u c = 0)%nat)   (* u is invalid     *) ->
+  Count bs (partial (u :: us, inbs) m) ->
+   (* u is invalid     *)  
+  (exists c, (u c = 0)%nat)  ->
   Count bs (partial (us, u :: inbs) m)
 | fin m inbs w 
   (d : (forall c, (wins_type m c) + (loses_type m c))) :
-  Count bs (partial ([], inbs) m)  (*no ballots left*) ->
+  (*no ballots left*)
+  Count bs (partial ([], inbs) m)   ->
   (forall c, w c = true <-> (exists x, d c = inl x)) ->
   (forall c, w c = false <-> (exists x, d c = inr x)) ->
   Count bs (winners w).
@@ -830,7 +841,7 @@ Inductive Count (bs : list ballot) : State -> Type :=
 \noindent
 The intuition here is simple: the first constructor, \texttt{ax},
 initiates the construction of the margin function, and we ensure
-that all ballots are uncounted, no ballot are invalid (yet), and the
+that all ballots are uncounted, no ballots are invalid (yet), and the
 margin function is constantly zero. The second constructor,
 \texttt{cvalid}, updates the margin function according to a valid
 ballot (all candidates have preferences marked against their name),
@@ -842,7 +853,7 @@ ballots). In its arguments, \texttt{w : cand -> bool} is the function
 that determines election winners, and \texttt{d} is a function that
 delivers, for every candidate, type-level evidence of winning or
 losing, consistent with \texttt{w}. Given this, we can conclude the
-count and declare \texttt{w} to be the set of winners (or more
+count, and declare \texttt{w} to be the set of winners (or more
 precisely, those candidates for which \texttt{w} evaluates to
 \texttt{true}).
 
@@ -863,7 +874,7 @@ independent verification.
 
 
 
-\subsection{All Schulze Election Have Winners}
+\subsection{All Schulze Elections Have Winners}
 \label{sec:all_winners}
 The main theorem, the proof of which we describe in this section, is
 that all elections according to the Schulze method engender a
@@ -887,7 +898,7 @@ correctness of the execution of the count.
 
 
 \noindent
-The first step in the proof is elementary: We show that for any
+The first step in the proof is elementary: we show that for any
 given list of ballots we can reach a state of the count where there are
 no more uncounted ballots, i.e. the margin function has been
 fully constructed.
@@ -1002,7 +1013,8 @@ ballot) and once all ballots are exhausted, the determination of
 winners, together with paths and co-closed sets. The following is
 the transcript of a Schulze election where we have added wrappers
 to pretty-print the information content. This is the (full) scrutiny
-sheet promised in Section \ref{sec:prop-type}.
+sheet promised in Section \ref{sec:prop-type} and concretely 
+it looks follows:
 %
 %\newpage
 %\begin{footnotesize}
@@ -1140,7 +1152,7 @@ using a logarithmic scale.
  \label{sec:count_million}
  The previous extracted Haskell code was very slow  and was not 
  practical for real life election involving millions of ballots. To scale it to real life election,
- we investigated the extracted Haskell code  from Coq code.
+ we analysed the extracted Haskell code  from Coq code.
 The most performance critical aspect of our code was the computation of  margin
 function. Recall that the margin function is of type
 \texttt{cand -> cand -> Z}
@@ -1158,7 +1170,7 @@ tool to automate this process}}.
 Below (Figure \ref{fig:straightfastlw}, Figure \ref{fig:straightfastlv}), we include our timing graphs,
 based on randomly generated ballots while keeping number of candidates
 constant i.e. 4 (The reason we kept it to 4 candidate to show the speed up compared to 
- \ref{fig:straightslowu} and \ref{fig:straightslown} . During the experimentation, we ran an election with 21 candidate, and 
+ \ref{fig:straightslowu} and \ref{fig:straightslown}). During the experiment, we ran an election with 21 candidate, and 
  we were able to count 2 million randomly generated ballots
  before running out of memory.)
 
@@ -1207,7 +1219,7 @@ In the Figure \ref{fig:straightfastlw}, we report timings (in seconds) for the c
 winners, whereas in the Figure \ref{fig:straightfastlv}, we include the time to additionally
 compute a universally verifiable certificate that attests  to the
 correctness of the count. This is consistent with complexity of Schulze 
-counting i.e. linear in no of ballots and cubic in candidates. 
+counting i.e. linear in number of ballots and cubic in number of candidates. 
 The experiments were carried out on system 
 equipped with intel core i7 processor and 16 GB of ram. We notice that the
 computation of the certiciate adds comparatively little in
@@ -1227,7 +1239,7 @@ million ballot papers) on a standard, commodity desktop computer with
 In this chapter,  we emphasize on correctness, 
 and we take the approach that computation of winners in
 electronic voting (and in situations where correctness is key in
-general) should not only produce an end result, but an end result,
+general) should not only produce an end result, but an end result
 \emph{together} with a verifiable justification of the correctness
 of the computed result. We have exemplified this
 approach by providing a provably correct, and evidence-producing
@@ -1285,7 +1297,7 @@ types that carry verifiable evidence (\texttt{wins\_type}).  We then
 join the (type level) winning conditions with an inductive type that
 details the construction of the margin function in an inductive
 type. Via propositions-as-types, a provably correct vote counting
-function is then equivalent the proposition that there exists an
+function is then equivalent to the proposition that there exists an
 inhabitant of \texttt{Count} for every set of ballots.  Coq's
 extraction mechanism then allows us to extract a Haskell program
 that produces election winners, together with verifiable
@@ -1299,7 +1311,7 @@ Our ballots are in plaintext and could easily be identified
 if the number of candidates participating in election in 
 are large (Italian attack) \citep{Otten}.
 \noindent
-In nutshell, the achieved and missed of this formalization:
+In nutshell, the achieved and failed of this formalization:
 
 \begin{itemize}
 \item Achieved 
@@ -1315,10 +1327,10 @@ In nutshell, the achieved and missed of this formalization:
           lead to increase in number of scrutineers. 
 
 \end{itemize}
-\item Missed
+\item Failed
 \begin{itemize}
 \item Privacy: There is no privacy  because the ballots involved 
-         are simply plaintext, and potentially, it could lead coercion and vote-selling (coercion).
+         are simply plaintext which could potentially lead coercion and vote-selling (coercion).
 \end{itemize}
 \end{itemize}
 
@@ -1331,8 +1343,8 @@ certificate verifier, possibly in a language such as CakeML
 be correct to the machine level. 
 
  In the next chapter, we will try to solve privacy and coercion problem, using encryption, and to keep 
- it verifiable, we will use zero-knowledge-proof. However, solution for privacy comes at a cost, e.g. 
+ it verifiable, we will use zero-knowledge-proof. However, the solution for privacy comes at a cost, e.g. 
  a loss in the pool of scrutineers because auditing a certificate generated by counting encrypted ballot 
- would requires intricate knowledge of cryptography.
+ requires intricate knowledge of cryptography.
  
 
