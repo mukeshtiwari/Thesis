@@ -81,8 +81,7 @@ framework by using pure type system \citep{berardi1988towards}
 In addition, 
 pure type system can be extended with three rules, 
 inductive data type, pattern matching, and recursion 
-to accommodate Calculus of Inductive Construction. 
-
+to accommodate Calculus of Inductive Construction.
 
 Lambda calculus was invented by Alonzo Church in the 1930s, 
 and his motive was to use lambda calculus as a foundation 
@@ -104,7 +103,7 @@ various mathematical notions. For example, we can represent
 $True$ as $\lambda x. \lambda y. x$, $False$ as $\lambda x. \lambda y. y$,
 $Zero$ as $\lambda f.\lambda x. x$,  $One$ as $\lambda f.\lambda x. f x$, etc. 
 However, there is nothing which is stopping us to construct lambda terms which 
-has no meaning, e.g. applying a variable $x$ with itself learning to a lambda 
+has no apparent meaning, e.g. applying a variable $x$ with itself learning to a lambda 
 term $x x$. To avoid these kind of terms, we extend the lambda calculus with 
 another abstraction called \textit{types}. Moreover, we add \textit{typing judgement} (rule) 
 which dictates which terms is well-typed and which one is not.  This new 
@@ -210,7 +209,7 @@ The typing judgement for \textit{PTS} in typing context $\Gamma$ is defined by f
  \item Start: \[ \frac{\Gamma \text{  } \vdash \text{ A : s}}{\Gamma \text{, x : A }\vdash \text{ x : A}} \]
  \item Weakening: \[ \frac{\Gamma \text{ } \vdash \text{ A : B } \quad \Gamma \text{ } \vdash \text{ C : s }}{\Gamma, \text{ x : C } \vdash \text{ A : B }} \]
  \item Product: \[ \frac{\Gamma \text{ } \vdash \text{ A : }s_{1} \quad \Gamma, \text{ x : A } \vdash \text{ B : }s_{2}}{\Gamma \text{ } \vdash (\prod \text{ x : A. B) : }s_{3}} \]
- \item Application: \[ \frac{\Gamma \text{ }\vdash \text{ F : (}\prod \text{x : A. B)} \quad \Gamma \text{ }\vdash \text{ a : A }}{\Gamma \text{ }\vdash \text{ Fa : B [x := a]}} \]
+ \item Application: \[ \frac{\Gamma \text{ }\vdash \text{ F : (}\prod \text{x : A. B)} \quad \Gamma \text{ }\vdash \text{ a : A }}{\Gamma \text{ }\vdash \text{ F a : B [x := a]}} \]
  \item Abstraction: \[ \frac{\Gamma, \text{ x : A }\vdash \text{ b : B } \quad \Gamma \text{ }\vdash (\prod \text{x : A. B) : s }}{\Gamma \text{ }\vdash (\lambda \text{x : A. b) : (}\prod \text{ x : A. B)}} \]
  \item Conversion: \[ \frac{\Gamma \text{ }\vdash \text{ A : B } \quad \Gamma \text{ }\vdash \text{ B' : s } \quad \text{B  }=_{\beta} \text{ B' }}{\Gamma \text{ } \vdash \text{ A : B' }} \]
 \end{itemize}   
@@ -256,6 +255,36 @@ representation more efficient. Below is the  (incomplete) syntax of Calculus of 
        | fix_{n}  $\lbrace$ V : T := T $\rbrace$ (* recursion *) \\
    \end{displayquote}
  
+
+\noindent 
+\textit{Inductive Type:} As we mentioned above that inductive types are basic building block for encoding various 
+data structures efficiently in the Coq. The keyword to declare a inductive data type in Coq is 
+\textit{Inductive}. For example, a length index list
+whose elements belong to a type $A$ can defined as (also known as vector):
+
+\begin{minted}{coq}
+
+Inductive Vector (A : Type) : nat -> Type :=
+| Nil : Vector A 0
+| Cons n : A -> Vector A n -> Vector A (S n).
+
+\end{minted}
+
+\noindent 
+Now we can define various function for the \textit{Vector} data structure. For example, 
+we can define a function to append two vectors for length $n$ and $p$ as follows:
+
+\begin{minted}{coq}
+Fixpoint append {A n p} (v : Vector A n) (w : Vector A p)  
+  : Vector A (n + p) :=
+  match v with
+  | Nil _ => w
+  | Cons _ _ a v' => Cons _ _ a (append v' w)
+  end.
+
+\end{minted}
+ 
+
  
 \noindent
 We would like to point that the current underlying theory of Coq has been 
@@ -303,7 +332,7 @@ the discussion of Co-Inductive types is not very relevant for this thesis.
   
   
   
-  \begin{minted}{coq}
+\begin{minted}{coq}
 Require Import Coq.Lists.List.
 Import ListNotations.
 
@@ -341,7 +370,7 @@ Proof.
   firstorder.
 Defined. 
 
-  \end{minted}
+\end{minted}
     
     
     
