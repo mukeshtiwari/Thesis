@@ -36,29 +36,41 @@ good to  have openness in democracy to make it more strong.
  
 
 
-In this chapter, we will discuss all the concepts required to develop a verified certificate checker for the certificate we generated 
-in the last chapter.  We have already explained our certificate in the section \ref{sec:extract}, but intuitively, 
-checking our certificate amounts to proving that  the homomorphic margin has been computed correctly and zero-knowledge-proof for every claim is correct. 
-Recall that our claims were that we have honestly decrypted every value, computed the finally tally correctly, and  
-a ballot has been permuted by the same permutation whose commitment is published (commitment consistent shuffle \citep{Wikstrom:2009:CPS}).
-We will sketch the proof of honest decryption, Pedersen's commitment, and homomorphic computing of 
-tally. As a consequence, translating these sketches into Coq proof is fairly trivial. The triviality comes from 
-the fact that most of these proofs are basic algebraic manipulation over various algebraic structures, 
-group, and field. Furthermore, we have formalized these algebraic manipulation
-in Coq. We have not formalized the shuffle algorithm \citep{Wikstrom:2009:CPS} because of 
-its complexity and would take a fair amount of time (the efforts are ongoing).  Finally, all 
-of the concepts explained in this chapter would be sufficient to develop the formally verified 
-certificate checker for IACR election. 
+In this chapter, we discuss the concepts required to develop a verified certificate checker for the certificate we generated 
+in the last chapter. Moreover, we sketch pseudo code (and pen-and-paper proof) as well for these concepts 
+which can be easily translated into the Coq code.  We have already explained our certificate in the Section \ref{sec:extract}, 
+but intuitively,  checking our certificate amounts to proving that  the homomorphic margin has been 
+computed correctly and zero-knowledge-proof for every claim is correct. In a nutshell, 
+our claims were:
+\begin{enumerate}
+\item honest decryption zero-knowledge-proof: every encrypted value is decrypted honestly 
+\item shuffle zero-knowledge-proof:
+  a ballot has been permuted by the same permutation whose commitment is published (commitment consistent shuffle \citep{Wikstrom:2009:CPS}).
+\item final homomorphic tally is computed correctly
+\end{enumerate}
 
-\textbf{Chapter Outline:} In the section $\ref{sec:algebra}$, we discuss the underlying algebraic structures needed for various 
+\noindent
+We sketch the encoding of Pedersen's commitment, one of the primitives of shuffle zero-knowledge-proof, in Coq, 
+but we leave the other details of shuffle zero-knowledge-proof algorithm \citep{Wikstrom:2009:CPS}. Moreover, we
+encode the sigma protocol in Coq as a record and give various examples of concrete sigma protocol including 
+the honest decryption zero-knowledge-proof.  Finally, all 
+the concepts explained in this chapter are sufficient to develop the formally verified 
+certificate checker for IACR election 
+\footnote{https://vote.heliosvoting.org/helios/elections/60a714ea-ce6d-11e8-8248-76b4ab96574c/view} 
+and our proof development can be accessed 
+\footnote{https://github.com/mukeshtiwari/secure-e-voting-with-coq}.
+
+
+\textbf{Chapter Outline:} In the Section $\ref{sec:algebra}$, we discuss the underlying algebraic structures needed for various 
  cryptographic operations. Section $\ref{sec:pedersen}$ focuses on generalizing the Pedersen commitment scheme for 
- a matrix. In the following section $\ref{sec:sigma_coq}$, we discuss the details of sigma protocol, and its formalization 
- in Coq. Moreover, we also discuss how to turn a probabilistic reasoning, which is the heart of sigma protocols, to 
- deterministic reasoning without losing the meaning of sigma protocol. In section $\ref{sec:conc_sigma}$, we show 
+ a matrix. In the following Section $\ref{sec:sigma_coq}$, we discuss the details of sigma protocol, and its formalization 
+ in Coq. In order to eschew the (monadic) probabilistic reasoning of sigma protocols, we use the standard trick of making the randomness 
+ explicit to make the reasoning easier
+ without losing the meaning of sigma protocol. In the Section $\ref{sec:conc_sigma}$, we show 
  how to make a concrete instance of sigma protocol by giving an example of discrete logarithm. In addition, 
- we show the protocol needed for honest decryption (section $\ref{sec:dec_sigma}$). Section $\ref{sec:homo_tally}$ sketches 
- the homomorphically tally based on additive ElGamal scheme. Finally, we discuss the IACR scrutiny sheet in section $\ref{sec:election_iacr}$, 
- and we summarize the chapter in the section $\ref{sec:summary_software}$
+ we show the protocol needed for honest decryption (Section $\ref{sec:dec_sigma}$). Section $\ref{sec:homo_tally}$ sketches 
+ the homomorphically tally based on additive ElGamal scheme. Finally, we discuss the IACR scrutiny sheet in the Section $\ref{sec:election_iacr}$, 
+ and we summarize the chapter in the Section $\ref{sec:summary_software}$
 
 
 \section{Algebraic Structures: Building Blocks}
@@ -69,17 +81,17 @@ vector space  of a cyclic group of prime order over the field of integers modulo
 because multiplying a group element by a field element can be abstracted over scalar multiplication of vector space.
 
 \begin{definition}[Group] 
-A group is a set $G$, with a binary operator $* : G \rightarrow G \rightarrow G$, identity element $e$, and inverse operator $inv : G \rightarrow G$ such 
+A group is a set $G$, with a binary operator $\cdot : G \rightarrow G \rightarrow G$, identity element $e$, and inverse operator $inv : G \rightarrow G$ such 
     that the following laws hold:  \end{definition} 
     \begin{itemize}
-     \item \textit{Associativity}: $\forall$  a b c $\in G,$  $a * (b * c) = (a * b) * c$
-    \item \textit{Closure}: $\forall$ a b $\in G,$  $a * b \in G$
-    \item \textit{Inverse Element}: $\forall$ a $\in G$ $\exists$ $a^{-1} \in G$, such that $a * a^{-1} = a^{-1} * a = e$. $a^{-1}$ is called inverse of $a$ ($inv$ a).
-    \item \textit{Identity}: $\forall$ a $\in G,$  $a * e = e * a  = a$
+     \item \textit{Associativity}: $\forall$  a b c $\in G,$  $a \cdot (b \cdot c) = (a \cdot b) \cdot c$
+    \item \textit{Closure}: $\forall$ a b $\in G,$  $a \cdot b \in G$
+    \item \textit{Inverse Element}: $\forall$ a $\in G$, $a \cdot (inv \text{ } a) = (inv \text{ } a) \cdot a = e$
+    \item \textit{Identity}: $\forall$ a $\in G,$  $a \cdot e = e \cdot a  = a$
     \end{itemize}
   
     \noindent
-    If the group is commutative, i.e. $\forall$ a b $\in  G,$  $a * b = b * a$, then we call it abelian group.  We can represent the abelian group in Coq by using the 
+    If the group is commutative, i.e. $\forall$ a b $\in  G,$  $a \cdot b = b \cdot a$, then we call it Abelian group.  We can represent the Abelian group in Coq by using the 
     record data type. 
  
  \begin{minted}{Coq}
@@ -103,6 +115,7 @@ Record AbelGroup (G : Type)
 Our Coq encoding is slight different from the definition of the group we gave above, mainly that \textit{G : Type} "read it as A has the type Type" and 
 \textit{(Hdec : forall x y : G, {x = y} + {x <> y})}. Because of the theoretical foundations of Coq, every term in Coq has to have a type;
 hence we need to explicitly state the type of term $G$, and we assume a decidable equality $Hdec$ on the elements of $G$.  
+In a nutshell, Type is used to represent sets. 
 
 \begin{definition}[Field] 
 A field  is a set $\mathbb{F}$, with two binary operator $+ : \mathbb{F} \rightarrow \mathbb{F} \rightarrow \mathbb{F}$,  and $\cdot : \mathbb{F} \rightarrow \mathbb{F} \rightarrow \mathbb{F}$, 
@@ -138,54 +151,68 @@ is  a vector space over a field $\mathbb{F}$ if the following properties hold:
 Recall that in the last chapter to prove that if a ballot was valid or invalid, we generated a secret permutation $\pi$ and published its commitment using 
 Pedersen commitment scheme. Later, we use this to shuffle each row and column of the ballot by this (secret) permutation. 
 In the shuffle algorithm \citep{Wikstrom:2009:CPS}), the data structure of permutation $\pi$ is matrix (a permutation matrix to be precise).
-In this section, we discuss that how to use generalize Pedersen commitment scheme for matrix. 
+In this section, we discuss that how to use generalize Pedersen commitment scheme for matrix data structure. 
 
-A Pedersen commitment for any two give group element $g$ $h$ $\in G$, a message $m \in \mathbb{F}$, and random element 
-$r \in \mathbb{F}$ is:
+A Pedersen commitment for any two give group element $g$ $h$ $\in G$, a message $m \in \mathbb{F}$, and a random element 
+$r \in \mathbb{F}$ is $g^r \cdot h^m$ ($\cdot$ is the group operation). In Coq, it can be encoded as follows:  
 
-\begin{displayquote}
 
-$\text{Pedersen\_commitment  g h m r := } g^r \cdot h^m$  
+\begin{minted}{coq}
 
-\end{displayquote}
+Definition ped_commitment {F G} (fn : G -> F -> G) 
+  (gn : G -> G -> G) (g h : G) (r m : F) : G := 
+    gn (fn g r) (fn h m).
 
+
+\end{minted}
+
+\noindent
+The function $fn$ (exponentiation operator) can be abstracted as a  scalar binary operator $\cdot$ and the 
+function $gn$ (group operator) can be 
+abstracted as addtion binary operator $+$ of vector space (vector space of a cyclic group $G$ of prime 
+order over the field of integers $\mathbb{F}$ modulo the same order).  
+Even though this abstraction is not necessary, but it 
+provides a clean way to work with a \textit{Group} and \textit{Field}. 
 We can extend the Pedersen commitment for a group element $g$, 
 vector of $n$ group element $h_{1}, h_{2} \dots h_{n}$, vector of $n$ 
 field element $m_{1}, m_{2} \dots m_{n}$, and a random field element 
-$r$ is:
-
-\begin{displayquote}
-
-$\text{Pedersen\_generalized g hs ms r := } g^r \cdot \prod_{i = 1}^n  h_{i}^{m_{i}}$  
-
-\end{displayquote}
-
+$r$ is $g^r \cdot \prod_{i = 1}^n  h_{i}^{m_{i}}$. 
 The $\prod_{i = 1}^n  h_{i}^{m_{i}}$ function can be written in Coq as 
 (this program is written using Equation library \citep{Sozeau:2019:ERH:3352468.3341690}):
 
 \begin{minted}{coq}
 
-Equations prod {F G n}  
-   (f : G -> F -> G) (g : G -> G -> G)
-   (v : Vector.t G (S n)) (w : Vector.t F (S n)) : G :=
-  prod  (n := 0) f g (vcons h _) (vcons m  _) := f h m;
-  prod  (n := S n) f g (vcons h hs) (vcons m ms)  := 
-     g (f h m) (prod f g hs ms).
+
+Equations prod {F G n}  (fn : G -> F -> G) (gn : G -> G -> G)
+  (hi : Vector.t G (S n)) (mi : Vector.t F (S n)) :  G :=
+  prod fn gn (vcons h vnil) (vcons m vnil) := fn h m;
+  prod fn gn (vcons h hs)  (vcons m ms)  := 
+         gn (fn h m) (prod fn gn hs ms).
+
 
 \end{minted}
 
-Finally, to commit a matrix of size $N \times N$, we need to call 
-$Pedersen\_generalized$ on each column of matrix. Consequently, 
-we  would get a vector of commitments of size N.
 
+Now we can define  generalized Pedersen commitment ( $g^r \cdot  \prod_{i = 1}^n  h_{i}^{m_{i}}$) as:
 
+\begin{minted}{coq}
+
+Definition ped_gen_commitment {F G n}
+           (fn : G -> F -> G) (gn : G -> G -> G)
+           (g : G) (r : F) (hs : Vector.t G (S n))
+           (ms : Vector.t F (S n)) :=
+  gn (fn g r) (prod fn gn hs ms).
+  
+\end{minted}
+  
  
-
-
+Finally, to commit a matrix of size $N \times N$, we need to call 
+$ped\_gen\_commitment$ on each column of matrix. Consequently, 
+we  would get a vector of commitments of size N.
 
 \section{Sigma Protocol: Efficient Zero-Knowledge-Proof}
 \label{sec:sigma_coq}
-A sigma protocol is a two party protocol, a prover $P$ and a verified $V$, where prover $P$ try to convince the $V$ that she 
+A sigma protocol is a two party protocol, a prover $P$ and a verified $V$, where prover $P$ tries to convince the verifier $V$ that she 
 holds a private input $x$ for some public input $w$ such that a binary relation $R$ holds, i.e. $(x, w) \in R$.  Sigma protocol, 
 in general, is a three step protocol:
 \begin{enumerate}
@@ -238,7 +265,8 @@ Record SigmaProtocol (Statement : Type) (* Statement x *)
     verify (s, c, e2, r2) = true ->
     Rel s (extractor e1 r1 e2 r2) = true;
   
- (* Probablistic Reasoning could have made it nicer *)
+ (* Special honest verifier zero knowledge proof. Explicit 
+    randomness makes it nicer to work in theorem prover  *)
   Special_Honest_Verifier_ZKP  (s : Statement) 
     (w : Witness) (e : Challenge): 
     Rel s w = true -> forall (r : RandCoin), 
@@ -255,7 +283,7 @@ Record SigmaProtocol (Statement : Type) (* Statement x *)
 
 \noindent
 The record \textit{SigmaProtocol} is indexed by \textit{Statement}, the public input 
-known to $P$ and $V$, \textit{Witness}, secret input known to the $P$, 
+known to $P$ and $V$, \textit{Witness}, secret input known to $P$, 
 \textit{Rel} such that $(x, w) \in Rel$, \textit{RandCoin}, the private 
 random coin toss of $P$, \textit{Commitment}, commitment computed 
 by $P$ based on the random coin toss of itself, 
@@ -268,7 +296,7 @@ functions \textit{simulator} and \textit{extractor}.  The
 reason for having \textit{simulator} and \textit{extractor} 
 to prove the property of special honest verifier zero knowledge proof 
 and special soundness of 
-sigma protocol. Finally, we have four property \textit{Completeness}, 
+the sigma protocol. Finally, we have four properties \textit{Completeness}, 
 \textit{Special\_Soundness}, \textit{Special\_Honest\_Verifier\_ZKP}
 and \textit{Simulator\_correct}. 
 \textit{Completeness} states that if $P$ and $V$ follow the protocol, then 
@@ -398,17 +426,16 @@ any transcript created by simulator checks out.
 Finally, we can use our construction, \textit{SigmaProtocol}, as building block 
 for composing different sigma protocols, which we are not explaining 
 here.  For example, 
-we can define parallel composition, AND composition,
+we can define AND composition,
 EQ composition, OR composition, etc.
 
 \subsection{Concrete Sigma Protocol: Discrete Logarithm}
 \label{sec:conc_sigma}
 One of the most basic sigma protocol is proof of knowledge of 
-discrete logarithm, i.e. given two elements$g$ and $h$ of 
+discrete logarithm, i.e. given two elements $g$ and $h$ of 
 a group $G$, prover convinces the verifier that 
 she knows the discrete logarithm ($\log_g h$) in zero 
-knowledge. In mathematical 
-notation of zero knowledge proof, it is represented as:
+knowledge. In Camenisch-Stadler notation\citep{camenisch1997proof} of zero knowledge proof, it is represented as:
 $ZKPoK \lbrace w \text{ | } h = g^w \rbrace$. We can show 
 that this is a sigma protocol inside Coq by 
 by encoding all the  functions 
@@ -440,12 +467,13 @@ Based on these definitions, we can easily discharge the three proofs, \textit{Co
 \textit{Special Soundness}, and \textit{Special Honest Verifier Zero Knowledge} axiom by simple 
 algebraic manipulation.
 
-\subsection{Honest Decryption: Diffie Hellman Tuple}
+\subsection{Honest Decryption Zero Knowledge Proof}
 \label{sec:dec_sigma}
 We have sigma protocol at our arsenal, we focus on honest decryption 
 problem. How can we convince someone that for a given group 
 $(G, g, p, h)$ and private key $x$ ($h := g^x$), the message $m$ is the 
-honest decryption of ElGamal cipher text $(c_{1}, c_{2})$ with revealing 
+honest decryption of ElGamal cipher text $(c_{1}, c_{2})$ (which is $(g^r, g^m \cdot h^r)$ for some randomness $r$) 
+with revealing 
 our private key $x$? To solve this problem, we use a well known protocol
 for proving equality of the discrete logarithm \citep{10.1007/3-540-69053-0_9}.
 We first discuss the protocol, and later we will show that how we can adopt 
@@ -471,13 +499,12 @@ this tuple can be written as $(g, h, g^r, g^m \cdot h^r \cdot g^{-m})$ for some
 random $r$. A further simplification leads to $(g, h, g^r, h^r)$, and 
 this tuple is clearly a \textit{Diffie Hellman} tuple, where $u = g^r$ and $v = h^r$. 
 We could not have been able to construct a  \textit{Diffie Hellman} tuple and proved 
-the equality of discrete log if we had claimed otherwise. For example, 
-suppose a cheating prover  claims that $m$ is the honest decryption of $(c_{1}, c_{2})$,
-while it is not. 
-If $m$ is not the honest decryption of $(c_{1}, c_{2})$, then we would end up with 
-a tuple $(g, h, g^r, g^{m_{1}} \cdot h^r \cdot g^{-m})$, where $m_{1}$ is the honest 
-decryption of $(c_{1}, c_{2})$.  Clearly, the tuple $(g, h, g^r, h^r \cdot g^{m_{1} - m})$ is not 
-\textit{Diffie Hellman} tuple; hence a cheating prove would not succeed. 
+the equality of discrete log if we had claimed anything other than the origin value $m$. For example, 
+suppose a cheating prover  claims that $m_{1}$ (different from $m$) is the honest decryption of $(c_{1}, c_{2})$.
+Following the cheating prover claim, we construct the \textit{Diffie Hellman} tuple 
+ $(g, h, g^r, g^{m} \cdot h^r \cdot g^{-m_{1}})$. 
+ Clearly, the tuple $(g, h, g^r, h^r \cdot g^{m - m_{1}})$ is not 
+\textit{Diffie Hellman} tuple; hence a cheating prover would not succeed. 
 
 
 
@@ -486,7 +513,7 @@ decryption of $(c_{1}, c_{2})$.  Clearly, the tuple $(g, h, g^r, h^r \cdot g^{m_
 \label{sec:homo_tally}
 Now that we have sorted out the correct decryption, the next challenge in our 
 tally sheet is  computing the final tally homomorphically.  Since our encryption 
-is additive ElGamal, and recall that our ballot is matrix of ciphertext: 
+is additive ElGamal, and recall that our ballot is a matrix of ciphertexts: 
 
 \begin{pmatrix}
   (g^{r_{11}}, g^{m_{11}} * h^{r_{11}})&  (g^{r_{12}}, g^{m_{12}} * h^{r_{12}}) & \cdots &  (g^{r_{1n}}, g^{m_{1n}} * h^{r_{1n}}) \\
@@ -533,13 +560,17 @@ decryption is left inverse of encryption.
 \noindent 
 The final decrypted tally would be a matrix filled with values like $g^{m_{1} + m_{2} + \cdots }$, and we 
 need to do a search to find the values of $m_{1} + m_{2} + \cdots$ from the 
-final decrypted tally. As a consequence, if the number of candidates and ballots are large then 
-this method is no longer a practical method. 
+final decrypted tally. A drawback of this method is that if the number of candidates and ballots are
+ large, then calculating $m_{1} + m_{2} + \cdots$ from 
+	      $g^{m_{1} + m_{2} + \dotsb  + m_{n}}$ is 
+	      not very practical \citep{10.1007/3-540-69053-0_9}.  
+
 
 \section{IACR 2018 Election}
 \label{sec:election_iacr}
 We followed some of these techniques explained above write a formal 
-certificate checker for  IACR 2018 directors election scrutiny sheet.  
+certificate checker for  IACR 2018 directors election scrutiny sheet
+\footnote{https://vote.heliosvoting.org/helios/elections/60a714ea-ce6d-11e8-8248-76b4ab96574c/view}.  
 The 2018  IACR directors election considered seven 
  candidates to fill three positions on the board of directors.   The voting 
  style was approval voting where all the eligible voters, IACR members, 
@@ -550,8 +581,8 @@ The Helios voting system \citep{Helios:2016:HVS}  was used for the election, and
 was configured with four authorities, who generated an ElGamal \citep{elgamal1985public}  public
 key such that all four authorities were required to decrypt efficiently.    
 Every eligible voter received the credentials by email which they used 
-to cast their ballot from their person computer. 
-During the cast process, each voter created seven ElGamal cipher text, 
+to cast their ballot from their personal computer. 
+During the cast process, each voter created seven ElGamal cipher texts, 
 encrypting either zero or one, for the seven participating candidates. 
 Since the vote was exponent, the ElGamal cryptosystem became 
 homomorphic additive. At this point,  the voter is then offered the chance to audit 
@@ -559,16 +590,16 @@ her encrypted ballot to check that
 it does indeed contain the vote she intended. If she chooses to audit, she must
 discard this ballot and asked to  cast 
 a fresh ballot. This mechanism is called called Benaloh challenge, 
-and the purpose of this challenge is to catch a cheating machines. 
+and the purpose of this challenge is to catch "cheating machines". 
 Moreover, this method ensures the cast-as-intended because 
-a cheating machine would have no idea when a voter would 
-cast her ballot, so, in most likely scenario, a voter would 
+a cheating machine would not know when a voter would 
+cast her ballot, so, in the most likely scenario, a voter would 
 end up cast her true intentions. Once she has an 
 unaudited ballot with which she is happy, she casts it. 
 The Helios website maintains an append-only bulletin board on which the voter's
 encrypted ballot appears.  
 After the voting period is over,
-all the encrypted ballots corresponding to each candidate are multiplied together; so that there is 
+all the encrypted ballots corresponding to all candidates are multiplied together; so that there is 
 now a single ciphertext for each candidate, encoding the number of votes for
 that candidate.  The authorities then decrypt 
 these (seven) ciphertexts, announce the results and prove,
@@ -577,7 +608,7 @@ correct decryption.
 
 
 Now we focus on three aspects of verifiability: cast-as-intended, collected-as-cast, 
-and tallied-as-collected. Well, the cast-as-intended has already been assured 
+and tallied-as-collected. The cast-as-intended has already been assured 
 by Benaloh challenges, and collect-as-cast is ensured by every voter 
 checking her ballot on the bulletin board. 
 The more complicated step is the counted-as-collected

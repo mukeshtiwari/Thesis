@@ -23,13 +23,13 @@
  \item Independence of irrelevant alternatives
  \end{itemize}
  
- Moreover, he concluded that no preferential voting method which can combine or aggregate the individual choices into a community wide 
+ Moreover, he showed no preferential voting method which can combine or aggregate the individual choices into a community wide 
  ranking would have all the properties of his axiomatic system. This result is now known as \textit{Arrow's impossibility theorem}. 
 
 
  In the light of impossibility theorem, Schulze method, a preferential voting method, can not have all the properties, and it fails on 
- Independence of irrelevant alternatives (IIA) criterion. Despite the fact that Schulze method fails on IIA,  it has a plenty of other nice 
- properties established by social choice theorist. In this chapter, we will discuss some of 
+ Independence of irrelevant alternatives (IIA) criterion. Despite the fact that Schulze method fails on IIA,  it has plenty of other desirable
+ properties established in the social choice theory. In this chapter, we will discuss some of 
  the properties.  Moreover, we will show that our implementation adheres to these properties. 
  
  \section{Condorcet Winner}
@@ -111,7 +111,13 @@ nodes, i.e.
    condorcet_winner c marg -> 
    M marg n c d >= 0.
 Proof. 
-    (* Coq terms omitted *)
+   unfold condercet_winner.
+   intros c d n marg Hc.
+   rewrite M_M_new_equal. 
+   revert d; revert n.
+   induction n; cbn; try auto.
+   intros d. pose proof (IHn d).
+   lia.
 Qed.
 
 Lemma gen_marg_lt0 :
@@ -119,14 +125,27 @@ Lemma gen_marg_lt0 :
    condorcet_winner c marg ->
    M marg n d c <= 0.
 Proof.
-   (* Coq terms omitted *)
+  unfold condercet_winner.
+  intros c d n marg Hc.
+  rewrite M_M_new_equal.
+  revert d; revert n.
+  induction n.
+  + cbn. intros d. pose proof (marg_neq c d marg).
+      pose proof (Hc d). lia. 
+   + cbn. intros d.
+       apply Z.max_lub_iff. 
+       split.
+       pose proof (IHn d). lia.
+       apply upperbound_of_nonempty_list; try auto.
+       intros x Hx. pose proof (IHn x).
+       lia.
 Qed.
 \end{minted}   
  
  Using these two key facts, we concluded that for any condorcet winner candidate $c$, 
  the generalized margin between her and every other opponent is greater than or equal 
  to reverse generalized margin between every other candidate and her.  Formally, 
- in Coq we prove the following theorem on which  the proof of 
+ in Coq we prove the following theorem, \textit{condorcet\_winner\_genmarg}, on which  the proof of 
  \textit{condorcet\_winner\_implies\_winner} hinges. 
  
 \begin{minted}{coq}
@@ -134,6 +153,12 @@ Qed.
       forall c d n marg, 
       condorcet_winner c marg -> 
       M marg n d c <= M marg n c d.  
+ Proof.
+   intros c d n marg Hc.
+   pose proof (gen_marg_gt0 c d n marg Hc).
+   pose proof (gen_marg_lt0 c d n marg Hc).
+   lia.
+ Qed.
 \end{minted}
    
 \section{Reversal Symmetry}
@@ -218,6 +243,33 @@ In terms of Coq, it is:
 Lemma path_with_rev_marg :
   forall k marg c d,
   Path marg k c d <->  Path (rev_marg marg) k d c.
+Proof.
+  intros k marg c d.
+  split. intro H. 
+  destruct (path_iterated_marg marg k c d H) as [n Hn].
+  destruct (proj1 (iterated_marg_char marg n c d k) Hn) 
+    as [l [H1 H2]].
+  rewrite  str_and_rev_str in H2.
+
+  assert (length (rev l) <= n)%nat.
+  rewrite rev_length. auto.
+  pose proof (path_len_iterated_marg 
+     (rev_marg marg) n d c k (rev l) H0 H2).
+  pose proof (iterated_marg_path 
+    (rev_marg marg) n k d c H3). auto. 
+      
+  intros H. 
+  destruct (path_iterated_marg (rev_marg marg) k d c H) 
+    as [n Hn].  
+  destruct (proj1 (iterated_marg_char 
+    (rev_marg marg) n d c k) Hn) as [l [H1 H2]].
+  apply iterated_marg_path with (n := length l).
+  apply path_len_iterated_marg with (l := rev l).
+  rewrite rev_length. lia. 
+  rewrite str_and_rev_str.
+  rewrite rev_involutive. auto.
+ Qed.
+    
 \end{minted}
 
 Using the lemma $path\_with\_rev\_marg$, we can conclude that if the strength of 
@@ -234,7 +286,7 @@ in theorem proving). We are in the process of proving it}.
  	
  
  \section{Summary}
- Although, we have just proved two properties of Schulze method (more are still going on), and so far, this chapter 
+ Although, we have just proved two properties of Schulze method, and so far, this chapter 
  is far from being complete. The rationale behind this chapter was to put forward the idea of 
  not only implementing the voting method and proving its correctness, but also proving that the implementation 
  follows the property of voting method. In the next chapter, I will conclude this thesis and some possible 
