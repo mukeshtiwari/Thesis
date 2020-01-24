@@ -258,7 +258,7 @@ representation more efficient. Below is the  (incomplete) syntax of Calculus of 
 
 \noindent 
 \textit{Inductive Type:} As we mentioned above that inductive types are basic building block for encoding various 
-data structures efficiently in the Coq (CIC). The keyword to declare a inductive data type in Coq is 
+data structures in the Coq (CIC). The keyword to declare a inductive data type in Coq is 
 \textit{Inductive}. For example, a length index list
 whose elements belong to a type $A$ can defined as (also known as vector):
 
@@ -481,9 +481,10 @@ The type of values to print should match the type constructed by type level
 function for successful type checking otherwise it will be type error. 
 
 \begin{minted}{coq}
-(* value level function whose type is constructed on fly by interp_format 
-    function *)
-Fixpoint interp_value (f : format) (acc : string) : interp_format f :=
+(* value level function whose type is constructed 
+    on fly by interp_format function *)
+Fixpoint interp_value (f : format) (acc : string) : 
+  interp_format f :=
   match f with
   | Fint f' => fun i => interp_value f' (acc ++ of_Z i)
   | Fstring f' => fun i => interp_value f' (acc ++ i)
