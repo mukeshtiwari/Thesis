@@ -258,7 +258,7 @@ representation more efficient. Below is the  (incomplete) syntax of Calculus of 
 
 \noindent 
 \textit{Inductive Type:} As we mentioned above that inductive types are basic building block for encoding various 
-data structures efficiently in the Coq. The keyword to declare a inductive data type in Coq is 
+data structures efficiently in the Coq (CIC). The keyword to declare a inductive data type in Coq is 
 \textit{Inductive}. For example, a length index list
 whose elements belong to a type $A$ can defined as (also known as vector):
 
@@ -271,8 +271,8 @@ Inductive Vector (A : Type) : nat -> Type :=
 \end{minted}
 
 \noindent 
-Now we can define various function for the \textit{Vector} data structure. For example, 
-we can define a function to append two vectors for length $n$ and $p$ as follows:
+Now we can define various functions for the \textit{Vector} data structure. For example, 
+we can define a function to append two vectors for length $n$ and $p$ as:
 
 \begin{minted}{coq}
 Fixpoint append {A n p} (v : Vector A n) (w : Vector A p)  
@@ -284,9 +284,19 @@ Fixpoint append {A n p} (v : Vector A n) (w : Vector A p)
 
 \end{minted}
  
-
- 
 \noindent
+The expressiveness of Coq allows to encode various correctness properties at type level. 
+In our example of \textit{append}, the correctness criteria states that appending a 
+vector of length $n$ with a vector of length $p$ yields a vector of length $(n + p)$.  
+In other words, the function \textit{append} is "correct-by-construction". 
+During our formalisation, we have encoded our vote counting 
+as a \textit{Inductive} data type with various assertions of 
+correctness criterion appearing at type level. These assertions at type level 
+enforce that only the "correct" term of vote counting inductive data type can be constructed
+(\textit{correct-by-construction}).
+
+
+
 We would like to point that the current underlying theory of Coq has been 
 extended with Co-Inductive types \citep{10.1007/3-540-60579-7_3}; however, 
 the discussion of Co-Inductive types is not very relevant for this thesis.	
