@@ -153,7 +153,7 @@ electronic voting. We achieve the following:
  \item \textit{Privacy and Coercion-resistance} by encryption. We use homomorphic encryption to compute the 
   final tally without decrypting any individual ballot. 
 \item \textit{Verifiability} by tabulating the relevant data of an election (which we call the scrutiny-sheet/certificate).
-   Achieving verifiability in a plain-text ballot counting is fairly straightforward. 
+   Achieving verifiability in a plaintext ballot counting is fairly straightforward. 
    To achieve verifiability in encrypted ballot counting, 
    we augment the scrutiny sheet with zero-knowledge-proofs for each claim we make during the 
    counting, which can  later be checked by any auditor.  
@@ -168,9 +168,9 @@ his original paper.
 \noindent 
 \textit{Formally Verified Checker:} Third party independent election audit based on scrutiny sheet data is a crucial step towards 
 establishing the trust in the system.   However, auditing the scrutiny sheet of an election involving encrypted ballots
-is not straightforward in comparison to an election with plain-text ballots. 
+is not straightforward in comparison to an election with plaintext ballots. 
 In general, auditing the scrutiny sheet of an election involving 
-plain-text ballots simply requires the knowledge of basic arithmetic, e.g.~addition, subtraction and multiplication, 
+plaintext ballots simply requires the knowledge of basic arithmetic, e.g.~addition, subtraction and multiplication, 
 and virtually anyone can audit the election based on the data produced in the scrutiny sheet by
 using a calculator or by writing a simple program in her preferred language. 
 However, an encrypted ballot election scrutiny sheet involves various
@@ -196,7 +196,7 @@ To achieve this goal, we have
 taken the axiomatic approach and assumed the existence of cryptographic primitives 
 inside Coq. Moreover, we assume axioms about their correctness behaviour, e.g.~decryption 
 is left inverse of encryption. These primitives, in general, provide functionality 
-of generating a random permutation, encrypting a plain-text data, decrypting a cipher-text data, 
+of generating a random permutation, encrypting a plaintext data, decrypting a cipher-text data, 
 producing commitment of a value, constructing a zero-knowledge-proof, 
 and verifying a zero-knowledge-proof. Later, in extracted OCaml code from Coq code, these functions are instantiated 
 with Unicrypt \citep{LocherH14} functions. 
@@ -292,7 +292,7 @@ of cryptographic primitives for future work (work in progress).}
  to get an executable which was correct with respect to the formal specification of the protocol
  down to machine level. 
  However, none of these works consider privacy and coercion resistance as a key 
- issue in electronic voting, and their method simply works for plain-text ballots which are  susceptible to 
+ issue in electronic voting, and their method simply works for plaintext ballots which are  susceptible to 
  "italian attack"  \citep{Otten}   \citep{Benaloh:2009:SSC}.  In a nutshell the italian attack can be described 
  as follows: 
  \begin{displayquote}
