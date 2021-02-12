@@ -4,11 +4,11 @@
 {\textit{Niels Bohr}} 
 
 \section{Problem Statement}
-A democracy can be described as a system where all eligible voters have equal rights to express their opinion(s) on different matters. 
-One of the most important examples of expressing opinions is by holding elections to elect the leader of country. During the 
-elections, all eligible voters express their opinion on a paper, also known as ballot,	 in a manner, depending on the voting method, 
-which reflects their true opinion. For example, if the voting method is \textit{ranked voting (preferential voting)}, then the voters rank the 
-candidates according to their preference, and if the method is \textit{first past the post}, then each voter selects one candidate by marking
+A democracy can be best described as a system where all eligible voters have equal rights to express their opinion(s) on different matters. 
+One of the most important example of expressing opinion is by holding election to elect the leader of country. During the 
+election, all eligible voters express their opinion on a paper,  known as ballot,  in a manner, depending on the voting method, 
+which reflects their true opinion.  For example, if the voting method is \textit{ranked voting (preferential voting)},  the voters rank the 
+candidates according to their preference, and if the method is \textit{first past the post},  each voter selects one candidate by marking
 against the candidate name on the ballot. Later, once the ballot cast finishes, a candidate is elected as a winner from  the participating
 candidates by combing the choices of all the voters. 
 The paper ballot method works great, except it is very time consuming, expensive, error prone, 
@@ -78,19 +78,19 @@ thousands of man hours, 11,000 working days, by using electronic voting \citep{E
 	
 
 In this thesis, we focus on privacy, correctness, coercion-resistance, and tallied-as-cast, the third part of end-to-end verifiability, property 
-of an election. Furthermore, we assume that the first two properties of end-to-end verifiability, \textit{cast-as-intended} and 
-\textit{collected-as-cast}, hold for an election. \textit{Cast-as-intended} is a verification method that is used to audit the 
+of an election. Furthermore, we assume that the first two properties of end-to-end verifiability, cast-as-intended and 
+collected-as-cast, hold for an election. Cast-as-intended is a verification method that is used to audit the 
 front end voting software, 
 also known as voting client software, to make sure that it is not modifying the options of voters. In a nutshell, 
 the cast-as-intended is assurance to a voter that front-end software is transparent and her vote 
-is recorded according to her intent.  \textit{Cast-as-intended} is an active area of research in its own right; 
-however, it is not the focus of this thesis. Similarly, \textit{Collect-as-cast} is a notion related to the voters to make 
+is recorded according to her intent.  Cast-as-intended is an active area of research in its own right \citep{10.1007/978-3-319-22270-7_1},  \citep{mci/Marky2018},  \citep{cortier:hal-02346420}; 
+however, it is not the focus of this thesis. Similarly,  collect-as-cast is a notion related to the voters to make 
 sure that the ballots appearing on the bulletin board are indeed the ballots that cast during the election. A consequence 
-of \textit{collected-as-cast} notion is that any attempt to change or delete the ballots from the bulletin board would 
+of collected-as-cast notion is that any attempt to change or delete the ballots from the bulletin board would 
 be detected. This notion is indeed a crucial one and works as a bridge between the cast-as-intended and tallied-as-cast 
 notions. However, it is related to voters' behaviour; hence, the reason for assumption.  Moreover, assuming these two 
 notions, cast-as-intended and collected-as-cast, helped us in isolating the irrelevant details and 
-paved a way to focus more on the complex problem of counting: tallied-as-cast. 
+paved a way to focus more on the complex problem of counting, i.e. tallied-as-cast. 
 
 
 \section{Research Motivation and Contribution}
@@ -103,16 +103,16 @@ The questions we asked ourselves were:
   (maximum possible assurance that we can get about software programs
    with respect to some specification) 
    that the resulting implementation is correct and  practical enough
-    to count  real-life elections involving millions of ballots (Correctness)?
+    to count  millions of ballots in a real-life election (Correctness)?
 
   \item Can we produce the result by counting encrypted ballots without revealing 
   its content, and at the same time, 
   assuring everyone that the result produced is only based on "valid" ballots, 
   and "invalid" ones have been discarded  (Privacy and Coercion-resistance)?
- \item Can we decouple the verifiability from implementation, i.e. 
-    ~generating enough evidence so that any independent auditor can 
-    ascertain the outcome of the election without trusting the implementation 
-    of software used to conduct the election (Verifiability)?
+ \item Can we decouple the verifiability from the implementation details of a vote counting software program, i.e. 
+    generating enough evidence so that any independent auditor can 
+    ascertain the outcome of an election without trusting the implementation 
+    of the vote counting software program used to conduct the election (Verifiability)?
   \end{enumerate}
 
 
@@ -132,9 +132,9 @@ i.e. it elects a single winner under the assumption that number of voters are mu
  number of candidates (and in case of a tie, when there is more than one winner, a random vote can be 
 selected to declare the winner.  However, our formalization 
 has not taken the randomness into account, so it can produce more than one winner). 
-Coq is a theorem prover (proof assistant) based on the \textit{Calculus of Inductive Construction} 
+Coq is a theorem prover (proof assistant) based on the \textit{Calculus of Inductive Construction (CIC)} 
 \citep{Coquand:1988:CC:47724.47725} \citep{coquand1988inductively}. 
-The \textit{Calculus of Inductive Construction} is a highly expressive formal system (type system) 
+The calculus of inductive construction is a highly expressive formal system (type system) 
 which allows "proof" terms and 
 "computation" terms to live in the same universe (level). Moreover, during the proof development, 
 it provides step by step feedback to the user and the possibility to automate proofs by 
@@ -149,11 +149,11 @@ electronic voting. We achieve the following:
   inside the Coq theorem prover. 
  Coq has a well-developed extraction facility that 
  we use to extract proofs into OCaml programs, and using these extracted OCaml programs, we 
- have counted the ballots from election to produce the result. 
+ have counted the ballots from an election to produce the result. 
  \item \textit{Privacy and Coercion-resistance} by encryption. We use homomorphic encryption to compute the 
   final tally without decrypting any individual ballot. 
 \item \textit{Verifiability} by tabulating the relevant data of an election (which we call the scrutiny-sheet/certificate).
-   Achieving verifiability in a plain-text ballot counting is fairly straightforward.  
+   Achieving verifiability in a plain-text ballot counting is fairly straightforward. 
    To achieve verifiability in encrypted ballot counting, 
    we augment the scrutiny sheet with zero-knowledge-proofs for each claim we make during the 
    counting, which can  later be checked by any auditor.  
@@ -177,7 +177,7 @@ However, an encrypted ballot election scrutiny sheet involves various
 cryptographic concepts (homomorphic encryption, zero-knowledge-proof, commitment scheme, etc.) 
 which are accessible to very few voters, mainly cryptographers,  so auditing it 
 requires a deep understanding of cryptographic principals. To ease this situation, we have developed a formally verified 
-certificate checker as a proof of concept for automating the auditing an election conducted on encrypted ballots. 
+certificate checker as a proof of concept for automating the audit of an election, conducted on encrypted ballots. 
 Having said that,  our certificate generated by encrypted ballots is very complex, and formalizing all the cryptographic 
 primitives involved would be fairly time consuming, so we have developed a proof of concept 
 formally verified certificate checker for the International Association of Cryptographic Research (IACR) 2018 election
@@ -202,7 +202,7 @@ and verifying a zero-knowledge-proof. Later, in extracted OCaml code from Coq co
 with Unicrypt \citep{LocherH14} functions. 
 \footnote{Formalizing the whole cryptographic stack used in our 
 project would be very time consuming (probably a PhD itself), but it would be worth trying. 
-Although, we have formalized the (El-Gamal) encryption, and decryption inside Coq, but we still 
+Although, we have formalized the (ElGamal) encryption, and decryption inside Coq, but we still 
 are very far from achieving the goal of fully verified cryptographic stack.  We leave the formalisation 
 of cryptographic primitives for future work (work in progress).}
 
@@ -211,19 +211,17 @@ of cryptographic primitives for future work (work in progress).}
 \section{Publication}
  The chapters, or some part of it,  of this thesis are based on the following papers:
 	\begin{enumerate}
-	\item Dirk Pattinson. and Mukesh Tiwari, 2017. Schulze Voting as Evidence carrying computation. In Proc. 
-	ITP 2017, vol. 10499 of Lecture Notes in Computer Science, 410–426. Springer. 
-	\item Lyria Bennett Moses, Rajeev Goré, Ron Levy, Dirk Pattinson, Mukesh Tiwari.
-	No More Excuses: Automated Synthesis of Practical and Verifiable Vote-Counting Programs for Complex 
-	Voting 	Schemes. E-VOTE-ID 2017: 66-83
-	\item Milad K. Ghale, Rajeev Goré, Dirk Pattinson, Mukesh Tiwari.
-	Modular Formalisation and Verification of STV Algorithms. E-Vote-ID 2018: 51-66
-	\item Thomas Haines, Dirk Pattinson, and Mukesh Tiwari. 2019. 
-	  Verifiable Homomorphic Tallying for the Schulze Vote Counting Scheme. 
-	  11th International Conference Verified Software: Theories, Tools, and Experiments. 
-      VSTTE 2019 (to appear)	  
-	\item Thomas Haines, Rajeev Goré, and Mukesh Tiwari. 2019. Verified Verifiers for Verifying Elections. 
-	 In Proceedings of the 2019 ACM SIGSAC Conference on Computer and Communications Security (CCS '19).
+	\item Pattinson D., Tiwari M. (2017) Schulze Voting as Evidence Carrying Computation. In: Ayala-Rincón M., Muñoz C. 
+	(eds) Interactive Theorem Proving. ITP 2017. Lecture Notes in Computer Science, vol 10499. Springer, Cham.  \url{https://doi.org/10.1007/978-3-319-66107-0_26}
+	\item Bennett Moses L., Goré R., Levy R., Pattinson D., Tiwari M. (2017) No More Excuses: Automated Synthesis of Practical and Verifiable Vote-Counting 
+	Programs for Complex Voting Schemes. In: Krimmer R., Volkamer M., Braun Binder N., Kersting N., Pereira O., Schürmann C. (eds) Electronic Voting. E-Vote-ID 
+	2017. Lecture Notes in Computer Science, vol 10615. Springer, Cham. \url{https://doi.org/10.1007/978-3-319-68687-5_5}
+	\item Ghale M.K., Goré R., Pattinson D., Tiwari M. (2018) Modular Formalisation and Verification of STV Algorithms. In: Krimmer R. et al. (eds) Electronic 
+	Voting. E-Vote-ID 2018. Lecture Notes in Computer Science, vol 11143. Springer, Cham.  \url{https://doi.org/10.1007/978-3-030-00419-4_4}
+	\item Haines T., Pattinson D., Tiwari M. (2020) Verifiable Homomorphic Tallying for the Schulze Vote Counting Scheme. In: Chakraborty S., Navas J. (eds) 
+	Verified Software. Theories, Tools, and Experiments. VSTTE 2019. Lecture Notes in Computer Science, vol 12031. Springer, Cham. \url{https://doi.org/10.1007/978-3-030-41600-3_4}
+	\item Thomas Haines, Rajeev Goré, and Mukesh Tiwari. 2019. Verified Verifiers for Verifying Elections. In Proceedings of the 2019 ACM SIGSAC Conference on 
+	Computer and Communications Security (CCS '19). Association for Computing Machinery, New York, NY, USA, 685–702. DOI:\url{https://doi.org/10.1145/3319535.3354247}
 	\end{enumerate}
  \noindent
  Part of chapter \ref{cha:background} is based on \textit{No More Excuses: Automated Synthesis of Practical 
@@ -257,10 +255,10 @@ of cryptographic primitives for future work (work in progress).}
  proved by \citep{10.1007/978-3-319-68687-5_7}  using Tamarin \citep{10.5555/2958031.2958047}.
  Most of these works differ from ours
  in the sense that their primary focus is verification of security protocols in  
- Dolev-Yao model or  complexity-theoretic model, whereas our work is 
+ Dolev-Yao model or  complexity-theoretic model \citep{1056650}, whereas our work is 
  more focused on verified implementation and  the verifiability  aspect of vote counting.
 
- The closest to our work is \citep{Cochran:2010:VFS} \citep{DeYoung:2012:LLV}, \citep{Pattinson:2015:VCM}, \citep{Pattinson:2016:MSP},
+ The closest to our work are \citep{Cochran:2010:VFS} \citep{DeYoung:2012:LLV}, \citep{Pattinson:2015:VCM}, \citep{Pattinson:2016:MSP},
  \citep{Verity:2017:FVI:3014812.3014845}, and \citep{Ghale:2017:FVS}.
  Business Object Notation (BON) and Java Modelling Language (JML)  have been used by \citep{Cochran:2010:VFS} to formally specify the
  Java implementation of  Irish Proportional  Representation  by  Single  Transferable  Vote  (PR-STV) 
@@ -291,7 +289,7 @@ of cryptographic primitives for future work (work in progress).}
  or audit the outcome of the election result.  In further research, \citep{10.1007/978-3-030-03592-1_5} 
  developed a formally verified certificate checker using the theorem prover HOL4 \citep{Slind:2008:BOH:1459784.1459792}. 
  Moreover, they connected the HOL4 proofs to the formally verified compiler CakeML \citep{Kumar:2014:CVI} 
- to get a executable which was correct with respect to the formal specification of the protocol
+ to get an executable which was correct with respect to the formal specification of the protocol
  down to machine level. 
  However, none of these works consider privacy and coercion resistance as a key 
  issue in electronic voting, and their method simply works for plain-text ballots which are  susceptible to 
@@ -330,7 +328,7 @@ sketches details for the formalization of  cryptographic concepts involved in th
 certificate generated by encrypted ballots. 
 \item Chapter \ref{cha:machine_checked} puts forward the idea of 
 machine checked properties of electronic voting schemes and describes a couple of the 
-properties,  condercet winner and reversal symmetry, of the Schulze method. 
+properties,  Condercet winner and reversal symmetry, of the Schulze method. 
 \item Chapter \ref{cha:conc} concludes the thesis, and some possible direction of future work. 
 \end{itemize}
 
