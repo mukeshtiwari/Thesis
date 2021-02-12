@@ -19,7 +19,7 @@
   Discussion and/or voting technology pilots (Yellow Area), 
   iii) Discussion and concrete plans for Internet voting (Orange Area),
   iv) Ballot scanners, Electronic Voting Machines, and Internet Voting (Green and Dark Green),
-  v) Withdrawn voting technology because of public concern (Red Area) 
+  v) Withdrawn voting technology because of public concern (Red Area).
     \begin{figure}[!htb]
 	\begin{center}
 	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{e-voting_worldmap_2015.pdf}
@@ -37,7 +37,7 @@
  and Netherlands. In the following Section \ref{secback:correctness_formal}, we  give 
  two anecdotes that how formal verification helped in achieving 
  the correctness and eliminating bug in \textit{CompCert}, a formally verified C compiler, 
- and \textit{Athelon}, a microprocessor designed by AMD, with 
+ and \textit{Athelon}, a microprocessor designed by Advanced Micro Devices (AMD), with 
  the emphasis that we should formally verify the software programs
  used in electronic voting to alleviate the concerns of 
  software/hardware bug. Section \ref{secback:varifiability} 
@@ -141,7 +141,7 @@
   India, one of the largest democracies in world, 
   uses electronic voting machines (also known as EVMs) for national 
   and state level  elections despite the fact that many political parties have raised security 
-  concern against it. Moreover, it has already been shown in \citep{Wolchok:2010:SAI:1866307.1866309}  that it 
+  concern against them. Moreover, it has already been shown in \citep{Wolchok:2010:SAI:1866307.1866309}  that it 
   is possible to manipulate the election results. In their attack, they replaced the parts 
   of electronic voting machine  with malicious look alike components. These components 
   were capable of receiving instruction over wireless communication. As a result, any malicious 
@@ -149,7 +149,7 @@
   instructions over wireless channel by using a simple hand-held device and 
   can  manipulate the results in their favour \footnote{https://indiaevm.org/}.
   India is mainly criticised for keeping the design of electronic voting machines 
-  a closely guard secretes (security by obscurity). However, it is not impossible to get access of 
+  a closely guard secrets (security by obscurity). However, it is not impossible to get access of 
   these machines as shown by \citep{Wolchok:2010:SAI:1866307.1866309}. 
   The worst part, the design of these machines were never audited by 
   any independent third party. 
@@ -251,7 +251,7 @@
    
    In the next section, given the mission critical importance of electronic voting software, 
    we will discuss that software testing 
-   in not sufficient to achieve the software trustworthiness \citep{10.1007/978-3-642-35795-4_5},  and we should 
+   is not sufficient to achieve the software trustworthiness \citep{10.1007/978-3-642-35795-4_5},  and we should 
    prove the  correctness of these software
    by using formal verification techniques \citep{BECKERT2014115}.
    Furthermore, we will argue that  having a formal verification software development methodology \citep{10.1007/978-3-319-95582-7_38}
@@ -395,7 +395,7 @@
     Recall that the notion of (end-to-end) verifiability in electronic voting is
  ascertaining the outcome of an election without trusting any 
  machine involved in the process. 
-   In general, formal verification certainly a necessary thing 
+   In general, formal verification is certainly a necessary thing 
    in developing the software programs for electronic voting, 
    but it is not sufficient because it does not provide verifiability.
    Combing both \emph{verification} of the
@@ -409,7 +409,7 @@
     Using a formally 
     verified software program to count the ballots would increase the confidence 
     of an electoral commission that it has announced and published the correct result. 
-    Moreover,  the published result always verifies would increase the confidence
+    Moreover,  the published result always verifies.  Therefore,  it would increase the confidence
     of voters in the system. 
 	 
 	 
@@ -421,140 +421,7 @@
 	counterpart that is both verified and produces 
 	evidence which can later be used to certify
 	the outcome of election \citep{Bernhard:2017:PES} \citep{Rivest:2008:PTRS}.
-	
-	
-        
-
-   
-   
-%   
-%\subsection{Aspects of Verification and Verifiability}
-%Any system for counting votes in democratic elections needs to
-%satisfy at least three conditions: (1) each person's vote must be
-%counted accurately, according to a mandated procedure, (2) the
-%system and process should be subjectively trusted by the electorate,
-%(3) there should be an objective basis for such trust, or in other
-%words the system must be trustworthy. While subjective trust cannot
-%be guaranteed through greater transparency \citep{ONeill:2002:QT}, transparency about
-%both the voting system and the actual counting of the vote in a
-%particular election are important in reducing errors and ensuring an
-%accurate count, promoting public trust and providing the evidential
-%basis for demonstrated trustworthiness. In particular, it is a lack
-%of transparency that has been the primary source of criticism of
-%existing systems, both in the literature
-%\citep{Carrier:2012:VCT,Conway:2017:ANS} and among civil
-%society organisations \citep{Vogl:2012:WWC} (for example,
-%\texttt{blackboxvoting.org} and
-%\texttt{trustvote.org}). International commitment to transparency is also
-%demonstrated through initiatives such as the Open Government
-%Partnership. Another important concept referred to both in the
-%literature and by civil society organisations is public
-%accountability, which requires both giving an “account” or
-%explanation to the public and when called on (for example, in court)
-%as well as being held publicly responsible for failures.
-%Transparency is thus a crucial component of accountability, although
-%the latter will involve other features (such as enforcement
-%mechanisms) that are beyond the scope of this paper. 
-%
-%There are two contexts in which transparency is important in the
-%running of elections. First, there should be transparency in Hood's
-%sense \citep{Hood:2001:T} as to the process used in elections generally. This is
-%generally done through legislation with detailed provisions
-%specifying such matters as the voting method to be used 
-%%(as noted above, the Schulz method is not generally used in public office
-%%elections)
-% as well as the requirements for a vote to count as valid.
-%In a semi-automated process, this requires a combination of
-%legislation (instructions to humans) and computer code (instructions
-%to machines). The second kind of transparency, corresponding to
-%Meijer’s use of the term \citep{Meijer:2014:T}, is required in relation to the
-%performance of these procedures in a specific election. In a manual
-%process, procedural transparency is generally only to
-%intermediaries, the scrutineers, who are able to observe the
-%handling and tallying of ballot papers in order to monitor officials
-%in the performance of their tasks. While the use of a limited number
-%of intermediaries is not ideal, measures such as allowing
-%scrutineers to be selected by candidates (eg Commonwealth Electoral
-%Act 1918 (Australia) s 264) promote public confidence that the
-%procedure as a whole is unbiased. However imperfect, procedural
-%transparency reduces the risk of error and fraud in execution of the
-%mandated procedure and enhances trust. 
-%
-%Electronic vote counting ought to achieve at least a similar level
-%of transparency along both dimensions as manual systems in order to
-%promote equivalent levels of trust. Ideally, it would go further
-%given physical limitations (such as the number of scrutineers
-%able to fit in a room) apply to a smaller part of the process. The
-%use of a verified, and fully verifiable system is transparent in both senses, with members of
-%the public able to monitor both the rules that are followed
-%and the workings and performance of the system in a particular
-%instance. 
-%
-%First, the vote counting procedure needs to be transparent. For
-%electronic vote counting, the procedure is specified in both
-%legislation (which authorises the electronic vote counting
-%procedure) and in the software employed. The use of open source code
-%ensures that the public has the same level of access to instructions
-%given to the computer as it has to legislative commands given to
-%election officials. The use of open source code is crucial as is
-%demonstrated through a comparison of different jurisdictions of
-%Australia. In Australia, for example, the Federal Senate and NSW
-%state election vote counting are based on proprietary black box
-%systems while the Australian Capital Territory uses open source
-%eVACS software
-%\citep{AEC:2013:LMM,Conway:2017:ANS,EA:2016:EVC}. This has
-%significant impact on the ability of researchers to detect errors
-%both in advance of elections and in time to correct results
-%\citep{Conway:2017:ANS}.
-%Private verification systems have been less successful, in both
-%Australia and the US, in providing equivalent protection against
-%error to open source software
-%\citep{Carrier:2012:VCT,Conway:2017:ANS}. Further, private
-%verification provides a lower level of public transparency than the
-%use of manual systems which rely on public legislation (instructions
-%to humans) as the primary source of vote counting procedures
-%\citep{Carrier:2012:VCT}. It
-%should also be noted that there are few public advantages in secrecy
-%since security is usually enhanced by adopting an open approach
-%(unless high quality open source vote counting software were
-%unavailable), and private profit advantages are outweighed by the
-%importance of trust in democratic elections. 
-%
-%Second, verifiability provides a method of ascertaining the
-%correctness of
-%results of a specific election. External parties are able to check a
-%certificate to confirm that the counting process has operated
-%according to the rules of the voting procedure.
-%% (here, the Schultz method). 
-%Under a manual process, tallying and counting can only be confirmed by a small number of scrutineers directly observing human
-%officials. The certification process allows greater transparency not
-%limited to the number of people able to fit within a physical space,
-%although we recognise that physical scrutiny is still required for
-%earlier elements of the voting and vote counting process (up to
-%verification of optical scanning of ballots). Certification reduces
-%the risk of error and fraud that would compromise accuracy and
-%provides an evidence-base for trustworthiness. It is also likely to
-%increase subjective public trust, although this will require
-%engagement with the public as to the nature of verification
-%involved. While it is likely that in practice checking will be
-%limited to a small group with the technical expertise,
-%infrastructure and political interest to pursue it, knowledge as to
-%the openness of the model is likely to increase public trust.
-%Currently in Australia, neither open source nor proprietary vote
-%counting systems provide an equivalent level of procedural
-%transparency for monitoring the count in a particular election (for
-%example, compare Commonwealth Electoral Act 1918 (Australia) s
-%273A). 
-%
-%Ultimately, legislation, computer code (where relevant) and
-%electoral procedures need to combine to safeguard an accurate count
-%in which the public has justified confidence. The verification and
-%verifiability measures suggested here go further to ensure this than
-%current methods used in Australia and, as far as we are aware,
-%public office elections around the world.
-%
-
-   		
+	  		
 		
 
   
@@ -568,8 +435,8 @@
 	and has been put forward in \citep{89397}
 	\citep{MCCONNELL2011119}
 	\citep{Arkoudas:2005:DRC}, and, in the context of electronic voting by  \citep{Schurmann:2009:EET} \citep{Pattinson:2015:VCM}.
-	 In general, the idea of computation is that a computable function \textit{f}, it takes 
-	a input \textit{x} and produces output \textit{y} (figure \ref{fig:fnxy}); however, in case of
+	 In general, the idea of computation is that a computable function \textit{f} takes 
+	an input \textit{x} and produces output \textit{y} (figure \ref{fig:fnxy}); however, in case of
 	 certified computation, 
 	the computable function \textit{f} on the given input \textit{x}, not only produces the output \textit{y},
 	but it also produces a witness \textit{w} for the fact that $ f (x) = y$ (Figure \ref{fig:fnxyw}).
@@ -589,26 +456,6 @@
   \end{figure} 
 
 
-%\begin{tikzpicture}
-%\draw (0,0) rectangle (10,10) node[pos=0.5] {program for f};
-%\end{tikzpicture}
-
-
- 
-%  \noindent 
-%   Below is a simple piece of Haskell code, but the choice of language does not matter as long as it 
-%   produces a certificate, which computes the greatest common divisor 
-%   of two numbers with a certificate (trace).  The first component of computation is the result and second one 
-%   the certificate. 
-%   \begin{verbatim}
-%   gcdWithCertificate :: Integer -> Integer -> (Integer, String)
-%   gcdWithCertificate a b
-%    | b == 0 = (a, "gcd " ++ show a ++ " 0 = " ++ show a)
-%    | otherwise = 
-%      let (rgcd, rcertificate) = gcdWithCertificate b (mod a b) in
-%      (rgcd, "gcd " ++ show a ++ " " ++ show b ++ "\n" ++ rcertificate)
-%   \end{verbatim}
-  
    \noindent 
     As a simple example, below is a certificate which has been generated by a program which computes the greatest common divisor 
     of two numbers. The program has produced the certificate (piece of data)
@@ -691,7 +538,8 @@
 
   
   
-  
+\section{Privacy}
+  WRITE ABOUT BALLOT PRIVACY
     
    
 \section{Summary}
@@ -707,6 +555,6 @@ winners. Given a certificate-producing vote-counting program, external
 parties or stakeholders can then satisfy themselves to the
 correctness of the count by checking the certificate.    
 
-In the next chapter, I will  briefly discussion about the Coq theorem prover and basic cryptographic primitives which 
+In the next chapter, I will  briefly discuss about the Coq theorem prover and basic cryptographic primitives which 
 would enable us later in counting encrypted ballots (without revealing any information about the
 voters' choice).
