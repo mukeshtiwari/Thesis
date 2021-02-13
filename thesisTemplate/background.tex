@@ -23,7 +23,7 @@
     \begin{figure}[!htb]
 	\begin{center}
 	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{e-voting_worldmap_2015.pdf}
-	\caption{World map of Electronic Voting}
+	\caption{World map of Electronic Voting (source: \url{https://www.e-voting.cc/en/it-elections/world-map/})}
 	\label{fig:world_electronic_voting_map}
 	\end{center}
   \end{figure}  
@@ -36,7 +36,7 @@
  state of electronic voting in Australia, Germany, India, 
  and Netherlands. In the following Section \ref{secback:correctness_formal}, we  give 
  two anecdotes that how formal verification helped in achieving 
- the correctness and eliminating bug in \textit{CompCert}, a formally verified C compiler, 
+ the correctness and eliminating bug in \textit{CompCert} \citep{DBLP:conf/popl/Leroy06},  a formally verified C compiler, 
  and \textit{Athelon}, a microprocessor designed by Advanced Micro Devices (AMD), with 
  the emphasis that we should formally verify the software programs
  used in electronic voting to alleviate the concerns of 
@@ -44,7 +44,7 @@
  emphasizes that formal verification is not enough
  to establish the trust and puts forward the concept of 
  scrutiny sheet (\ref{secback:scruntiny_sheet}), which 
- can be used independently to attest the result of election, 
+ can be used independently to attest the result of an election, 
  to achieve verifiability. Finally, we summarize in the Section \ref{secback:summary_back}
  by emphasizing that formal verification and verifiability both are needed 
  to ensure the trust in electronic voting. 
@@ -124,7 +124,7 @@
   and the results of elections conducted using these machines 
   were not publicly verifiable.  Besides, a Dutch public foundation, Wij vertrouwen stemcomputers niet
   (We do not trust voting computers), demonstrated that the e-voting machines 
-  used in election leaks enough information to guess the choice of a voter 
+  used in the election leaks enough information to guess the choice of a voter 
   at a distance of 20 to 30 meters from 
   the polling booths  \citep{NetherlandsYouTube}.
   
@@ -256,7 +256,7 @@
    by using formal verification techniques \citep{BECKERT2014115}.
    Furthermore, we will argue that  having a formal verification software development methodology \citep{10.1007/978-3-319-95582-7_38}
     would alleviate 
-	the bug problem with two case studies, \textit{CompCert} and \textit{Athelon}, as a supporting evidence. The success of these 
+	the bug problem with two case studies, \textit{CompCert} \citep{DBLP:conf/popl/Leroy06} and \textit{Athelon}, as a supporting evidence. The success of these 
 	case studies should be a good motivation for us to adopt formal method for electronic voting software development. 
    
    
@@ -280,10 +280,10 @@
 	Algebra \citep{10.1007/3-540-45842-5_7}, and Kepler Conjecture \citep{hales-kepler}.
 	None of these are toy projects, and it has taken years 
 	to develop and verify them. Also, some of these products 
-	are used commercially e.g CompCert is used by the AIRBUS, and the MTU
-	\footnote{https://www.absint.com/compcert/} and Fiat-crypto is used 
-	in the Google's BoringSSL library for elliptic-curve arithmetic 
-	\footnote{https://deepspec.org/entry/Project/Cryptography}. 
+	are used commercially,  e.g CompCert is used by the AIRBUS and the MTU (Motoren und Turbinen Union) 
+	Friedrichshafen\footnote{https://www.absint.com/compcert/},  Fiat-crypto is used 
+	in the Google's BoringSSL library for elliptic-curve 
+	arithmetic\footnote{https://deepspec.org/entry/Project/Cryptography}. 
 	Based on the cost and efforts of these project, 
 	the very basic question to ponder about using formal method to develop 
 	software:  does formal verification produce bug free software?
@@ -296,9 +296,9 @@
 	\citep{Yang:2011:FUB:1993316.1993532} developed random 
 	C program generator and used these programs to test various 
 	compilers. In three years of its usage, they have found 325 unknown
-	bugs in various compiler including GCC
-	\footnote{https://embed.cs.utah.edu/csmith/gcc-bugs.html} and LLVM
-	\footnote{https://embed.cs.utah.edu/csmith/llvm-bugs.html}; however, 
+	bugs in various compiler including 
+	GCC\footnote{https://embed.cs.utah.edu/csmith/gcc-bugs.html} and 
+	LLVM\footnote{https://embed.cs.utah.edu/csmith/llvm-bugs.html}; however, 
 	they could not find any bug in verified component of CompCert. 
 	In their own words \citep{Yang:2011:FUB:1993316.1993532}:
 	
@@ -539,8 +539,57 @@
   
   
 \section{Privacy}
-  WRITE ABOUT BALLOT PRIVACY
-    
+   So far we have argued that given the  importance of vote counting software in an election, we should 
+   develop it with highest possible rigour, i.e. formal verification and open source it for public scrutiny. Furthermore, 
+   to increase the public trust in vote counting process, we should strive for verifiability by tabulating all the 
+   relevant data (scrutiny sheet) on a public bulletin board.  Many jurisdictions follow some derived version of these practises, e.g.  ACT Electoral 
+   Commission\footnote{\url{https://www.elections.act.gov.au/elections_and_voting/electronic_voting_and_counting}}
+   has published all the ballots and vote counting software since 2001, the year electronic voting  was introduced 
+   (surprisingly,  this year,  2020,  ACT Electoral Commission did not  publish the vote counting software, a step back than 
+   going forward).  However, for preferential voting schemes publishing all the ballots in plaintext could lead to ballot identification
+   via Italian attack \citep{Otten}, which we have already discussed in the previous chapter.    This may appear surprising in the 
+   first sight,  but if we analyse it more carefully,  we can see that verifiability requirement is causing this privacy issue.   Indeed, 
+   privacy and verifiability are conflicting requirements \citep{JONKER20131}.  
+   On the one hand,  (end-to-end) verifiability, in a broad sense,  is about making sure that
+   every voter can see that her ballot is included in the final tally and the final tally is produced based on all the published ballots, 
+   while on the other, privacy is about not letting any one link a ballot to a particular voter,  even if that particular voter wants.  
+   The only way to resolve the tension between privacy 
+   and verifiability is to use various cryptographic primitives,  which hide the data  by using encryption (privacy) and 
+   ensure that every claim is accompanied by a mathematical proofs (verifiability) (these proofs are in form of data which 
+   can be checked by anyone,  and one such proof system is zero-knowledge-proof).  
+   
+   
+   The "Italian" attack may seem far-fetched to the reader; however,  a political scientist,  Dr. Kevin Bonhma,
+   from Tasmania was able to link   40 ballots to its voters when he was studying the Tasmania Senate election \citep{TasmaniaVoting}.  
+   His method was to
+   
+   
+   
+   \begin{displayquote}
+   
+   There is a minor privacy implication of the increased uniqueness of Senate votes under the new system.  In theory, coercion to 
+   vote a given way is useless in the Australian context outside of postal voting, because the ballot box is secret, so the coercer 
+   cannot establish how the person voted.  However, in the Senate it is not that difficult to establish whether or not anyone at all 
+   voted in a particular manner, so it is also often possible to confirm that there is a specific way that nobody at all (either in general or 
+   at least at a specific booth) voted.   So in theory a coercive person could direct a voter to vote in a certain way, and then check the 
+   files to verify whether anyone in a booth, or at all, had voted in that way. The coercer could even choose to "sign" the directed vote 
+   with an unlikely combination of candidates or an unlikely set of repetitions, not affecting the fate of the vote, to make it more likely 
+   that the coerced vote would be unique in the whole state and not just at booth level.  That way if the vote did not appear, they 
+   would know the voter had not voted as they directed.
+   
+   \end{displayquote}
+   
+   
+   Given the importance of privacy in elections,  we champion that cryptography should be 
+   used to hide the options (encrypted data) of a voter.  Moreover, every claim about (encrypted) data 
+   should be accompanied by proofs in form of data.  
+   
+   Finally,  we augment our requirements to
+   \begin{itemize}
+   \item Correctness: formal verification of vote counting software
+   \item Verifiability: tabulation of all the relevant data on a public bulletin board
+   \item Privacy: hiding the options of a voter by means of cryptography 
+   \end{itemize}
    
 \section{Summary}
 \label{secback:summary_back}
