@@ -560,10 +560,10 @@
    
    
    The "Italian" attack may seem far-fetched to the reader; however,  a political scientist,  Dr. Kevin Bonhma,
-   from Tasmania was able to link   40 ballots to its voters when he was studying the Tasmania Senate election \citep{TasmaniaVoting}.  
-   His method was to
-   
-   
+   from Tasmania was able to link  15 ballots, when he was studying the Tasmania Senate election,  
+   to its voters by looking at the preferences \citep{TasmaniaVoting}  (he found the voters on a private Facebook 
+   group where one person came up with a rough order,  which eventually led to this particular order after 
+   some refinement).  He pointed \citep{TasmaniaVoting} towards a potential privacy and coercions issue:
    
    \begin{displayquote}
    
@@ -580,19 +580,22 @@
    \end{displayquote}
    
    
-   Given the importance of privacy in elections,  we champion that cryptography should be 
+   We champion, given the importance of privacy in elections,  that cryptography should be 
    used to hide the options (encrypted data) of a voter.  Moreover, every claim about (encrypted) data 
    should be accompanied by proofs in form of data.  
    
-   Finally,  we augment our requirements to
+   
+   
+\section{Summary}
+\label{secback:summary_back}
+
+Finally,  we augment our requirements to
    \begin{itemize}
    \item Correctness: formal verification of vote counting software
    \item Verifiability: tabulation of all the relevant data on a public bulletin board
    \item Privacy: hiding the options of a voter by means of cryptography 
    \end{itemize}
    
-\section{Summary}
-\label{secback:summary_back}
 We reiterate that to maximise trust, reliability and auditability of electronic vote counting, we
 need both approaches, verification and verifiability, to be combined. To ensure
 verifiability, we advocate that vote-counting programs
