@@ -547,7 +547,7 @@
    has published all the ballots and vote counting software since 2001, the year electronic voting  was introduced 
    (surprisingly,  this year,  2020,  ACT Electoral Commission did not  publish the vote counting software, a step back than 
    going forward).  However, for preferential voting schemes publishing all the ballots in plaintext could lead to ballot identification
-   via Italian attack \citep{Otten}, which we have already discussed in the previous chapter.    This may appear surprising in the 
+   via "Italian" attack \citep{Otten}, which we have already discussed in the previous chapter.    This may appear surprising in the 
    first sight,  but if we analyse it more carefully,  we can see that verifiability requirement is causing this privacy issue.   Indeed, 
    privacy and verifiability are conflicting requirements \citep{JONKER20131}.  
    On the one hand,  (end-to-end) verifiability, in a broad sense,  is about making sure that
@@ -559,11 +559,14 @@
    can be checked by anyone,  and one such proof system is zero-knowledge-proof).  
    
    
-   The "Italian" attack may seem far-fetched to the reader; however,  a political scientist,  Dr. Kevin Bonhma,
-   from Tasmania was able to link  15 ballots, when he was studying the Tasmania Senate election,  
-   to its voters by looking at the preferences \citep{TasmaniaVoting}  (he found the voters on a private Facebook 
+   The "Italian" attack may seem far-fetched to the reader; however,  a political scientist,  Dr. Kevin Bonham,
+    was able to link  15 ballots, when he was studying the Tasmania Senate election,  
+   to its voters by looking at the preferences \citep{TasmaniaVoting}. The preferences on these 15 ballots were so rare, amongst 
+   all the cast ballots,  that  he conjectured that these votes could be a recommendation from some lobby group 
+   or some technological issue. 
+   Later, he found the voters of these 15 ballots on a private Facebook 
    group where one person came up with a rough order,  which eventually led to this particular order after 
-   some refinement).  He pointed \citep{TasmaniaVoting} towards a potential privacy and coercions issue:
+   some refinement.  He pointed \citep{TasmaniaVoting} towards a potential privacy and coercions issue:
    
    \begin{displayquote}
    
@@ -580,33 +583,39 @@
    \end{displayquote}
    
    
-   We champion, given the importance of privacy in elections,  that cryptography should be 
-   used to hide the options (encrypted data) of a voter.  Moreover, every claim about (encrypted) data 
-   should be accompanied by proofs in form of data.  
-   
+   We champion,  considering the importance of privacy in elections,  that cryptographic methods should be 
+   used to hide (encrypt) the preferences in the ballot of a given voter.  
+   Moreover, every claim about the (encrypted) ballot
+   should be accompanied by mathematical proofs (in form of data) so that the claims can be verified 
+   by any  independent third party, including the voter itself.  At this point,  we would like to point that 
+   cryptography makes the auditing difficult for general public because of the complex mathematics 
+   involved in the process.  We believe nonetheless that there would enough voters and independent 
+   auditors, having the knowledge of required cryptographic schemes, who would be able to audit the election 
+   and ascertain the outcome. 
    
    
 \section{Summary}
 \label{secback:summary_back}
 
-Finally,  we augment our requirements to
-   \begin{itemize}
-   \item Correctness: formal verification of vote counting software
-   \item Verifiability: tabulation of all the relevant data on a public bulletin board
-   \item Privacy: hiding the options of a voter by means of cryptography 
-   \end{itemize}
-   
-We reiterate that to maximise trust, reliability and auditability of electronic vote counting, we
-need both approaches, verification and verifiability, to be combined. To ensure
-verifiability, we advocate that vote-counting programs
-do not only compute a final result, but additionally produce an
-independently verifiable certificate that attests to the correctness
-of the computation, together with a formal verification that
-valid certificates indeed imply the correct determination of
-winners. Given a certificate-producing vote-counting program, external
-parties or stakeholders can then satisfy themselves to the
-correctness of the count by checking the certificate.    
-
-In the next chapter, I will  briefly discuss about the Coq theorem prover and basic cryptographic primitives which 
+In this chapter, we argued that to make the electronic voting  more trustworthy 
+and privacy preserving, we need three ingredient: 
+\begin{enumerate}
+   \item correctness: formal verification of vote counting software
+   \item verifiability: tabulation of all the relevant data on a public bulletin board
+   \item privacy: hiding the options of a voter by means of cryptography 
+\end{enumerate}
+\noindent 
+The system,  by combing these three concepts,  would be a formally 
+verified (encrypted) vote counting software that not only computes the 
+final result but additionally produces an independently verifiable certificate, 
+which attests to the correctness of the computation.  The major advantage of 
+a certificate-producing formally verified vote-counting program,  all the external
+parties or stakeholders can satisfy themselves to the
+correctness of the count by checking the certificate.  
+Moreover, we also argued 
+that including a formally verified certificate checker would boost the confidence 
+of both,  electoral commission and voters. 
+  
+In the next chapter, we will  briefly discuss about the Coq theorem prover and basic cryptographic primitives which 
 would enable us later in counting encrypted ballots (without revealing any information about the
 voters' choice).
