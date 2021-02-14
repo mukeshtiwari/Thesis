@@ -41,7 +41,7 @@ The Automath project can be seen as the precursor of
  \texttt{Gallina} with an example showing that why writing proofs using  
  \texttt{Gallina} is difficult and cumbersome, and how it can be eased by 
  using tactics. Finally, in the Section  \ref{sec:coqproof}, we will take 
- philosophical route to justify that why should we trust in Coq proofs 
+ philosophical route to justify that why we should trust in Coq proofs 
  even though they do not appear anywhere near to a proof written by 
  a human.  In the Section \ref{sec:cryptography}, we give some historical 
  context and modern day usage of cryptography.  In the following Section 
@@ -50,10 +50,10 @@ The Automath project can be seen as the precursor of
  In the next two sections, we describe the ElGamal encryption (\ref{sec:elgamal}) 
  and Homomorphic Encryption (\ref{sec:homomorphic-enc}). In addition, 
  we show the both homomorphic property, multiplicative and additive, 
- of ElGamal encryption. We explain the concept of Zero-Knowledge-Proof 
- and Zero-Knowledge-Proof  of knowledge in Section \ref{sec:zkp}. 
+ of ElGamal encryption. We explain the concept of zero-knowledge proof 
+ and zero-knowledge proof  of knowledge in Section \ref{sec:zkp}. 
  In the next two sections, we discuss Sigma protocols (\ref{sec:sigma}), 
- an efficient way to achieve zero knowledge proof, and Commitment schemes
+ an efficient way to achieve zero-knowledge proof, and commitment schemes
  (\ref{sec:commscheme}), a cryptographic protocol to force two mutually 
  distrusting parties to behave honestly with the explanation of Pedersen 
  commitment scheme based on discrete logarithm.  Finally, we give a 
@@ -152,7 +152,7 @@ which takes a input and simply returns it, also known as identity function. Assu
 base type, $nat$ for the type of natural numbers and $bool$ for type of boolean values, as member of 
 type variable set $\mathcal{V}$. We can represent a
  identity function on boolean value as $\lambda x : bool. x$, and on natural number as 
- $\lambda x : nat, x$. In general, we would have one identity function per type. We can 
+ $\lambda x : nat. x$. In general, we would have one identity function per type. We can 
  abstract these types in to type variable, but we need to type these type variables as well
  to keep everything well typed.  Consequently, abstracting the 
  \textit{types} over type variable, which itself is of sort \textit{kinds} and represented as $*$, 
@@ -317,9 +317,9 @@ the discussion of Co-Inductive types is not very relevant for this thesis.
  code, and only the terms of type Type are translated into target language
  (OCaml/Haskell/Scheme). Because of this, Coq in general does not allow
  the case analysis on
- the terms (logical objects) of sort Prop   when the goal is in not in Prop,
+ the terms (logical objects) of sort Prop   when the goal is not in Prop,
  but in certain cases it can be achieved (we call this special 
- case reification and explained next). 
+ case reification and explain next). 
  
  
   
@@ -388,7 +388,7 @@ Defined.
   to make  our formalization more accessible for human inspection.
   For example, we have two definition, one in Prop and other in Type, 
   of winner, loser and path. The rationale behind two definitions 
-  is that that Prop definitions are very natural and easy to understand 
+  is that Prop definitions are very natural and easy to understand 
   compared to their Type counter part. Furthermore, we have shown that they are 
   equivalent to each other, and used the definitions in Type for
   computation.  Also, there is a nice Coq library 
@@ -428,7 +428,7 @@ Defined.
  
 
 
-First, we defined a abstract syntax tree, \textit{format}, to make it explicit the characters we 
+First, we defined a abstract syntax tree, \textit{format}, to make explicit the characters we 
 are interested in format string. Additionally, the \textit{format\_string} function takes the format string 
 and returns the abstract syntax tree, and the type level, \textit{interp\_format}, takes the 
 abstract syntax tree and returns the function type corresponding to format string.
@@ -524,7 +524,7 @@ while second one is successfully printed as string.
   Gallina is a highly expressive specification 
   language for development of mathematical theories and proving the    
   theorems about these  theories; however, writing proofs in Gallina
-  is very tedious and cumbersome. Furthermore, It is not suitable for large proof 
+  is very tedious and cumbersome. Furthermore,  it is not suitable for large proof 
   development. In order to ease the proof development, Coq also provides 
   tactics.  The user interacting with Coq theorem prover applies these 
   tactics to build the  Gallina term  which otherwise would  
@@ -573,7 +573,7 @@ Qed.
   are verbose and fairly long, so a 
   very fundamental question is: why should we 
   accept or believe in a proof written in Coq \citep{pollack1998believe}?  Generally, the answer of 
-	accepting or trusting Coq proos is two fold:
+	accepting or trusting Coq proofs is two-fold:
   i) is the logic (CIC) sound?, and ii) is the implementation correct?
   The logic has already been reviewed by many peers and proved correct 
   using some meta-logic, therefore the answer of our question about trusting Coq proof 
@@ -718,10 +718,10 @@ Qed.
       
            	 
      
-     \subsection{El-Gamal Encryption Scheme}
+     \subsection{ElGamal Encryption Scheme}
      \label{sec:elgamal}
-     In 1985, Tahir El-Gamal \citep{elgamal1985public} proposed a new encryption system which was based on Diffie-Hellman algorithm. 
-     \textit{El-Gamal} turned the interactive  Diffie-Hellman algorithm into a non-interactive, no need for any active second party, by introducing 
+     In 1985, Tahir ElGamal \citep{elgamal1985public} proposed a new encryption system which was based on Diffie-Hellman algorithm. 
+     \textit{ElGamal} turned the interactive  Diffie-Hellman algorithm into a non-interactive, no need for any active second party, by introducing 
      a randomness.  The \textit{ElGamal} scheme has three phases:
      \begin{enumerate}
 		\item \textbf{Key Generation:}   
@@ -837,7 +837,7 @@ Qed.
 	      $g^{m_{1} + m_{2} + \dotsb  + m_{n}}$ is 
 	      not very practical \citep{10.1007/3-540-69053-0_9}. 
 	     
-     \subsection{Zero Knowledge Proof}
+     \subsection{Zero-Knowledge Proof}
      \label{sec:zkp}
       In conventional mathematics, a proof of mathematical statement is collection of basic axioms combined according to rules of 
       the system. For example, we want to prove that in for any group G with group operation *, for any two elements x y $\in$ G, we have:
@@ -890,7 +890,7 @@ Qed.
      the prover and verifier. In addition, 
      the goal of the prover is to convince the verifier about the validity of some statement without revealing any information, i.e. 
      the only thing verifier would learn is that if statement is true or false without any other information. 
-     More formally, zero-knowledge-proof for a language $L \in \{0, 1\}^{*} $ (generally NP) is a interactive proof  
+     More formally, zero-knowledge proof for a language $L \in \{0, 1\}^{*} $ (generally NP) is a interactive proof  
      between a (computationally unbounded) prover $P$ and a (polynomial time) verifier $V$. Furthermore, 
      the goal of $P$ is to convince V that x $\in$ L  such that:
    
@@ -901,28 +901,28 @@ Qed.
      \textbf{Soundness:} If x $\notin$ L then dishonest prover $P^{*}$ can not convince the honest verifier $V$ 
      to accept the claim (with some small probability error known as soundness error)
      
-     \textbf{Zero knowledge:} A malicious verifier $V^{*}$ would gain no additional information by interacting with a honest prover $P$ 
+     \textbf{zero-knowledge:} A malicious verifier $V^{*}$ would gain no additional information by interacting with a honest prover $P$ 
       other than x $\in$ L. More formally, for every (polynomial time) program $V^{*}$ there exists a (polynomial time)
       program $S$, also known as simulator, which can produce the transcript of protocol by itself without interactive with anyone. 
       Moreover, the transcript 
       produced by simulator $S$ is indistinguishable from real transcript produced by interaction between 
       
     
-    \subsubsection{Zero Knowledge Proof of Knowledge}
+    \subsubsection{Zero-Knowledge Proof of Knowledge}
     Sometimes, the fact that $ x \in L$ is completely trivial.  For example, for any given finite group $G$ of order $p$ ($p$ is prime), 
     a random element $h$ from the group $G$, and generator $g$of the group $G$, a prover claims that there is a $x$ such that 
     $g^x = h$. 
     This is trivial because we know that there always exists such $x$ (discrete logarithm problem); however, the challenge is to show that
     the prover knows the witness $x$.
-    Formally, zero-knowledge-proof of knowledge is defines as: let $R = {(x, w) \subset L \times W$ is a binary relation such that     
+    Formally, zero-knowledge proof of knowledge is defines as: let $R = {(x, w) \subset L \times W$ is a binary relation such that     
     $x \in L$ is common string between prover $P$ and verifier $V$ and $w \in W$, also known as witness, is private to 
-    the prover $P$.  Moreover, the goal of prover $P$ is to convince verfier $V$ that $(x, w) \in R$ in zero-knowledge.  
+    the prover $P$.  Moreover, the goal of prover $P$ is to convince verifier $V$ that $(x, w) \in R$ in zero-knowledge.  
     
         
    
     \subsection{Sigma Protocol}
     \label{sec:sigma}
-     Sigma protocols are efficient way to achieve zero-knowledge-proof of knowledge.   Sigma protocol is 
+     Sigma protocols are efficient way to achieve zero-knowledge proof of knowledge.   Sigma protocol is 
      a three step communication between a prover $P$ and a verifier $V$ where goal of the prover is to convince the verifier that 
      she knows witness $w$ for common input $x$ such that  $(x, w) \in R$: 
      
@@ -942,7 +942,7 @@ Qed.
       and $(a, e', z')$ ($e$ and $e'$ are disjoint), then there exists a efficient program, extractor, which can extract the 
       witness w.
       
-      \textbf{Honest Verifier Zero Knowledge:} For a given public input $x$ and random input $e$, there is a simulator 
+      \textbf{Honest Verifier Zero-Knowledge:} For a given public input $x$ and random input $e$, there is a simulator 
       which outputs an accepting transcript $(a, e, z)$ which is indistinguishable from a proof generated by 
       a prover interacting with honest verifier. 
      
@@ -959,7 +959,7 @@ Qed.
      \end{itemize}
      
      For the protocol described above, all three properties, completeness, special soundness, and honest 
-     verifier zero knowledge, hold. 
+     verifier zero-knowledge, hold. 
      \begin{itemize}
       \item Completeness holds with probability $1$. Simplifying the expression $g^{z}$ shows that 
       it is equal to $a * x^{c}$. Replacing the $z$ by $r + c * w$ in expression  $g^{z}$, we get 
@@ -971,8 +971,8 @@ Qed.
      \item Special soundness holds. For any two given response, 
      $z_{1} = r + w * c_{1}$ and  $z_{2} = r + w * c_{2}$, we can find the witness w by  $(z_{2} - z_{1})/(c_{2} - c_{1})$.
      
-     \item Honest Verifier Zero Knowledge also holds. Simulator can always produce a transcript $(g^{z} x^{-c}, c, z)$ by randomly 
-     choosing $c$ (the random choice $c$ is the reason for special honest verifier zero knowledge), and $z$. 
+     \item Honest verifier zero-knowledge also holds. Simulator can always produce a transcript $(g^{z} x^{-c}, c, z)$ by randomly 
+     choosing $c$ (the random choice $c$ is the reason for special honest verifier zero-knowledge), and $z$. 
      \end{itemize}
      
      \textbf{Fiat-Shamir Transform:}
