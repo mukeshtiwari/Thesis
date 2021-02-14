@@ -27,32 +27,34 @@ The Automath project can be seen as the precursor of
 
 \textbf{Chapter overview:}
  This chapter is an overview of the Coq theorem prover and cryptographic primitives. 
- In the Section \ref{sec:problemstatement}, we will give a brief overview of 
- theoretical foundation, calculus of construction and calculus of inductive 
- construction, of Coq.  In the Section \ref{sec:typeprop}, we will discuss
+ In the Section \ref{sec:problemstatement}, we give a brief overview of 
+ the theoretical foundation, calculus of construction and calculus of inductive 
+ construction, of Coq.  In the Section \ref{sec:typeprop}, we discuss
  the difference between \texttt{Type} and \texttt{Prop}
- which is very crucial from program extraction point of view.  The goal of 
- our formalization was not only proving the correctness of 
+ which is very crucial from program extraction point of view (the goal of 
+ our formalization is  not only proving the correctness of 
  Schulze method, but extracting  OCaml/Haskell code to count 
- ballots.  In the Section \ref{sec:deplambda}, we will focus 
- on dependent types and  how it leads to correct by construction paradigm
- by designing a  type safe printf function. 
+ ballots).  In the Section \ref{sec:deplambda}, we focus 
+ on dependent type and  how it leads to correct by construction paradigm
+ by demonstrating a  type safe printf function. 
  Section \ref{sec:gallina} focuses on Coq specification language 
  \texttt{Gallina} with an example showing that why writing proofs using  
  \texttt{Gallina} is difficult and cumbersome, and how it can be eased by 
- using tactics. Finally, in the Section  \ref{sec:coqproof}, we will take 
+ using tactics. Finally, in the Section  \ref{sec:coqproof}, we take 
  philosophical route to justify that why we should trust in Coq proofs 
  even though they do not appear anywhere near to a proof written by 
- a human.  In the Section \ref{sec:cryptography}, we give some historical 
+ a human.  
+ 
+ In the Section \ref{sec:cryptography}, we give some historical 
  context and modern day usage of cryptography.  In the following Section 
- \ref{sec:group}, we describe \textit{Group} which is the underlying 
+ \ref{sec:group}, we describe Group which is the underlying 
  algebraic structure for Diffie-Hellman construction (\ref{sec:diffie-hellman}). 
  In the next two sections, we describe the ElGamal encryption (\ref{sec:elgamal}) 
  and Homomorphic Encryption (\ref{sec:homomorphic-enc}). In addition, 
- we show the both homomorphic property, multiplicative and additive, 
- of ElGamal encryption. We explain the concept of zero-knowledge proof 
+ we show the both, multiplicative and additive,  homomorphic property
+ of the ElGamal encryption. We explain the concept of zero-knowledge proof 
  and zero-knowledge proof  of knowledge in Section \ref{sec:zkp}. 
- In the next two sections, we discuss Sigma protocols (\ref{sec:sigma}), 
+ In the next two sections, we discuss sigma protocols (\ref{sec:sigma}), 
  an efficient way to achieve zero-knowledge proof, and commitment schemes
  (\ref{sec:commscheme}), a cryptographic protocol to force two mutually 
  distrusting parties to behave honestly with the explanation of Pedersen 
@@ -65,23 +67,25 @@ The Automath project can be seen as the precursor of
 \section{Coq: Interactive Proof Assistant}
 \label{sec:problemstatement}
 Coq  is an interactive proof assistant (theorem prover) based on
-theory of Calculus of 
-Inductive Construction \citep{Paulin-Mohring:1993:IDS:645891.671440} which itself is an 
-augmentation of Calculus of Construction 
+the theory of calculus of 
+inductive construction (CIC) \citep{Paulin-Mohring:1993:IDS:645891.671440} which itself is an 
+augmentation of the calculus of construction (CoC) 
 \citep{Coquand:1988:CC:47724.47725}.  
-The underlying theory of CoC and CIC is (typed) lambda calculus, so 
-before we describe the CoC and CIC syntax and its typing judgement, 
-we will take a brief detour to explain 
+The underlying theory of calculus of construction and calculus of 
+inductive construction is (typed) lambda calculus, so 
+before we describe the calculus of construction and calculus of inductive 
+construction syntax and its typing judgement, 
+we will take a brief detour to explain the
 different variants of lambda calculus starting from 
-untyped lambda calculus and moving up in the ladder by 
+untyped lambda calculus and moving up progressively by 
 adding various abstractions. Later, we will show that 
-these all variant, including CoC, can be abstracted into one 
-framework by using pure type system \citep{berardi1988towards} 
+these all variant, including calculus of construction, can be abstracted into one 
+framework,  pure type system (PTS) \citep{berardi1988towards} 
 \citep{Barendregt:1993:LCT:162552.162561}.  
 In addition, 
 pure type system can be extended with three rules, 
 inductive data type, pattern matching, and recursion 
-to accommodate Calculus of Inductive Construction.
+to accommodate calculus of inductive construction.
 
 Lambda calculus was invented by Alonzo Church in the 1930s, 
 and his motive was to use lambda calculus as a foundation 
@@ -102,14 +106,14 @@ Using these three rules, we can construct the lambda terms corresponding to
 various mathematical notions. For example, we can represent
 $True$ as $\lambda x. \lambda y. x$, $False$ as $\lambda x. \lambda y. y$,
 $Zero$ as $\lambda f.\lambda x. x$,  $One$ as $\lambda f.\lambda x. f x$, etc. 
-However, there is nothing which is stopping us to construct lambda terms which 
-has no apparent meaning, e.g. applying a variable $x$ with itself learning to a lambda 
-term $x x$. To avoid these kind of terms, we extend the lambda calculus with 
-another abstraction called \textit{types}. Moreover, we add \textit{typing judgement} (rule) 
-which dictates which terms is well-typed and which one is not.  This new 
-lambda calculus augmented with \textit{types} is known as 
+However, there is nothing which is stopping us from constructing  a lambda term which 
+has no apparent meaning, e.g.  applying a variable $x$ to itself leading to a lambda 
+term $x x$.  To avoid situation like this,  we extend the lambda calculus with 
+another abstraction called \textit{type}. Moreover, we add \textit{typing judgement} (rule) 
+that dictates which term is well-typed and which one is not.  This new 
+lambda calculus, augmented with type, is known as 
 \textit{Simple Typed Lambda Calculus}, represented as $\lambda^{\to}$. 
-The abstract syntax tree for \textit{Simple Typed Lambda Calculus} is:
+The abstract syntax tree for simple typed lambda calculus is:
 
 \begin{displayquote}
 
@@ -127,36 +131,36 @@ T = V (* Variables *) \\
 \end{displayquote}
 
 \noindent
-The typing judgement is a relation between \textit{types} and \textit{terms} in some abstract typing context $\Gamma$. The $\Gamma$ 
-is a set/list of typing assumption of the form $x : A$, meaning $x$ is of type $A$. Moreover, $\Gamma$ $\vdash$ $x : A$ means that 
-the term $x$ has type $A$ in the context $\Gamma$.
+The typing judgement is a relation between \textit{type} and \textit{term} in some abstract typing context $\Gamma$. The $\Gamma$ 
+is a set or list of typing assumption of the form $x : A$, meaning term $x$ is of type $A$. Moreover, $\Gamma$ $\vdash$ $x : A$ means that 
+term $x$ has type $A$ in the context $\Gamma$.
 The typing judgement of \textit{Simple Typed Lambda Calculus} 
 has three rules, \textit{Var, Abstraction}, and \textit{Application}, to ensure that the terms are well-typed:
 \begin{itemize}
-\item Var: \[ {\frac {\text{x : A }  \in \text{  }\Gamma }{\Gamma \text{  } \vdash \text{  x : A }} \]
-\item Abstraction: \[ {\frac {\Gamma \text{, x : A } \vdash \text{ e : B }}{\Gamma \text{  }\vdash \text{ } (\lambda \text{ x : A. e ) : }A \rightarrow B}} \]
-\item Application: \[ {\frac {\Gamma \text{  } \vdash \text{ f : } A \rightarrow B \quad \Gamma \text{  }\vdash \text{ x : A }}{\Gamma \text{  } \vdash \text{  f  x  : B} }} \]
+\item Var: \[ {\frac {x : A  \in \text{  }\Gamma }{\Gamma \text{  } \vdash x : A} \]
+\item Abstraction: \[ {\frac {\Gamma \text{, } x : A \vdash  e : B }{\Gamma \text{  }\vdash \text{ } (\lambda  x : A. e ) : A \rightarrow B}} \]
+\item Application: \[ {\frac {\Gamma \text{  } \vdash f :  A \rightarrow B \quad \Gamma \text{  }\vdash x : A }{\Gamma \text{  } \vdash   f \text{  } x  : B }} \]
 \end{itemize}
 
 \noindent
-Now these three typing judgement rules rule out the term $x x$ because it is not well-typed term, and this can be 
-inferred from \textit{Application} rule. 
-The  \textit{Application} rule states that for $f$ $x$ to be a well typed term of some type $B$, the $f$ has to have 
-a type $A \rightarrow B$ for some type $A$ and $x$ has to have the type $A$. Following the 
-\textit{Application rule}, for $x x$ to be well typed, the $x$ has to have a arrow type $A \rightarrow B$
-and type $A$ in some typing context $\Gamma$. However, it is not possible that $A$ = $A \rightarrow B$
-leading to rejection of term $xx$. 
+Now these three typing judgements  reject the term $x x$ because it is not well-typed term, and this can be 
+inferred from the Application rule. 
+The Application rule states that for $f$ $x$ to be a well typed term of some type $B$, the $f$ must have 
+a type $A \rightarrow B$ for some type $A$ and $x$ must have the type $A$. Following the 
+Application rule, for $x x$ to be well typed, the $x$ must have an arrow type $A \rightarrow B$
+and type $A$ simultaneously in some typing context $\Gamma$. However, it is not possible that $A$ = $A \rightarrow B$
+leading to rejection of the term $x x$. 
 
-Simple typed lambda calculus is great for many practical purposes except it is verbose. Consider a function 
-which takes a input and simply returns it, also known as identity function. Assuming that we two 
-base type, $nat$ for the type of natural numbers and $bool$ for type of boolean values, as member of 
-type variable set $\mathcal{V}$. We can represent a
- identity function on boolean value as $\lambda x : bool. x$, and on natural number as 
- $\lambda x : nat. x$. In general, we would have one identity function per type. We can 
- abstract these types in to type variable, but we need to type these type variables as well
+Simple typed lambda calculus is great for many practical purposes, except it is verbose. Consider a function 
+which takes an input and simply returns it, also known as identity function.  If we extend the  
+type variable set $\mathcal{V}$ with two base type,  $nat$ for the type of natural numbers 
+and $bool$ for type of boolean values,  we can represent an
+ identity function on boolean value as $\lambda x : bool. x$ and on natural number as 
+ $\lambda x : nat. x$.   In general, we would have one identity function per type.  We can 
+ abstract these types into a type variable,  but we need to type these type variables as well
  to keep everything well typed.  Consequently, abstracting the 
- \textit{types} over type variable, which itself is of sort \textit{kinds} and represented as $*$, 
- leads to \textit{Second Order Lambda Calculus} ($\lambda2$), and 
+ types over type variable, which itself is of sort \textit{kinds} and represented as $*$, 
+ leads to \textit{Second Order Lambda Calculus} ($\lambda2$),  and 
  now the identity function over different types can be abstracted into a single function:
  $\lambda \alpha : \star. \lambda x : \alpha. x$.
  There are various other variants or abstractions 
@@ -174,12 +178,11 @@ type variable set $\mathcal{V}$. We can represent a
 %        \caption{Lambda Cube}
 %      \end{figure} 
 
-All these variation of lambda calculus can be captured into a unified framework
-known as \textit{Pure Type System} or \textit{Generalized Type System}.
-The \textit{PTS} is group of type system that allows the dependencies between 
-types and terms. Unlike the simple typed lambda calculus ($\lambda^{\to}$) where 
-terms and types live in two disjoint world, \textit{PTS} blurs this distinction between 
-types and terms.  The abstract syntax  of pure type system:
+All these variations of the lambda calculus can be captured into a unified framework
+known as \textit{Pure Type System}.  Unlike the simple typed lambda calculus ($\lambda^{\to}$) where 
+terms and types live in two disjoint worlds,  pure type system blurs this distinction between 
+types and terms and  allows the dependencies between them.  
+The abstract syntax  of pure type system:
  \begin{displayquote}
 
     T = V   (* \textit{variable} *)\\
@@ -190,19 +193,19 @@ types and terms.  The abstract syntax  of pure type system:
    \end{displayquote}
 
 \noindent
-The pure type system parametrized by a specification, i.e. 
-set of sorts $S$, axioms $A$, and rules $R$, such that: 
+The pure type system is parametrized by three specifications: 
+i) set of sorts $S$, ii) set of axioms $A$, and iii) set of rules $R$ such that: 
 
  \begin{itemize}
 	\item $S$ is a subset of  $C$, i.e.  $S \subseteq C$. 
-	\item $A$ is the axioms of form \textit{c : s} where $c \in C$ and $s \in S$, i.e.  $A \subseteq C \times S$. 
+	\item $A$ is the set of axioms of form \textit{c : s} where $c \in C$ and $s \in S$, i.e.  $A \subseteq C \times S$. 
 	\item $R$ is the set of rules of form $(s_{1}, s_{2}, s_{3})$ such that $s_{1}, s_{2}, \text{ and } s_{3} \in S$, i.e.
 	 $R \subseteq S \times S \times S$.
  
  \end{itemize}
  
 \noindent 
-The typing judgement for \textit{PTS} in typing context $\Gamma$ is defined by following rules ($s$ ranges of $S$, and $x$ ranges over V 
+The typing judgement for pure type system in a typing context $\Gamma$ is defined by following rules ($s$ ranges of $S$, and $x$ ranges over V 
  with usual notion of  variable capture avoidance):
  \begin{itemize}
  \item Axiom: \[ \frac{\text{c : s } \in A}{\Gamma \text{  } \vdash \text{ c : s}} \]
