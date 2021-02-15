@@ -205,7 +205,7 @@ i) set of sorts $S$, ii) set of axioms $A$, and iii) set of rules $R$ such that:
  \end{itemize}
  
 \noindent 
-The typing judgement for pure type system in a typing context $\Gamma$ is defined by following rules ($s$ ranges of $S$, and $x$ ranges over V 
+The typing judgement for the pure type system, in a typing context $\Gamma$, is defined by following rules ($s$ ranges of $S$, and $x$ ranges over V 
  with usual notion of  variable capture avoidance):
  \begin{itemize}
  \item Axiom: \[ \frac{\text{c : s } \in A}{\Gamma \text{  } \vdash \text{ c : s}} \]
@@ -221,9 +221,9 @@ The typing judgement for pure type system in a typing context $\Gamma$ is define
 
 \subsection{Calculus of Construction/Inductive Construction}
 \label{sec:cc}
-The Calculus of Construction is a higher order  natural deduction style proof system 
+The calculus of construction is a higher order  natural deduction style proof system 
 for constructive proofs where every proof a typed $\lambda$-abstractions.  Using the 
-\textit{Pure Type System} syntax, it can be expressed as:
+pure type system syntax, it can be expressed as:
 
 \begin{displayquote}
 
@@ -241,14 +241,14 @@ for constructive proofs where every proof a typed $\lambda$-abstractions.  Using
 \end{displayquote}
 
 \noindent
-The sort \textit{Prop} captures type of expression which represents logical proposition, while 
-the sort \textit{Type} captures the computational content.   Calculus of Construction is
+The sort \textit{Prop} captures the type of expressions which represent logical proposition, while 
+the sort \textit{Type} captures the computational content.   The calculus of construction is
  powerful enough to encode inductive definitions \citep{pfenning1989inductively}, but 
- one of the main drawback is efficiency of computation of function over these encoded 
- inductive definitions, and some other properties could not be proven \citep{10.1007/3-540-45413-6_16}.
-In order to solve these problems, \citep{Paulin-Mohring:1993:IDS:645891.671440}  introduced 
-Inductive definitions, pattern matching, and fixpoint in the Calculus of Construction to make the data structure 
-representation more efficient. Below is the  (incomplete) syntax of Calculus of Inductive Construction:
+ one of the main drawback is efficiency of computation over these encoded 
+ inductive definitions.  Moreover, some other properties could not be proven \citep{10.1007/3-540-45413-6_16}.
+Therefore, \citep{Paulin-Mohring:1993:IDS:645891.671440}  introduced 
+Inductive definitions, pattern matching, and fixpoint in the calculus of construction to make the data structure 
+representation more efficient.  Below is the  (incomplete) syntax of calculus of inductive construction:
 
  \begin{displayquote}
 
@@ -260,8 +260,8 @@ representation more efficient. Below is the  (incomplete) syntax of Calculus of 
  
 
 \noindent 
-\textit{Inductive Type:} As we mentioned above that inductive types are basic building block for encoding various 
-data structures in the Coq (CIC). The keyword to declare a inductive data type in Coq is 
+Inductive Type: as we mentioned above that inductive types are basic building block for encoding various 
+data structures in the Coq (calculus of inductive construction). The keyword to declare a inductive data type in Coq is 
 \textit{Inductive}. For example, a length index list
 whose elements belong to a type $A$ can defined as (also known as vector):
 
@@ -274,7 +274,7 @@ Inductive Vector (A : Type) : nat -> Type :=
 \end{minted}
 
 \noindent 
-Now we can define various functions for the \textit{Vector} data structure. For example, 
+Now we can define various functions for the  vector data structure.  For example, 
 we can define a function to append two vectors for length $n$ and $p$ as:
 
 \begin{minted}{coq}
@@ -289,38 +289,38 @@ Fixpoint append {A n p} (v : Vector A n) (w : Vector A p)
  
 \noindent
 The expressiveness of Coq allows to encode various correctness properties at type level. 
-In our example of \textit{append}, the correctness criteria states that appending a 
+In our example of append, the correctness criteria states that appending a 
 vector of length $n$ with a vector of length $p$ yields a vector of length $(n + p)$.  
-In other words, the function \textit{append} is "correct-by-construction". 
+In other words, the function append is "correct-by-construction". 
 During our formalisation, we have encoded our vote counting 
-as a \textit{Inductive} data type with various assertions of 
-correctness criterion appearing at type level. These assertions at type level 
-enforce that only the "correct" term of vote counting inductive data type can be constructed
-(\textit{correct-by-construction}).
+as an inductive data type with various assertions (correctness specification)
+appearing at the type level. These assertions at the type level 
+enforce that only a "correct" term of the vote counting inductive data type can be constructed
+(\emph{correct-by-construction}).
 
 
 
 We would like to point that the current underlying theory of Coq has been 
-extended with Co-Inductive types \citep{10.1007/3-540-60579-7_3}; however, 
-the discussion of Co-Inductive types is not very relevant for this thesis.	
+extended with co-inductive types \citep{10.1007/3-540-60579-7_3}; however, 
+the discussion of co-inductive types is not very relevant for this thesis.	
 
  
 \subsection{Type vs. Prop: Code Extraction}
 \label{sec:typeprop}
  Every term in Coq has
  a type, and the term could be either a logical proposition 
- or computational term. 
- The type of logical propositions are \textit{Prop}, while the type of 
- computational parts are \textit{Type}. This distinction between 
- the type of logical propositions (Prop) and the type of computational 
- parts  (Type) provides a mechanism to extract 
- functional programs directly from Coq proof scripts.
+ or a computational term. 
+ The type of logical proposition is \textit{Prop}, while the type of 
+ computational term is \textit{Type}. This distinction between 
+ the type of logical proposition (Prop) and the type of computational 
+ term  (Type) provides a mechanism to extract 
+ functional program directly from Coq proof script.
  During the extraction process \citep{Letouzey:2008:ECO}, 
- every term of type Prop is removed and no longer exists in extracted 
- code, and only the terms of type Type are translated into target language
+ every term of type Prop is erased and no longer exists in the extracted 
+ code, and only the terms of type Type are translated into the target language
  (OCaml/Haskell/Scheme). Because of this, Coq in general does not allow
  the case analysis on
- the terms (logical objects) of sort Prop   when the goal is not in Prop,
+ the terms (logical objects) of type Prop  when the goal is not in Prop,
  but in certain cases it can be achieved (we call this special 
  case reification and explain next). 
  
@@ -328,22 +328,37 @@ the discussion of Co-Inductive types is not very relevant for this thesis.
   
   \subsubsection{Reification}
   \label{sec:reification}
-  Sometimes it is very natural to express certain properties/definitions
-  in the Prop than the Type. Moreover, the definitions/terms in the Prop are self contained and 
+  Sometimes it is very natural to express certain properties or definitions
+  in the Prop than in the Type.  Moreover, the definitions/terms in the Prop are self contained and 
   very intuitive for human understanding. The only problem is that the terms of the type Prop do not carry any 
-  computational content but only the proof part. However, 
+  computational content but only the proof part.  However, 
   we can escape this situation if the term of type Prop is decidable predicate (boolean predicate) and its domain is finite. 
   In the case of decidable predicate in Prop over a finite domain,  we can extract 
-  the witness constructively by using 
-  a program of linear search that tries the decidable predicate on 
-  every element of its (finite) domain. Below is the linear search 
-  reification code 
+  a witness constructively by enumerating the elements of the finite domain in a 
+  list and using a linear search program that tries the decidable predicate on
+  every element of the enumerated list. 
+  
+  
+  Figure \ref{sec:coq-reif} is the
+  reification Coq code 
   which produces a Type level witness, \textit{existsT},
   from a Prop level witness, \textit{exists}, by iterating 
   through all the elements of finite type $A$ (the finiteness 
-  of $A$ is captured by the list $l$).
-  
-  
+  of $A$ is captured by the list $l$). The program is written 
+  in the proof mode, hence the clutter of tactics, but the basic idea is that 
+  we inspect every single element of  $A$, represented as list $l$, 
+  and look for the element which satisfies the Prop level assertion, 
+  (exists x, In x l  $\wedge$  P x = true), and this element is 
+  precisely our witness which is wrapped in a type level existential,  
+  existsT x, P x = true.  Another way to look at the  reification is that 
+  the Prop level assertion, (exists x, In x l  $\wedge$  P x = true), 
+  merely  postulate the existence of an element without telling which one, 
+  and we find this element by looking over all the elements of finite type $A$, 
+  as we can see it is pretty evident from the extract OCaml code \ref{sec:ocaml-reif}
+  (the proofs terms are erased and only computational terms contribute to the 
+   extracted function). 
+
+\begin{figure}
   
 \begin{minted}{coq}
 Require Import Coq.Lists.List.
@@ -382,18 +397,38 @@ Proof.
   firstorder. exists x.
   firstorder.
 Defined. 
-
 \end{minted}
+\caption{Coq Code for Reification}
+\label{sec:coq-reif}
+\end{figure}
+
+\begin{figure}
+\begin{minted}{ocaml}
+(** val reify : ('a1 -> bool) -> 'a1 list -> ('a1, __) sigT **)
+
+let rec reify p = function
+| Nil -> assert false (* absurd case *)
+| Cons (h, tl) ->
+  let hbiv = match p h with
+             | True -> Left
+             | False -> Right in
+  (match hbiv with
+   | Left -> ExistT (h, __)
+   | Right -> reify p tl)
+\end{minted}
+\caption{Extracted OCaml Code from the Coq Code}
+\label{sec:ocaml-reif}
+\end{figure}
     
-    
-    
+   
+   
   We have used many standard tricks like this  
   to make  our formalization more accessible for human inspection.
-  For example, we have two definition, one in Prop and other in Type, 
+  For example, we have two definitions, one in Prop and other in Type, 
   of winner, loser and path. The rationale behind two definitions 
   is that Prop definitions are very natural and easy to understand 
   compared to their Type counter part. Furthermore, we have shown that they are 
-  equivalent to each other, and used the definitions in Type for
+  equivalent to each other and used the definitions in Type for
   computation.  Also, there is a nice Coq library 
   ConstructiveEpsilon\footnote{https://coq.github.io/doc/master/stdlib/Coq.Logic.ConstructiveEpsilon.html}
   which uses the similar trick as ours; however, we have not used this library in 
