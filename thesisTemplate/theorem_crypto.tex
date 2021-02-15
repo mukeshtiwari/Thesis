@@ -180,7 +180,7 @@ and $bool$ for type of boolean values,  we can represent an
 
 All these variations of the lambda calculus can be captured into a unified framework
 known as \textit{Pure Type System}.  Unlike the simple typed lambda calculus ($\lambda^{\to}$) where 
-terms and types live in two disjoint worlds,  pure type system blurs this distinction between 
+terms and types live in two disjoint world,  pure type system blurs this distinction between 
 types and terms and  allows the dependencies between them.  
 The abstract syntax  of pure type system:
  \begin{displayquote}
@@ -437,9 +437,9 @@ let rec reify p = function
  \label{sec:deplambda}
   One of the highly sought feature of Coq is dependent type, 
   a type which is parametrised by value.  
-  The expressiveness of dependent type make it possible
-  to express specification at type level, and these specifications enables larger 
-  set of  logical errors to eliminated at compile time. 
+  The expressiveness of dependent type makes it possible
+  to express specification at type level,  and these specifications enable larger 
+  set of  logical errors to eliminate at compile time. 
   
  
  Using the expressiveness of dependent type, we construct a type-safe version of 
@@ -461,12 +461,12 @@ let rec reify p = function
  signature \texttt{string -> Z  -> string}.
  The value level function, whose type signature 
  is constructed by the type level function, would take the values to printed as input. If the 
- type of values to be printed is aligned with the type constructed by the type level function then 
+ type of values to be printed is aligned with the type constructed by the type level function,
  we proceed to print the string, otherwise we generate compiler error.  
  
 
 
-First, we defined a abstract syntax tree, \textit{format}, to make explicit the characters we 
+First, we defined an abstract syntax tree, \textit{format}, to make explicit the characters we 
 are interested in format string. Additionally, the \textit{format\_string} function takes the format string 
 and returns the abstract syntax tree, and the type level, \textit{interp\_format}, takes the 
 abstract syntax tree and returns the function type corresponding to format string.
@@ -513,10 +513,12 @@ Eval compute in interp_format (format_string "%d %s %s").
      : Type *)
 \end{minted}
 
-Now, we construct a value level function, \textit{interp\_value}, whose type 
-is constructed by type level function, and it will take the values to be printed as input.
-The type of values to print should match the type constructed by type level 
-function for successful type checking otherwise it will be type error. 
+Now, we construct a value level function, \textit{interp\_value}, whose return 
+type, constructed by the interp\_format function, depends on the input value. 
+What it means is that for every input value f of type format,  the 
+interp\_format  constructs a return type and 
+the  interp\_value constructs a value level function in 
+such a way that return type aligns with input values.   
 
 \begin{minted}{coq}
 (* value level function whose type is constructed 
@@ -548,7 +550,7 @@ Eval compute in  printf "\%d \%s" 42 "hello Coq"%string.
 \end{minted}
 The first input, printf "\%d \%s" "hello Coq" 42, is type error because 
 printf "\%d \%s" returns a value level function whose  type is Z -> string -> string, but 
-the type of first argument, "hello Coq", is string which does not unifies with Z,
+the type of first argument, "hello Coq", is string which does not unify with Z,
 while second one is successfully printed as string. 
 
   
@@ -557,7 +559,7 @@ while second one is successfully printed as string.
  
  \subsection{Gallina: The Specification Language}
  \label{sec:gallina}
-  The example, type safe printf function, I gave in previous 
+  The example, type safe printf function, I gave in the previous 
   section was encoded in Coq's specification language Gallina. 
   Gallina is a highly expressive specification 
   language for development of mathematical theories and proving the    
@@ -565,7 +567,7 @@ while second one is successfully printed as string.
   is very tedious and cumbersome. Furthermore,  it is not suitable for large proof 
   development. In order to ease the proof development, Coq also provides 
   tactics.  The user interacting with Coq theorem prover applies these 
-  tactics to build the  Gallina term  which otherwise would  
+  tactics to build the  Gallina term,  which otherwise would  
   be very laborious.
   
  We have written two proofs that addition on natural number is commutative. 
@@ -618,14 +620,14 @@ Qed.
   hinges on the implementation. 
   The Coq implementation (written in OCaml)  has two parts, the type checker (small kernel), 
   and tactic language to build the proofs.
-  We lay our trust in type checker, because it is a small kernel and can be 
+  We lay our trust in type checker because it is a small kernel and can be 
   manually inspected. Furthermore, if there
-  is a bug in tactic language, which often is the case, then build proof would 
+  is a bug in tactic language, which often is the case,  build proof would 
   not pass the type checker.  Also, we can use the publicly available proof 
   checkers written by experts and inspected by many others. In addition, to increase the 
   confidence, there have been 
   efforts to certify type checker \citep{Appel2003}
-  \citep{barras1996coq}, verifying meta theory of one proof system 
+  \citep{barras1996coq}, verify meta theory of one proof system 
   in other \citep{10.1007/978-3-319-08970-6_3}, self certificate of 
   theorem prover \citep{10.1007/11814771_17}. However, no system can 
   prove its own consistency (G{\"o}del's second incompleteness theorem), therefore
