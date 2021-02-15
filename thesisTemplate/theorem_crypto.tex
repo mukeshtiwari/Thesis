@@ -650,34 +650,33 @@ Qed.
     as \textit{Caesar cipher}, which would shift each character in letter by 3 position right with wrapping 
     around, i.e. X would wrap A, Y would wrap to B, and Z would wrap to C. Decryption was 
 	3 character left shift.  Using the  tools of modern mathematics, encryption and decryption 
-	in \textit{Caesar cipher} is modular addition and modular subtraction (modulo 26), respectively.  
+	in Caesar cipher are modular addition and modular subtraction (modulo 26), respectively.  
     Overall, cryptography is art and science of making thing  unintelligible from everyone, except the 
     intended recipient.  	
 	    
-	The modern day cryptography originated in 1970 with two ingenious ideas, \textit{Data Encryption Standard (DES)}, 
-	and \textit{Diffie-Hellman Algorithm}. Data Encryption Standard, developed at IBM in 1970, is a symmetric 
+	The modern day cryptography originated in 1970 with two ingenious ideas, \textit{Data Encryption Standard (DES)} \citep{standard1999data} , 
+	and \textit{Diffie-Hellman Algorithm} \citep{Diffie:2006:NDC:2263321.2269104}.  Data Encryption Standard, developed at IBM in 1970, is a symmetric 
 	key encryption algorithm which uses the same key for encryption and decryption. Since its inception, Data Encryption Standard
 	amassed a bad reputation because of \textit{National Security Agency (NSA)} involvement; however, it had a 
 	practicality issue: key management. If the two parties wanted to communicate
 	securely over insecure channel using  the Data Encryption Standard, then they needed to agree on a common key. 
-	In order to agree on the common key, they needed a secure channel where they can securely communicate the key. 
-    The solution to this problem came from \textit{Diffie-Hellman} key exchange where two parties can exchange the 
-    key securely over insecure channel. Moreover, the advent of \textit{Diffie-Hellman} key exchange started the 
+	In order to agree on the common key, they needed a secure channel where they could securely communicate the key. 
+    The solution to this problem came from Diffie-Hellman key exchange where two parties can exchange the 
+    key securely over insecure channel. Moreover, the advent of Diffie-Hellman key exchange started the 
     whole new area of public key cryptography where encryption and decryption key are different. 
-    Although \textit{Diffie-Hellman} key exchange suffers from  man-in-the-middle (MITM)  attack if used for keys exchange in its 
+    Although Diffie-Hellman key exchange suffers from  man-in-the-middle (MITM)  attack if used for keys exchange in its 
     naivety, e.g. Logjam \citep{Adrian:2015:IFS:2810103.2813707}. Nonetheless, 
     it is a building block ElGamal Encryption \citep{elgamal1985public}. 
     
     
     
-    In this thesis, we are mostly concern about public key cryptography.
+    In this thesis, we are mostly concerned about public key cryptography.
     The basic working principles of modern day cryptography is based on 
-    mathematical principle than vanilla symbol replacement. 
-    In addition, it is no longer just 
+    mathematical principle, and  it is no longer just 
     used to achieving confidentiality, but various other things, e.g. integrity,  authentication, non-repudiation 
     protocol, digital signature, digital cash, etc.
-    These mathematical principle involves 
-    various algebraic structures and algorithm to manipulate the object from these structures.
+    These mathematical principles involve 
+    various algebraic structures and algorithms to manipulate the object from these structures.
     For example, the underlying mathematical principal of \textit{Diffie-Hellman}  algorithm 
     is hardness of computing discrete logarithms in finite fields.
     
@@ -688,7 +687,7 @@ Qed.
     algorithm, because all the constructions we have used  are based on Diffie-Hellman construction. 
     Before we describe the algorithm, we briefly sketch the algebraic structure Group because it is underlying algebraic structure of 
     Diffie-Hellman  construction  (typically, the underlying 
-    structure is multiplicative group of a finite field). Also, note that our definition is influenced theorem-provers/type-theory because 
+    structure is multiplicative group of a finite field). Also, note that our definition is influenced by theorem-provers/type-theory because 
     we have  written the type signature of group operator $*$ and inverse operator $inv$. 
     
     \subsection{Group}
@@ -696,17 +695,17 @@ Qed.
     A group is a set $G$, with a binary operator $* : G \rightarrow G \rightarrow G$, identity element $e$, and inverse operator $inv : G \rightarrow G$ such 
     that the following laws hold: 
     \begin{itemize}
-     \item \texttt{Associativity}: $\forall$  a b c $\in G,$  $a * (b * c) = (a * b) * c$
-    \item \texttt{Closure}: $\forall$ a b $\in G,$  $a * b \in G$
-    \item \texttt{Inverse Element}: $\forall$ a $\in G$ $\exists$ $a^{-1} \in G$, such that $a * a^{-1} = a^{-1} * a = e$. $a^{-1}$ is called inverse of a (
+     \item \texttt{Associativity}: $\forall \text{  } a \text{  } b  \text{  } c \text{  } \in G,  \text{  } a * (b * c) = (a * b) * c$
+    \item \texttt{Closure}: $\forall \text{  } a \text{  } b \in G,  \text{  } a * b \in G$
+    \item \texttt{Inverse Element}: $\forall \text{  } a \in G \text{  } \exists \text{  } a^{-1} \in G$, such that $a * a^{-1} = a^{-1} * a = e$. $a^{-1}$ is called inverse of a (
      $inv$ $a$).
-    \item \texttt{Identity}: $\forall$ a $\in G,$  $a * e = e * a  = a$
+    \item \texttt{Identity}: $\forall \text{  } a \in G,$  $a * e = e * a  = a$
     \end{itemize}
    
     \noindent
     Furthermore, if a group is commutative, i.e. 
-    $\forall$ a b $\in  G,$  $a * b = b * a$, then we call it abelian group (in honour of Niels Henrik Abel). In addition, 
-    if a \textit{group} is \textit{cyclic group} if it can be generated by a single element, also known as generator of group 
+    $\forall \text{  } a \text{  } b \text{  } \in  G,  \text{  } a * b = b * a$, then we call it abelian group (in honour of Niels Henrik Abel). In addition, 
+    a group is \textit{cyclic group} if it can be generated by a single element, also known as generator of group 
     and denoted as $g$, by repeatedly applying the group operator $*$ to itself. Moreover, a group is \textit{finite cyclic group}
     if it is cyclic and the cardinality of the underlying set (carrier set) $G$ is finite. The cardinality is also known as order of group. 
 	    
@@ -736,25 +735,26 @@ Qed.
       \noindent
        During the whole process, Eve, the adversary, would have $g^{a}$ and $g^{b}$, but she can not compute the 
       $ g^{ab}$ from these two values assuming that discrete logarithm is hard to compute. 
-      There are, off course, other attacks exists, e.g. denial of man in the middle attack, Logjam, etc. 
+      There are, off course, other attacks, e.g.  man in the middle attack \citep{menezes2018handbook}, Logjam \citep{Adrian:2015:IFS:2810103.2813707}, etc. 
       The security property of \texttt{Diffie-Hellman} construction is formalized using complexity theoretic notion 
       given below (we would not go into the details of complexity theoretic notions):
       
      
       \textbf{DL - Discrete Logarithm problem:} 
       An instance of \textit{DL} problem states that given a finite cyclic group $G$, a generator of $g$ of $G$, and 
-      an element $y$, finding an element $x \in G$ such that $g^{x} = y$.
+      an element $y$,  we need to find an element $x \in G$ such that $g^{x} = y$ (computing this $x$ is believed to be a 
+      hard problem).
       
       
-      \textbf{DH - Diffie-Hellman problem:}
-      An instance of \textit{DH} problem   
+      \textbf{CDH -Computational Diffie-Hellman problem:}
+      An instance of \textit{CDH} problem   
       states that given a finite cyclic group $G$, a generator of $g$ of $G$, 
-      elements $g^{a}$ and $g^{b}$, finding the element $g^{ab}$.
+      elements $g^{a}$ and $g^{b}$,  we need to find the element $g^{ab}$.
       
       
-      \textbf{DDH - Decision Diffie-Hellman Problem:}
+      \textbf{DDH - Decisional Diffie-Hellman Problem:}
       An instance of \textit{DDH} problem states that given a finite cyclic group $G$, a generator of $g$ of $G$,
-      elements $g^{a}$, $g^{b}$, and $g^{c}$, determining if $c = a * b$.
+      elements $g^{a}$, $g^{b}$, and $g^{c}$,  we need to determining if $c$ is equal to $a * b$, i.e. $c = a * b$, or not, i.e.  $c \neq a * b$.
       
            	 
      
@@ -765,10 +765,10 @@ Qed.
      a randomness.  The \textit{ElGamal} scheme has three phases:
      \begin{enumerate}
 		\item \textbf{Key Generation:}   
-		The user, say Alice, first chooses a finite-cyclic group $G$ of order $p$ ($p$ is a large prime) and a group group generator $g$.
-		She randomly selects a an element $x$ from $\{1, \ldots, p-1\}$ as a private key, computes her public key $h = g^{x}$. 
+		The user, say Alice, first chooses a finite-cyclic group $G$ of order $p$ ($p$ is a large prime) and a group generator $g$.
+		She randomly selects an element $x$ from $\{1, \ldots, p-1\}$ as a private key, computes her public key $h = g^{x}$. 
 		Subsequently, she publishes 
-		the <$G$, $g$, $p$, $h$> and keeps $x$ private. 
+		the ($G$, $g$, $p$, $h$) and keeps $x$ private. 
 		\item \textbf{Encryption:}
 		If any party, say Bob, wants to send a encrypted message $m$ to Alice, then he would randomly select an element 
 		r, where 1 < r < p, computes $c_{1} := g^{r}$ and $c_{2} := m * h^{r}$, and send the pair ($c_{1}, c_{2}$) to 
@@ -814,7 +814,7 @@ Qed.
 		These two operators $\bigotimes$ and $\bigoplus$ are very specific. If a cryptosystem that supports an arbitrary 
 		function $f$ on ciphertext, then it is called fully homomorphic cryptosystem:
 		\begin{displayquote}
-		  $ f (Enc_{pk}(m_{1}), Enc_{pk}(m_{2}), ..., Enc_[pk}(m_{k}) = Enc_{pk}( f (m_{1}, m_{2}, ..., m_{k}))$ 
+		  $ f (Enc_{pk}(m_{1}), Enc_{pk}(m_{2}), ..., Enc_{pk}(m_{k}) = Enc_{pk}( f (m_{1}, m_{2}, ..., m_{k}))$ 
 	    \end{displayquote}
 		
 		\noindent
@@ -831,7 +831,7 @@ Qed.
 	     
 	    Now, keeping in mind that homomorphic encryption enables us to perform useful operation on encrypted data, 
 	    we will see what kind of homomorphic property is exhibited by the ElGamal method discussed in the previous section. 
-	    Given a public infrastructure <$G, p, g, h$> for ElGamal scheme, 
+	    Given a public infrastructure ($G, p, g, h$) for ElGamal scheme, 
 	     we encrypt two message $m_{1}$ and $m_{2}$ by taking two random numbers $r_{1}$,  $r_{2}$ from the group:
 	     \begin{displayquote}
 	     $Enc(m_{1}, r_{1}) := (g^{r_{1}}, m_{1} *  h^{r_{1}})$ 
@@ -842,19 +842,19 @@ Qed.
 	      \end{displayquote}
 	     
 	     
-	     If we mutiply these two cipher together pairwise, we get ($g^{r_{1}+ r_{2}}, m_{1} * m_{2} *  h^{r_{1} + r_{2}}$). 
-	     After decrypting this combined ciphertext, we will get $m_{1} * m_{2}$. In the scheme, $\bigotimes$ is multiplication and 
-	     $\bigoplus$ is also multiplication. Furthermore,  
-	     if our end goal is  to achieve multiplication on a bunch of plaintext, then rather than decrypting the corresponding ciphertext individually 
+	     If we multiply these two cipher together pairwise, we get ($g^{r_{1}+ r_{2}}, m_{1} * m_{2} *  h^{r_{1} + r_{2}}$). 
+	     After decrypting this combined ciphertext, we will get $m_{1} * m_{2}$. In this scheme, $\bigotimes$ is multiplication $*$ and 
+	     $\bigoplus$ is also multiplication $*$.  Furthermore,  
+	     if our end goal is  to achieve multiplication on a bunch of plaintext,  rather than decrypting the corresponding ciphertext individually 
 	     and multiplying them, we could simply multiply all the ciphertext together and decrypt the final result.  
 	     The advantage of this scheme is that it does not leak the individual values which, sometimes, is a very crucial property in many 
-	     application, specifically election voting.
+	     application, specifically in electronic voting.
 	     In electronic voting protocols, we do not want to reveal the choices of a individual voter, but it is acceptable to reveal the final tally. 
 	     However, this scheme is not suitable for electronic voting schemes because it is multiplicative. Almost, to the best of 
 	     my knowledge, all the electronic voting scheme calculate the finally tally by adding the individual choices of all
 	     voters, so the requirement is achieve the addition on plaintext. 
 	     There are 
-	     many additive homomorphic encryption schemes, e.g. Benaloh cryptosystem, Paillier cryptosystem, etc. In addition, we 
+	     many additive homomorphic encryption schemes, e.g. Benaloh cryptosystem \citep{benaloh1994dense}, Paillier cryptosystem \citep{paillier1999public},  etc. In addition, we 
 	     can modify the ElGamal encryption scheme to make additive. In additive case, it works as:
 	       \begin{displayquote}
 	      $Enc(m_{1}, r_{1}) := (g^{r_{1}}, g^{m_{1}} *  h^{r_{1}})$ 
@@ -869,18 +869,18 @@ Qed.
 	    
 	      \noindent
 	      Multiplying these two ciphers pairwise would give us,  ($g^{r_{1} + r_{2}}$, $g^{m_{1} + m_{2}} * h^{r_{1} + r_{2}}$) which would decrypt as 
-	      $g^{m_{1} + m_{2}}$. In this case, $\bigtimes$ is multiplication and $\bigoplus$ is addition.  We can calculate the value 
+	      $g^{m_{1} + m_{2}}$.  We can calculate the value 
 	      of $m_{1} + m_{2}$ by using linear search algorithm, or more efficient one 
 	      Pohlig–Hellman algorithm \citep{10.1109/TIT.1978.1055817}. 
 	      However, the downside 
-	      of this scheme is that if the values of $m_{1} + m_{2} + \dotsb + m_{n}$ (assuming n values) is very large, then calculating it from 
+	      of this scheme is that if the value of $m_{1} + m_{2} + \dotsb + m_{n}$ (assuming n values) is very large,  calculating it from 
 	      $g^{m_{1} + m_{2} + \dotsb  + m_{n}}$ is 
 	      not very practical \citep{10.1007/3-540-69053-0_9}. 
 	     
      \subsection{Zero-Knowledge Proof}
      \label{sec:zkp}
       In conventional mathematics, a proof of mathematical statement is collection of basic axioms combined according to rules of 
-      the system. For example, we want to prove that in for any group G with group operation *, for any two elements x y $\in$ G, we have:
+      the system. For example, we want to prove that  for any group G with group operation *, for any two elements x y $\in$ G, we have:
       \begin{displayquote}
 		 
 		 $(x * y)^{-1}$ = $y^{-1} * x^{-1}$
@@ -888,7 +888,7 @@ Qed.
 	    \end{displayquote}
       
       \noindent
-      Proof: we assume arbitrary x, y. We show that $(x * y)^{-1}$ and $y^{-1} * x^{-1}$ are 
+      Proof: we assume arbitrary x, y. We show that $(x * y)}$ and $y^{-1} * x^{-1}$ are 
       inverse of each other by combining them together using the group operator $*$ and using 
       the group laws lead to the identity of the group $G$.
  
@@ -901,7 +901,7 @@ Qed.
 \end{align}
 
      \noindent
-      Similarly, we can prove that $((y^{-1} * x^{-1}) *   (x * y) = e $.
+      Similarly, we can prove that $(y^{-1} * x^{-1}) *   (x * y) = e $.
       We can also formalize it inside theorem prover and prove it more formally (below is a proof in Coq theorem prover where 
       $*$, the group operation, is represented as $f$ and $^{-1}$, the inverse operation, is represented as $inv$).
       
@@ -919,18 +919,18 @@ Qed.
       Qed.
       \end{minted}
      
-     If a verifier wants to verify the correctness of our proof, then she would simply check that if the group rules are applied correctly. 
+     If a verifier wants to verify the correctness of our proof,  she would simply check that if the group rules are applied correctly. 
      Moreover, these proofs 
-     are static in nature, i.e. once the prover has produced the proof, then the content of proof is not going to change over time, and
+     are static in nature, i.e. once the prover has produced the proof,  the content of proof is not going to change over time, and
      there would not be any interaction between prover and verifier if verifier wants to verify the proof.  In addition, the verifier 
      not only learned that the statement is true, but she also learned the content of proof (gained some knowledge).
      
      In contrast, zero-knowledge-proof, first introduced by Goldwasser, Micali, and Rackoff \citep{Goldwasser:1985:STOC} , 
      is probabilistic proof that involves the explicit notion of a interaction between 
-     the prover and verifier. In addition, 
+     a prover and a verifier. In addition, 
      the goal of the prover is to convince the verifier about the validity of some statement without revealing any information, i.e. 
-     the only thing verifier would learn is that if statement is true or false without any other information. 
-     More formally, zero-knowledge proof for a language $L \in \{0, 1\}^{*} $ (generally NP) is a interactive proof  
+     the only thing the verifier would learn is that if statement is true or false without any other information. 
+     More formally, zero-knowledge proof for a language $L \in \{0, 1\}^{*} $ (generally NP) is an interactive proof  
      between a (computationally unbounded) prover $P$ and a (polynomial time) verifier $V$. Furthermore, 
      the goal of $P$ is to convince V that x $\in$ L  such that:
    
@@ -941,28 +941,29 @@ Qed.
      \textbf{Soundness:} If x $\notin$ L then dishonest prover $P^{*}$ can not convince the honest verifier $V$ 
      to accept the claim (with some small probability error known as soundness error)
      
-     \textbf{zero-knowledge:} A malicious verifier $V^{*}$ would gain no additional information by interacting with a honest prover $P$ 
+     \textbf{Zero-Knowledge:} A malicious verifier $V^{*}$ would gain no additional information by interacting with a honest prover $P$ 
       other than x $\in$ L. More formally, for every (polynomial time) program $V^{*}$ there exists a (polynomial time)
-      program $S$, also known as simulator, which can produce the transcript of protocol by itself without interactive with anyone. 
+      program $S$, also known as simulator, which can produce the transcript of protocol by itself without interacting with anyone. 
       Moreover, the transcript 
-      produced by simulator $S$ is indistinguishable from real transcript produced by interaction between 
+      produced by simulator $S$ is indistinguishable from real transcript, produced by interaction between the prover and the verifier. 
       
     
     \subsubsection{Zero-Knowledge Proof of Knowledge}
-    Sometimes, the fact that $ x \in L$ is completely trivial.  For example, for any given finite group $G$ of order $p$ ($p$ is prime), 
-    a random element $h$ from the group $G$, and generator $g$of the group $G$, a prover claims that there is a $x$ such that 
+    Sometimes, the fact that $ x \in L$ is completely trivial \citep{10.1007/3-540-48071-4_28}.  For example, for any given finite group $G$ of order $p$ ($p$ is prime), 
+    a random element $h$ from the group $G$, and generator $g$ of the group $G$, a prover claims that there is a $x$ such that 
     $g^x = h$. 
-    This is trivial because we know that there always exists such $x$ (discrete logarithm problem); however, the challenge is to show that
+    This is trivial because we know that there always exists such $x$ (because $h \text{  }\in \text{  } G$) ; however, the challenge is to show that
     the prover knows the witness $x$.
     Formally, zero-knowledge proof of knowledge is defines as: let $R = {(x, w) \subset L \times W$ is a binary relation such that     
     $x \in L$ is common string between prover $P$ and verifier $V$ and $w \in W$, also known as witness, is private to 
-    the prover $P$.  Moreover, the goal of prover $P$ is to convince verifier $V$ that $(x, w) \in R$ in zero-knowledge.  
+    the prover $P$.  Moreover, the goal of prover $P$ is to convince verifier $V$ that $(x, w) \in R$ in zero-knowledge, i.e. without revealing
+    anything else other than showing that the statement $(x, w) \in R$ is true. 
     
         
    
     \subsection{Sigma Protocol}
     \label{sec:sigma}
-     Sigma protocols are efficient way to achieve zero-knowledge proof of knowledge.   Sigma protocol is 
+     Sigma protocols  \citep{10.1007/3-540-48658-5_19} are efficient way to achieve zero-knowledge proof of knowledge.   Sigma protocol is 
      a three step communication between a prover $P$ and a verifier $V$ where goal of the prover is to convince the verifier that 
      she knows witness $w$ for common input $x$ such that  $(x, w) \in R$: 
      
@@ -975,26 +976,26 @@ Qed.
      Based on public inputs $(x, a, e, z)$, the verifier $V$ decides to accept or reject the proof.   A protocol is 
      said to be sigma protocol for a relation $R$ if: 
      
-     \textbf{Completeness:} when prover and verifier follow the protocol for public input $x$ and witness $w$ 
-          then verifier accepts the proof
+     \textbf{Completeness:} when prover and verifier follow the protocol for public input $x$ and (private) witness $w$, 
+          verifier accepts the proof
           
       \textbf{Special Soundness:} For a given pubic input $x$, if prover can produce two accepting transcript $(a, e, z)$ 
-      and $(a, e', z')$ ($e$ and $e'$ are disjoint), then there exists a efficient program, extractor, which can extract the 
+      and $(a, e', z')$ ($e$ and $e'$ are disjoint),  there exists a efficient program, extractor, which can extract the 
       witness w.
       
       \textbf{Honest Verifier Zero-Knowledge:} For a given public input $x$ and random input $e$, there is a simulator 
       which outputs an accepting transcript $(a, e, z)$ which is indistinguishable from a proof generated by 
       a prover interacting with honest verifier. 
      
-     A concrete example of sigma protocol is Schnorr protocol \citep{10.1007/3-540-48658-5_19}. In this example, 
+     A concrete example of sigma protocol \citep{10.1007/3-540-48658-5_19} is Schnorr protocol \citep{10.1007/0-387-34805-0_22}.  In this example, 
      the goal of a prover $P$ is
-     to prove the knowledge of discrete log in a Group of order $p$ (p is prime) to a verifier $V$.
+     to prove the knowledge of discrete logarithm in a Group of order $q$ (q is prime) to a verifier $V$.
      Furthermore, $g$ is the generator of 
      group $G$, $x$ is the public input and $w$ is private input with relation $x = g^w$. The protocol follows:
      
      \begin{itemize}
-     \item Prover $P$ randomly selects an element $r$ from [0 $\dotsb$ q), computes $a = g^r$ and sends $a$ to verifier $V$
-     \item Verifier $V$ randomly selects an element $c$ from [0 $\dotsb$ q) and sends it to $P$
+     \item Prover $P$ randomly selects an element $r$ from $Z_{q}$, computes $a = g^r$ and sends $a$ to verifier $V$
+     \item Verifier $V$ randomly selects an element $c$ from  $Z_{q}$ and sends it to $P$
      \item Prover $P$ sends $z = r + c * w $ to $V$.  $V$ checks $g^{z} = a * x^{c}$
      \end{itemize}
      
@@ -1004,7 +1005,7 @@ Qed.
       \item Completeness holds with probability $1$. Simplifying the expression $g^{z}$ shows that 
       it is equal to $a * x^{c}$. Replacing the $z$ by $r + c * w$ in expression  $g^{z}$, we get 
       $g^{r + c * w}$.  Using addition rule of power, $g^{r + c * w}$ can be simplified as 
-      $g^{r} * g^{c * w}$. First first step of protocol, $a = g^r$, so we can replace the $g^{r} * g^{c * w}$ 
+      $g^{r} * g^{c * w}$. First step of protocol, $a = g^r$, so we can replace the $g^{r} * g^{c * w}$ 
       by $a * g^{c * w}$. From the group infrastructure, we have $x = g^w$, so we can write $x$ at place of 
       $g^{w}$, therefore, $a * g^{c * w}$ transforms into $a * x^c$. 
       
@@ -1016,13 +1017,13 @@ Qed.
      \end{itemize}
      
      \textbf{Fiat-Shamir Transform:}
-      In practice, the \textit{Fiat-Shamir} transform is used to turn a Sigma protocol into a non-interactive proof. 
-      As a consequence, there is no longer any interaction with verifier. A \textit{Fiat-Shamir}  transform to sigma protocol is:
+      In practice, the \textit{Fiat-Shamir} \citep{10.5555/36664.36676} transform is used to turn a Sigma protocol into a non-interactive proof. 
+      As a consequence, there is no longer any interaction with verifier.  
       
       \begin{itemize}
      \item Prover $P$ randomly selects an element $r$ from [0 $\dotsb$ q), computes $a = g^r$
-     \item Prover $P$ computes $c =  H(a || x) $ where $H$ is a hash function
-     \item Prover $P$ computer $z := r + c  * w $
+     \item Prover $P$ computes $c =  H(a || x)$ where $H$ is a hash function and $||$ is concatenation function. 
+     \item Prover $P$ computer $z = r + c  * w $
      \end{itemize}
       Finally, $P$ publishes the transcript $(a, c, z)$ for anyone to verify her claim. Subsequently, 
       any one who is verifying the claim has to check two things: (i) $c := H (a || x)$, and (ii) 
@@ -1032,33 +1033,36 @@ Qed.
      \subsection{Commitment Schemes}   
      \label{sec:commscheme}
       Commitment schemes are cryptographic primitives equivalent to real life sealed lock-box.
-      Once the lock-box is locked and sealed, the content inside it can not be changed without breaking the lock and seal. 
+      Once the lock-box is locked and sealed, the content inside  can not be changed without breaking the lock and seal. 
       In general, commitment primitives 
-      are backbone of any cryptographic protocol between two parties, communicating over internet, to force them  to  follow the 
+      are backbone of any cryptographic protocol between two parties, communicating over Internet, to force them  to  follow the 
       protocol honestly, even they would have a huge gain from deviating 
-      from protocol. For example, in order to save some time before a match, Indian cricket team captain, living in Delhi, and Australian cricket 
-      team captain, living in Canberra, decide 
+      from protocol. For example, in order to save some time before a match, Indian cricket team captain (coin tossing captain), living in Delhi, and Australian cricket 
+      team captain (calling captain), living in Canberra, decide 
       to toss a coin in advance over the Internet, using a mobile application  called toss-app, for a  upcoming series of one-day matches
       \footnote{
       In a cricket match, which is very popular sport in India and Australia, both captains meet in the ground and toss a coin to 
-      decide who would have the first call.}.  Assuming the workings of toss-app is naive, i.e. one captain is going to post
-      his call in the chat box, and the other other captain is going to toss the coin at their end and post the outcome in chat box. 
-      Furthermore, the decision is taken based on the messages posted by the two captains. In this scenario, we are assuming that 
-      the captain, who is tossing the coin, is honest and posting the outcome of the coin honestly in the chat box, which could or 
-      could not be the case.  The question is can we devise some scheme which would force the both parties to behave honestly? 
-      The answer is yes, we can devise such scheme. We would use the sealed lock-box concept, albeit the digital one. Moreover, 
-      the first captain would put his call in digitally sealed lock-box and post it in the chat box. Because it is sealed and 
+      decide who would have the first call.}.  Assuming the workings of toss-app is naive and all the messages posted in 
+      chat box are in plaintext.   Using the toss-app,  both captains, the coin tossing captain and the calling captain,  post their 
+      outcome in the chat box,  and the toss winner is decided based on the messages posted by the two captains.  
+	 How likely would be the case where both captains are honest, if the toss plays a major role in winning the series? 
+	 We can not expect them to be honest because they both have incentive (winning the series) to cheat during the 
+	 protocol (coin toss).      
+      
+      The question is can we devise some scheme which would force the both parties to behave honestly? 
+      The answer is yes, we can devise such scheme.  We would use the sealed lock-box concept, albeit digital one. Moreover, 
+      the first captain would put his call in a digitally sealed lock-box and post it in the chat box. Because it is sealed and 
       locked, the other captain would have no idea what is the content inside it. Furthermore, it is impossible to break 
-      the lock box, so it is fruitless and waste of time for the other captain to even try. The other captain will toss the coin 
-      and post the outcome in a separate digital sealed lock box. Now that we two digital sealed lock box which can 
-      only be opened by the respective owners, they would move for the next phase of coin tossing  called revealed phase. 
-      In the revealed phase, they both would open their sealed locked box to show that what they have locked, 
+      the lock-box, so it is fruitless and waste of time for the other captain to even try. The other captain will toss the coin 
+      and post the outcome in a separate digital sealed lock-box  in the chat box.  Now that we two digital sealed lock-box which can 
+      only be opened by the respective owners, they would move for the next phase of coin tossing  called reveal phase. 
+      In the reveal phase, they both would open their sealed locked box to show that what they have locked, 
       and the decision would be taken accordingly \footnote{Story influenced by Manuel Blum's coin flipping by telephone}. 
       
       
       Formally, a commitment scheme is three step protocol between a sender $S$ and a receiver $R$:
       \begin{enumerate}
-      \item Commit phase: sender $S$ commits a value $m$ by generating a random number $r$ and using some algorithm $C$, which takes the message 
+      \item Commit phase: sender $S$ commits a message $m$ by generating a random number $r$ and using some algorithm $C$, which takes the message 
       and random $r$. Moreover, the committed value produced by the commitment algorithm $C$, $c = C(m, r)$, is shared with receiver $R$.
       \item Reveal phase: In the reveal phase, the sender reveals the message $m$ and randomness $r$ which are subsequently used by 
          receiver to verify the result, i.e. the receiver computes  $c' = C(m, r)$ and matches it again the given $c$ in the commit phase of protocol. 
@@ -1066,7 +1070,7 @@ Qed.
       
       
     \textbf{Security Properties:} 
-     Commitment schemes have to have two properties: hiding and binding. Hiding property ensures that 
+     Commitment schemes have two properties: hiding and binding. Hiding property ensures that 
      the receiver can not recover or recompute the original message $m$ from the given commitment $c$, i.e. 
      it forces the receiver to behave honestly in the protocol. 
      Furthermore, binding property ensures that it is impossible for sender to come up with 
@@ -1074,13 +1078,13 @@ Qed.
      it forces the sender to behave honestly in the protocol. 
      
     \textbf{Pedersen commitment:}
-     Finally, we give a brief overview of a Pedersen commitment scheme which is based on discrete log.  The protocol as follows assuming 
+     Finally, we give a brief overview of a Pedersen commitment scheme which is based on discrete logarithm.  The protocol as follows assuming 
      the public parameter available to sender and receiver, i.e. the set up has been conducted to generate the the public parameter, 
      and both parties have these values. These values include a prime $p$, $y$ a randomly chosen element from $Z_{p}^{*}$, and $g$ 
      a randomly chosen generator from   $Z_{p}^{*}$.  
      
      \begin{itemize}
-     \item Commit phase: The sender generates a random $r$ from $Z_{p}^{*}$, computes commitment $c = g^{r}*y^{m}$ and sent the commitment to 
+     \item Commit phase: The sender generates a random $r$ from $Z_{p}^{*}$, computes commitment $c = g^{r}*y^{m}$ and sends the commitment to 
         receiver
       \item Verification phase: In verification phase, the sender reveals the original message $m$ and the randomness $r$. Finally, 
             the receiver computes  $g^{r}*y^{m}$. If the computed  value matches with the commitment received in 
@@ -1091,7 +1095,7 @@ Qed.
 	
 
 \section{Summary}
-In this chapter, we gave a brief summary of Coq theorem prover and cryptographic notation needed to understand the further chapters. By no means, 
+In this chapter, we gave a brief summary of Coq theorem prover and cryptographic primitives needed to understand the further chapters. By no means, 
 these descriptions were exhaustive. For a detailed treatment of Coq theorem prover,   \citep{Bertot:2004:ITP} \citep{Chlipala:2013:CPD:2584504}
  can be referred, and for cryptography,    \citep{Menezes:1996:HAC:548089} \citep{Schneier:1995:ACP:212584} \citep{Paar:2009:UCT:1721909} 
 can be referred.  In the next chapter, we will discuss the Schulze method, and the machinery for its formalization. 
