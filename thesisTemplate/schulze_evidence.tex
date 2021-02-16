@@ -8,7 +8,7 @@ co-operation of all on board it can be safely brought to part.}
 {\textit{Sardar Vallabhbhai Patel}} 
 
 \section{Introduction}
- Correctness and verifiability/evidence are two main pillar of any democratic election. 
+ Correctness and verifiability/evidence are two main pillars of any democratic election. 
  In case of paper ballot election, correctness and verifiability of counting is achieved 
  by public scrutiny because each step is carefully observed by general member of public, 
  and agents from different political parties. For example, casting ballot at booth 
@@ -27,10 +27,10 @@ co-operation of all on board it can be safely brought to part.}
  
  
  \textbf{Chapter overview:} In this chapter, we explain the Schulze method in Section \ref{sec:schulze_algorithm}, 
- and its formal specification in the Section \ref{sec:spec}. The  corner stone of our formalization is 
- a correct by construction dependent inductive data type 
+ and its formal specification in the Section \ref{sec:spec}. The  corner stone of our formalisation is 
+ a correct-by-construction dependent inductive data type 
  that represents all correct executions (\ref{sec:inductive_type}) with the formal proof of
- that every Schulze election have winners (\ref{sec:all_winners}).  Every inhabitant of 
+ that every Schulze election has winners (\ref{sec:all_winners}).  Every inhabitant of 
  this dependent inductive data type not only produces a final result, but also all the 
  intermediate steps which lead to the notion of evidence or scrutiny sheet (Section 
   \ref{sec:scrunity_sheet}).  In the Section \ref{sec:count_million}, we discuss the optimization techniques
@@ -70,13 +70,15 @@ margin between $d$ and $c$. More concretely:
 
 \begin{itemize}
 
-\item Consider an election with a set of $m$ candidates
- $C$ = $\{c1,\dots,cm\}$, and 
+\item Consider an election with a set of $t$ candidates
+ $C$ = $\{c1,\dots,ct\}$, and 
 	a set of $n$ votes $P$ = $\{b1,\dots,bn\}$. A vote
 	is represented as function $b: C \rightarrow \mathbb{N}$ that 
 	assigns natural 
 	number (the preference) to each candidate. We recover a strict linear  
-	preorder $<_b$ on candidates by setting $c <_b d$ if $b(c) > b(d)$. 
+	preorder $<_b$ on candidates by setting $c <_b d$ if $b(c) > b(d)$, i.e. 
+	$c$ is less preferred over $d$ if the natural number $b(c)$ is greater
+	than the natural number $b(d)$. 
 	
 \item Given a set of ballots $P$ and candidate set $C$, we construct graph $G$ based on the margin function $m: C \times C \to \mathbb{Z}$. Given two candidates $c, d \in C$,
 the \emph{margin} of $c$ over $d$ is
@@ -93,17 +95,17 @@ In symbols:
 
 
 \item A directed \emph{path} in the graph, $G$, from
-candidate $c$ to candidate $d$ is a sequence $p \equiv c_0, \dots, c_{n+1}$
-of candidates with $c_0 = c$ and $c_{n+1} = d$ ($n \geq 0$), and the
-\emph{strength}, st, of path, p, is the minimum margin of adjacent
+candidate $c$ to candidate $d$ is a sequence $p \equiv c_0, \dots, c_{w+1}$
+of candidates with $c_0 = c$ and $c_{w+1} = d$ ($w \geq 0$), and the
+\emph{strength}, $st$, of path, $p$, is the minimum margin of adjacent
 nodes, i.e.
-\[ st(c_0, \dots, c_{n+1}) = \min \lbrace m (c_i, c_{i+1}) \mid 0
-\leq i \leq n \rbrace. \]
-\item For candidates c and d, let $M(c, d)$ denote the maximum strength, or generalized margin of a path
-	from c to d i.e. 
-	\[ M(c, d) = \max \lbrace st (p) : \text{p is path from c to d in G} \rbrace\]
+\[ st(c_0, \dots, c_{w+1}) = \min \lbrace m (c_i, c_{i+1}) \mid 0
+\leq i \leq w \rbrace. \]
+\item For candidates $c$ and $d$, let $M(c, d)$ denote the maximum strength, or generalised margin of a path
+	from $c$ to $d$ i.e. 
+	\[ M(c, d) = \max \lbrace st (p) : p \text{ is path from } c \text{ to } d \text{ in } G \rbrace\]
 	
-\item The winning set is, always non empty and  formally proved in \ref{sec:all_winners}, defined as 
+\item The winning set, formally defined in \ref{sec:all_winners},  is defined as 
  \[ W =  \lbrace c \in C : \forall d \in C \setminus \{c\}, M (c, d) \geq M (d, c) \rbrace\]
 
 \end{itemize}
@@ -111,20 +113,20 @@ nodes, i.e.
 In other words, the Schulze method
 stipulates that a candidate $c \in C$ is a \emph{winner} of the
 election with margin function $m$ if, for all other candidates $d \in
-C$, there exists a number $k \in Z$ such that
+C$, there exists a number $k \in \mathbb{Z}$ such that
 \begin{itemize}
 \item there is a path $p$ from $c$ to $d$ with strength $st(p) \geq k$
 \item all paths $q$ from $d$ to $c$ have strength $st(q) \leq k$.
 \end{itemize}
 Informally speaking, we can say that  candidate $c$
-\emph{beats} candidate $d$ if there's a path $p$ from
-$c$ to $d$ which stronger than any path from $d$ to $c$. Using
+\emph{beats} candidate $d$ if there is a path $p$ from
+$c$ to $d$ which is stronger than any path from $d$ to $c$. Using
 this terminology, a candidate $c$ is a winner if $c$ cannot be
 beaten by any (other) candidate.
 
 
 	\subsection{An Example}
-	Suppose that for some given set of ballots (the actual set of ballots are not very important because we want to demonstrate the Condercet Paradox) for 
+	Suppose that for some given set of ballots (the actual set of ballots are not very important because we want to demonstrate the Condercet Paradox that we will explain below) for 
 	a given set of candidates $\lbrace A, B, C \rbrace$, 
 	we have computed 
 	the margin function $m$ such that $m$ ($A, B$) = 3, $m$ ($B, A$) = -3, $m$ ($A, C$) = -1, 
@@ -147,12 +149,12 @@ A \ar@/^/[rr]^{3} \ar@/_/[dr]_{-1} & & B \ar@/^/[ll]^{-3}
 
 
 The main idea of the method is to resolve cycles by considering \emph{transitive preferences} or a generalised notion of margin. 
-Figure \ref{generalizemargin} shows the graph interpretation of the generalised 
+Figure \ref{generalisemargin} shows the graph interpretation of the generalised 
 margin, $M$, after running the Schulze method on the margin function $m$ (the 
 word margin function is used interchangeably with margin matrix).  In order to 
-compute $M(A, B)$, we first compute all the paths from candidate $A$ to $B$. Here we have just two path from $A$ to $B$, a direct path between them and 
-a intermediate path via candidate $C$.  Now that we two paths, we compute the path strength $st$ for each path, $st(A, B) = min \lbrace m (A, B) \rbrace $ 
-and $st (A, C, B)$ = $min \lbrace m (A, C), m (C, B) \rbrace$.  Simply these expression:
+compute $M(A, B)$, we first compute all the paths from candidate $A$ to $B$. Here we have just two paths from $A$ to $B$, a direct path between them and 
+an intermediate path via candidate $C$.  Now that we have all the paths, we compute the path strength $st$ for each path, $st(A, B) = min \lbrace m (A, B) \rbrace $ 
+and $st (A, C, B)$ = $min \lbrace m (A, C), m (C, B) \rbrace$.  Simply these expressions:
 
 \begin{align}
 \hspace{-3cm} st (A, B)&=  \min \lbrace m (A, B) \rbrace  \nonumber \\
@@ -167,9 +169,8 @@ st (A, C, B)&=  \min \lbrace m (A, C), m (C, B) \rbrace  \nonumber \\
                      &= -5\nonumber
 \end{align}
 
-Once we have the path strength for every path between $A$ and $B$, we compute generalize margin 
-$M(A, B) = \max \lbrace st (A, B), st(A, C, B) \rbrace$, and simplification leads to 3; hence the arrow going
-$A$ to $B$ has strength 3.  
+Once we have the path strength for every path between $A$ and $B$, we compute generalised margin 
+$M(A, B) = \max \lbrace st (A, B), st(A, C, B) \rbrace$.
 
 
 \begin{align}
@@ -178,8 +179,11 @@ M (A, B)&=  \max \lbrace st (A, B), st(A, C, B) \rbrace \nonumber \\
                      &= 3\nonumber
 \end{align}
 
-Similarly, we can compute other values as well. 
 
+Since $M(A, B) = $ 3,  hence the arrow going $A$ to $B$ has strength 3.   Similarly, we can compute other values as well. 
+
+\noident
+Strength of paths between $B$ to $A$:
 \begin{align}
 \hspace{-3cm} st (B, A)&=  \min \lbrace m (B, A) \rbrace  \nonumber \\
 					  &= \min \lbrace -3 \rbrace  \nonumber \\
@@ -193,12 +197,16 @@ st (B, C, A)&=  \min \lbrace m (B, C), m (C, A) \rbrace  \nonumber \\
                      &= 1\nonumber
 \end{align}
 
+\noindent
+Generalised margin between $B$ and $A$:
 \begin{align}
 M (B, A)&=  \max \lbrace st (B, A), st(B, C, A) \rbrace \nonumber \\
                      &= \max \lbrace -3, 1 \rbrace \nonumber \\
                      &= 1\nonumber
 \end{align}
 
+\noident
+Strength of paths between $A$ to $C$:
 \begin{align}
 \hspace{-3cm} st (A, C)&=  \min \lbrace m (A, C) \rbrace  \nonumber \\
 					  &= \min \lbrace -1 \rbrace  \nonumber \\
@@ -212,13 +220,16 @@ st (A, B, C)&= \min \lbrace m (A, B), m (B, C) \rbrace  \nonumber \\
                      &= 3\nonumber
 \end{align}
 
+\noindent
+Generalised margin between $A$ and $C$:
 \begin{align}
 M (A, C)&=  \max \lbrace st (A, C), st(A, B, C) \rbrace \nonumber \\
                      &= \max \lbrace -1, 3 \rbrace \nonumber \\
                      &= 3\nonumber
 \end{align}
 
-
+\noident
+Strength of paths between $C$ to $A$:
 \begin{align}
 \hspace{-3cm} st (C, A)&=  \min \lbrace m (C, A) \rbrace  \nonumber \\
 					  &= \min \lbrace 1 \rbrace  \nonumber \\
@@ -232,6 +243,8 @@ st (C, B, A)&= \min \lbrace m (C, B), m (B, A) \rbrace  \nonumber \\
                      &= -5\nonumber
 \end{align}
 
+\noindent
+Generalised margin between $C$ and $A$:
 \begin{align}
 M (C, A)&=  \max \lbrace st (C, A), st(C, B, A) \rbrace \nonumber \\
                      &= \max \lbrace 1, -5 \rbrace \nonumber \\
@@ -241,7 +254,8 @@ M (C, A)&=  \max \lbrace st (C, A), st(C, B, A) \rbrace \nonumber \\
 
 
 
-
+\noident
+Strength of paths between $C$ to $B$:
 \begin{align}
 \hspace{-3cm} st (C, B)&=  \min \lbrace m (C, B) \rbrace  \nonumber \\
 					  &= \min \lbrace -5 \rbrace  \nonumber \\
@@ -255,13 +269,16 @@ st (C, A, B)&= \min \lbrace m (C, A), m (A, B) \rbrace  \nonumber \\
                      &= 1\nonumber
 \end{align}
 
+\noindent 
+Generalised margin between $C$ and $B$:
 \begin{align}
 M (C, B)&=  \max \lbrace st (C, B), st(C, A, B) \rbrace \nonumber \\
                      &= \max \lbrace -5, 1 \rbrace \nonumber \\
                      &= 1\nonumber
 \end{align}
 
-
+\noident
+Strength of paths between $B$ to $C$:
 \begin{align}
 \hspace{-3cm} st (B, C)&=  \min \lbrace m (B, C) \rbrace  \nonumber \\
 					  &= \min \lbrace 5 \rbrace  \nonumber \\
@@ -275,6 +292,8 @@ st (B, A, C)&= \min \lbrace m (B, A), m (A, C) \rbrace  \nonumber \\
                      &= -3\nonumber
 \end{align}
 
+\noindent 
+Generalised margin between $B$ and $C$:
 \begin{align}
 M (B, C)&=  \max \lbrace st (B, C), st(B, A, C) \rbrace \nonumber \\
                      &= \max \lbrace 5, -3 \rbrace \nonumber \\
@@ -282,7 +301,7 @@ M (B, C)&=  \max \lbrace st (B, C), st(B, A, C) \rbrace \nonumber \\
 \end{align}
 
 \noindent
-Now we have computed all the values of generalize margin $M$, we can interpret it as a
+Now we have computed all the values of generalised margin $M$, we can interpret it as a
 graph show below.  It is clear from the graph that candidate $A$ is winner, as she beats 
 $B$ with strength 3 (reverse path from $B$ to $A$ is weaker, i.e. strength 1) and 
 $C$ with strength 3 (reverse path from $C$ to $A$ is weaker, i.e. strength 1). 
@@ -294,7 +313,7 @@ A \ar@/^/[rr]^{3} \ar@/_/[dr]_{3} & & B \ar@/^/[ll]^{1}
 \ar@/^/[dl]^5 \\
 & C \ar@/_/[ul]_{1} \ar@/^/[ur]^{1}
 }\]
-\caption{Generalised Margin (Graph Interpretation)}\label{generalizemargin}
+\caption{Generalised Margin (Graph Interpretation)}\label{generalisemargin}
 \end{figure}
 	 
 	
@@ -331,7 +350,7 @@ variable:
 We formalise the notion of path and strength of a path by means of a
 single (but ternary) inductive proposition that asserts the
 existence of a path of strength $\geq k$ between two candidates, for
-$k \in Z$. The notion of winning candidate is that it beats every other candidate, i.e.  all the paths from 
+$k \in  \mathbb{Z}$. The notion of winning candidate is that it beats every other candidate, i.e.  all the paths from 
 the winner to other candidates are at least as strong as the reverse path. Dually, the notion of loser
  is that there is a candidate who beats the loser, i.e. the path from the candidate to the loser is 
  stronger than the reverse path. 
@@ -379,7 +398,7 @@ next section.
 
 
 \label{sec:prop-type}
-One of the fundamental question about the declaring some one 
+One of the fundamental question about declaring someone 
 as a winner or loser is that 
 how can we know that, say, a candidate $c$ in fact wins a
 Schulze election, and that, say, $d$ is not a winner? One possible 
@@ -414,12 +433,12 @@ existence of a path, and the notion of path is inductively defined.
 For the second item, we need to produce evidence of membership in
 the \emph{complement} of an inductively defined set.
 
-Mathematically, given $k \in Z$ and a margin function $m: C \times C
-\to Z$, the pairs $(c, d) \in C \times C$ for which there exists a
+Mathematically, given $k \in \mathbb{Z}$ and a margin function $m: C \times C
+\to \mathbb{Z}$, the pairs $(c, d) \in C \times C$ for which there exists a
 path of strength $\geq k$ that joins both are precisely the elements
 of the least fixpoint $LFP(V_k)$ of the monotone operator $V_k:
-Pow(C \times C) \to Pow(C \times C)$, defined by
-\[ V_k(R) = \lbrace (c, e) \in C \mid m(c, e) \geq k \mbox{ or }
+Pow(C \times C) \to Pow(C \times C)$ (where $Pow$ stand for powerset) , defined by
+\[ V_k(R) = \lbrace (c, e) \in C \times C \mid m(c, e) \geq k \mbox{ or }
 (m(c, d) \geq k \mbox{ and } (d, e) \in R \mbox{ for some } d \in C)
 \rbrace \]
 It is easy to see that this operator is indeed monotone, and that
@@ -445,7 +464,7 @@ $R \subseteq W_{k+1}(R)$.
 That is, to demonstrate that $(d, c) \in GFP(W_{k+1})$, we need
 to exhibit a $W_{k+1}$-coclosed set $R$ with $(d, c) \in R$.
 If we unfold the definitions, we have:
-\[ W_k(R) = \lbrace (c, e) \in C^2 \mid m(c, e) < k \mbox{ and
+\[ W_k(R) = \lbrace (c, e) \in C \times C \mid m(c, e) < k \mbox{ and
 } (m(c, d) < k \mbox{ or } (d,e) \in R \mbox{ for all } d \in C)
 \rbrace \]
 so that given \emph{any} fixpoint $R$ of $W_k$ and $(c, e) \in W$, we
@@ -457,7 +476,7 @@ $\geq k$) or we don't have a path between $d$ and $e$ of strength
 $\geq k$. We use the following terminology:
 
 \begin{definition} Let $R \subseteq C \times C$ be a subset and $k \in
-Z$. Then $R$ is \emph{$W_k$-coclosed}, or simply
+\mathbb{Z}$. Then $R$ is \emph{$W_k$-coclosed}, or simply
 \emph{$k$-coclosed}, if $R \subseteq W_k(R)$.
 \end{definition}
 
@@ -499,12 +518,12 @@ formulate the notion of $k$-coclosed predicate.
 
 \noindent
 Now, we have following type-level definition of winning (and dually, 
-no-winning) for Schulze counting. As we see that these definition not only produces 
+no-winning) for Schulze counting. As we see that these definitions not only produces 
 the result, but they also produce witness, e.g. the \texttt{wins\_type} definition 
 states that if a candidate, say $c$, is the winner,  
-then for each individual candidates participating in election, it produces two witness:
+for each individual candidate participating in election, it produces two witnesses:
 (i) a path from itself to the beating candidate of certain strength, say $k$, and 
-(ii) a $k$+1 co-closed set.  These witness are basic building blocks of the 
+(ii) a $k$+1 coclosed set.  These witnesses are basic building blocks of the 
 scrutiny sheet we produce after election. 
 
 \begin{minted}{coq}
@@ -615,9 +634,9 @@ level winning condition.
       
 \end{minted}
 
-Similarly, we connect the propositional losing to type level losing via generalized margin. We show that 
-candidate $c$ is losing then there is a candidate $d$ and generalized margin between candidate $d$ and 
-$c$ is more that generalized margin between $c$ and $d$.  Using this fact, we can prove the 
+Similarly, we connect the propositional losing to type level losing via generalised margin. We show that 
+candidate $c$ is losing then there is a candidate $d$ and generalised margin between candidate $d$ and 
+$c$ is more that generalised margin between $c$ and $d$.  Using this fact, we can prove the 
 type level losing condition. 
 
 \begin{minted}{coq} 
@@ -636,7 +655,7 @@ type level losing condition.
 The proof of lemma  $iterated\_marg\_loses\_type$ is not straight forward because
 we are in a similar situation  as we were in $wins\_prop\_type$. 
 We can not eliminate \texttt{exists n, P n} in order to show \texttt{existsT n, P n},
-because Coq would not allows to do case analysis on \texttt{exists n, P n} (a term of 
+because Coq would not allow to do case analysis on \texttt{exists n, P n} (a term of 
 type \texttt{Prop}) since the goal, \texttt{existsT n, P n} (a term of type \texttt{Type}), is not in
 \texttt{Prop}. We again follow the technique described in 
 \texttt{Type vs Prop} section (\ref{sec:reification}).
@@ -657,7 +676,7 @@ Corollary reify_opponent (c: cand):
 
 \noindent
 The crucial part of establishing the type-level winning conditions
-in the proof of the lemma above is the construction of a co-closed set. 
+in the proof of the lemma above is the construction of a coclosed set. 
 First note that \texttt{M (length cand\_all)} is precisely
 the generalised margin function. Writing $g$ for this function, we
 assume that $g(c, d) \geq g(d, c)$ for all candidates $d$, and given
@@ -691,7 +710,7 @@ program will \emph{additionally} deliver, for all other candidates,
 \begin{itemize}
 \item an integer $k$ and a path of strength $\geq k$ from the winning candidate to the
 other candidate 
-\item a co-closed set that witnesses that no path of strength $>k$
+\item a coclosed set that witnesses that no path of strength $>k$
 exists in the opposite direction.
 \end{itemize}
 
@@ -701,7 +720,7 @@ It is precisely this additional data, which we call scrutiny sheet,
 election winners) that allows for scrutiny of the process, as it
 provides an orthogonal approach to verifying the correctness of the
 computation: both checking that the given path has a certain
-strength, and that a set is indeed co-closed, is easy to verify.
+strength, and that a set is indeed coclosed, is easy to verify.
 We reflect more on this in Section
 \ref{sec:discussion}, and present an example of a full scrutiny
 sheet in the next section, when we join the type-level winning
@@ -715,7 +734,7 @@ checking whether
 
 \end{itemize}
 \item the path provided is really a path of the claimed strength
-\item the set provided is indeed co-closed
+\item the set provided is indeed coclosed
 \end{itemize}
 
 \noindent
@@ -750,7 +769,7 @@ In practice, ballots are
 implemented by asking voters to put numerical preferences against
 the names of candidates as represented by the Figure $\ref{fig:ballot}$ .
 The most natural representation of a ballot is therefore a function
-$b: C \to Nat$ that assigns a natural number (the preference) for
+$b: C \to \mathbb{N}$ that assigns a natural number (the preference) for
 each candidate, and we recover a strict linear preorder $<_b$ on candidates
 by setting $c <_b d$ if $b(c) > b(d)$. 
 
@@ -759,7 +778,7 @@ numbered beginning with $1$, we interpret a preference of $0$ as the
 voter failing to designate a preference for a candidate
 as this allows us to also accommodate incomplete ballots.
 This is clearly a design decision, and we could have formalised
-ballots as functions $b: C \to 1 + Nat$ (with $1$ being the unit
+ballots as functions $b: C \to 1 + \mathbb{N}$ (with $1$ being the unit
 type) but it would add little to our analysis.
 %
 %
@@ -772,7 +791,7 @@ The count of an individual election is then parameterised by the list
 of ballots cast, and is represented as a dependent inductive type.
 More precisely, we have a type \texttt{State} that represents either
 an
-intermediate stages of constructing the margin function or the
+intermediate stage of constructing the margin function or the
 determination of the final election result:
 \begin{minted}{coq}
 
@@ -798,9 +817,9 @@ that determines the set of winners.
 The type that formalises correct counting of votes according to the
 Schulze method is parameterised by the profile of ballots cast (that
 we formalise as a list), and depends on the type \texttt{State}. That
-is to say, an inhabitant of the type \texttt{Count n}, for
-\texttt{n} of type \texttt{State}, represents a correct execution of
-the voting protocol up to reaching state \texttt{n}. This
+is to say, an inhabitant of the type \texttt{Count st}, for
+\texttt{st} of type \texttt{State}, represents a correct execution of
+the voting protocol up to reaching state \texttt{st}. This
 state generally represents intermediate stages of the construction
 of the margin function, with the exception of the final step where
 the election winners are being determined. The inductive type takes
@@ -929,7 +948,7 @@ using  the function (or proposition)
 	The crucial aspect of our formalisation is that the vote counting
 protocol itself is represented as a dependent inductive type
 that represents all (correct) partial executions of
-the protocol.  A complete execution is can then be understood as a
+the protocol.  A complete execution can then be understood as a
 state of vote counting where election winners have been determined.
 Our main theorem, \texttt{schulze\_winners}, then asserts that an 
 inhabitant of this type
@@ -948,7 +967,7 @@ of an algorithm with the means to verify each particular
 From the perspective of electronic voting, this means that
 we no longer need to trust the hardware and software (assuming the 
 cast-as-intended and collected-as-cast verifiability)
-that was employed to obtain the election result, as the generated
+that were employed to obtain the election result, as the generated
 certificate can be verified independently. In the literature on
 electronic voting, this is known as (tallied-as-cast) \emph{verifiability} and has
 been recognised as one of the cornerstones for building trust in
@@ -995,7 +1014,7 @@ election outcomes by electronic voting research community \citep{Chaum:2004:SBR}
 %inductive definition, the \emph{complement} of this predicate arises
 %as a greatest fixpoint, or equivalently as a coinductively defined
 %predicate (see e.g. \citep{Kozen:2016:PC}). This allows us to witness
-%the non-existence of paths by exhibiting co-closed sets.
+%the non-existence of paths by exhibiting coclosed sets.
   
 
 
@@ -1010,7 +1029,7 @@ correctness of the determination of winners. That is, we see the
 individual steps of the construction of the margin function (one
 step per
 ballot) and once all ballots are exhausted, the determination of
-winners, together with paths and co-closed sets. The following is
+winners, together with paths and coclosed sets. The following is
 the transcript of a Schulze election where we have added wrappers
 to pretty-print the information content. This is the (full) scrutiny
 sheet promised in Section \ref{sec:prop-type} and concretely 
@@ -1037,11 +1056,11 @@ V: [], I: [A1 B0 C4 D3],
 M: [AB:3 AC:3 AD:9 BC:4 BD:9 CD:9]
 -------------------------------------------------------
 winning: A
-  for B: path A --> B of strenght 3, 4-coclosed set: 
+  for B: path A --> B of strength 3, 4-coclosed set: 
     [(B,A),(C,A),(C,B),(D,A),(D,B),(D,C)]
-  for C: path A --> C of strenght 3, 4-coclosed set:
+  for C: path A --> C of strength 3, 4-coclosed set:
     [(B,A),(C,A),(C,B),(D,A),(D,B),(D,C)]
-  for D: path A --> D of strenght 9, 10-coclosed set:
+  for D: path A --> D of strength 9, 10-coclosed set:
     [(D,A),(D,B),(D,C)]
 losing: B
   exists A: path A --> B of strength 3, 3-coclosed set:
@@ -1104,8 +1123,12 @@ development into Haskell, with all types defined by Coq extracted as
 is, i.e. in particular using Coq's unary representation of natural
 numbers, and Haskell native integer representation. The results are displayed in Figure \ref{fig:straightslowu}, 
 and Figure \ref{fig:straightslown}
-using a logarithmic scale. 
-
+using a logarithmic scale.  As the reader can see that
+the execution time, in both Figures, increases linearly  by increasing the votes by factor of 10
+on a logarithm scale, and what it means is that the execution time 
+increases exponentially with increasing the votes by factor of 10. Indeed, 
+it is the case, and both (extracted) codes, the unary natural number and Haskell native integer, 
+are very slow, but the native integer code is marginally better than the unary natural number code. 
 
 %\begin{figure}
 %\centering
@@ -1170,7 +1193,7 @@ tool to automate this process}}.
 Below (Figure \ref{fig:straightfastlw}, Figure \ref{fig:straightfastlv}), we include our timing graphs,
 based on randomly generated ballots while keeping number of candidates
 constant i.e. 4 (The reason we kept it to 4 candidate to show the speed up compared to 
- \ref{fig:straightslowu} and \ref{fig:straightslown}). During the experiment, we ran an election with 21 candidate, and 
+ \ref{fig:straightslowu} and \ref{fig:straightslown}). During the experiment, we ran an election with 21 candidates, and 
  we were able to count 2 million randomly generated ballots
  before running out of memory.)
 
@@ -1280,10 +1303,10 @@ margin function, everything that is needed is to show that the
 respective margins change according to the counted ballot. For the
 correctness of determination of winners, it is easy to verify
 existence of paths of a given strength, and also whether certain
-sets are co-closed -- even by hand! This dramatically increases the
+sets are coclosed -- even by hand! This dramatically increases the
 class of people that can scrutinise the correctness of the count,
 and so helps to establish a trust basis that is much wider as no
-trust in election officials and software artefacts is required.
+trust in software artefacts is required.
 
 
 Technically, we do not \emph{implement} an algorithm that counts
@@ -1311,7 +1334,7 @@ Our ballots are in plaintext and could easily be identified
 if the number of candidates participating in election in 
 are large (Italian attack) \citep{Otten}.
 \noindent
-In nutshell, the achieved and failed of this formalization:
+In nutshell, the achieved and failed points of this formalization:
 
 \begin{itemize}
 \item Achieved 
