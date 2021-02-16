@@ -79,7 +79,7 @@ we will take a brief detour to explain the
 different variants of lambda calculus starting from 
 untyped lambda calculus and moving up progressively by 
 adding various abstractions. Later, we will show that 
-these all variant, including calculus of construction, can be abstracted into one 
+these all variants, including calculus of construction, can be abstracted into one 
 framework,  pure type system (PTS) \citep{berardi1988towards} 
 \citep{Barendregt:1993:LCT:162552.162561}.  
 In addition, 
@@ -179,7 +179,8 @@ and $bool$ for type of boolean values,  we can represent an
 %      \end{figure} 
 
 All these variations of the lambda calculus can be captured into a unified framework
-known as \textit{Pure Type System}.  Unlike the simple typed lambda calculus ($\lambda^{\to}$) where 
+known as \textit{Pure Type System} \citep{berardi1988towards} 
+\citep{Barendregt:1993:LCT:162552.162561}.  Unlike the simple typed lambda calculus ($\lambda^{\to}$) where 
 terms and types live in two disjoint world,  pure type system blurs this distinction between 
 types and terms and  allows the dependencies between them.  
 The abstract syntax  of pure type system:
@@ -198,7 +199,7 @@ i) set of sorts $S$, ii) set of axioms $A$, and iii) set of rules $R$ such that:
 
  \begin{itemize}
 	\item $S$ is a subset of  $C$, i.e.  $S \subseteq C$. 
-	\item $A$ is the set of axioms of form \textit{c : s} where $c \in C$ and $s \in S$, i.e.  $A \subseteq C \times S$. 
+	\item $A$ is the set of axioms of form $c$ : $s$ where $c \in C$ and $s \in S$, i.e.  $A \subseteq C \times S$. 
 	\item $R$ is the set of rules of form $(s_{1}, s_{2}, s_{3})$ such that $s_{1}, s_{2}, \text{ and } s_{3} \in S$, i.e.
 	 $R \subseteq S \times S \times S$.
  
@@ -208,13 +209,13 @@ i) set of sorts $S$, ii) set of axioms $A$, and iii) set of rules $R$ such that:
 The typing judgement for the pure type system, in a typing context $\Gamma$, is defined by following rules ($s$ ranges of $S$, and $x$ ranges over V 
  with usual notion of  variable capture avoidance):
  \begin{itemize}
- \item Axiom: \[ \frac{\text{c : s } \in A}{\Gamma \text{  } \vdash \text{ c : s}} \]
- \item Start: \[ \frac{\Gamma \text{  } \vdash \text{ A : s}}{\Gamma \text{, x : A }\vdash \text{ x : A}} \]
- \item Weakening: \[ \frac{\Gamma \text{ } \vdash \text{ A : B } \quad \Gamma \text{ } \vdash \text{ C : s }}{\Gamma, \text{ x : C } \vdash \text{ A : B }} \]
- \item Product: \[ \frac{\Gamma \text{ } \vdash \text{ A : }s_{1} \quad \Gamma, \text{ x : A } \vdash \text{ B : }s_{2}}{\Gamma \text{ } \vdash (\prod \text{ x : A. B) : }s_{3}} \]
- \item Application: \[ \frac{\Gamma \text{ }\vdash \text{ F : (}\prod \text{x : A. B)} \quad \Gamma \text{ }\vdash \text{ a : A }}{\Gamma \text{ }\vdash \text{ F a : B [x := a]}} \]
- \item Abstraction: \[ \frac{\Gamma, \text{ x : A }\vdash \text{ b : B } \quad \Gamma \text{ }\vdash (\prod \text{x : A. B) : s }}{\Gamma \text{ }\vdash (\lambda \text{x : A. b) : (}\prod \text{ x : A. B)}} \]
- \item Conversion: \[ \frac{\Gamma \text{ }\vdash \text{ A : B } \quad \Gamma \text{ }\vdash \text{ B' : s } \quad \text{B  }=_{\beta} \text{ B' }}{\Gamma \text{ } \vdash \text{ A : B' }} \]
+ \item Axiom: \[ \frac{c \text{  } : \text{  }s \text{  } \in A}{\Gamma \text{  } \vdash c \text{  } : \text{  }s \text{  }} \]
+ \item Start: \[ \frac{\Gamma \text{  } \vdash  A \text{  } : \text{  } s}{\Gamma \text{, } x \text{  } : \text{  } A \vdash  x \text{  } : \text{  } A} \]
+ \item Weakening: \[ \frac{\Gamma \text{ } \vdash  A \text{  } : \text{  } B  \quad \Gamma \text{ } \vdash  C \text{  }: \text{  }s }{\Gamma,   x \text{  }: \text{  }C  \vdash  A \text{  }: \text{  }B } \]
+ \item Product: \[ \frac{\Gamma \text{ } \vdash A \text{  }: \text{  }s_{1} \quad \Gamma,  x \text{  }: \text{  }A  \vdash  B \text{  }: \text{  }s_{2}}{\Gamma \text{ } \vdash (\prod  x\text{  } : \text{  }A. \text{  }B) \text{  }: \text{  }s_{3}} \]
+ \item Application: \[ \frac{\Gamma \text{ }\vdash  \text{  }F \text{  }: \text{  }(\prod \text{  }x \text{  }: \text{  }A. \text{  }B) \quad \Gamma \text{ }\vdash  a\text{  } : \text{  }A }{\Gamma \text{ }\vdash  F\text{  } a \text{  }: \text{  }B \text{  }[x := a]} \]
+ \item Abstraction: \[ \frac{\Gamma,  x\text{  } : \text{  }A \vdash  b \text{  } : \text{  } B \quad \Gamma \text{ }\vdash (\prod x\text{  } : \text{  }A. \text{  }B) : s }{\Gamma \text{ }\vdash (\lambda x \text{  }: \text{  }A. \text{  }b) : (\prod  x \text{  }: \text{  }A. \text{  }B)} \]
+ \item Conversion: \[ \frac{\Gamma \text{ }\vdash  A \text{  }: \text{  }B  \quad \Gamma \text{ }\vdash  B' \text{  } : \text{  }s \quad B \text{  } =_{\beta}  B'}{\Gamma \text{ } \vdash A \text{  }: \text{  }B' } \]
 \end{itemize}   
 
 
@@ -294,7 +295,7 @@ vector of length $n$ with a vector of length $p$ yields a vector of length $(n +
 In other words, the function append is "correct-by-construction". 
 During our formalisation, we have encoded our vote counting 
 as an inductive data type with various assertions (correctness specification)
-appearing at the type level. These assertions at the type level 
+appearing at type level. These assertions at the type level 
 enforce that only a "correct" term of the vote counting inductive data type can be constructed
 (\emph{correct-by-construction}).
 
@@ -344,7 +345,7 @@ the discussion of co-inductive types is not very relevant for this thesis.
   which produces a Type level witness, \textit{existsT},
   from a Prop level witness, \textit{exists}, by iterating 
   through all the elements of finite type $A$ (the finiteness 
-  of $A$ is captured by the list $l$). The program is written 
+  of $A$ is captured by the list $l$) \citep{10.1145/2808098.2808102}. The program is written 
   in the proof mode, hence the clutter of tactics, but the basic idea is that 
   we inspect every single element of  $A$, represented as list $l$, 
   and look for the element which satisfies the Prop level assertion, 
@@ -443,11 +444,16 @@ let rec reify p = function
   
  
  Using the expressiveness of dependent type, we construct a type-safe version of 
- printf \citep{Pierce:2004:ATT:1076265}. Our goal is to generate compiler error when the given format string and the type of 
- corresponding input values  
- do not match, e.g. printf "\%d \%s" "hello Coq" 42 should be compiler error because
- \%d is a directive for integer value, but the type of input, "hello Coq", is string. In addition, 
- type-safe printf should print the input when the format string is aligned with type of input, e.g.
+ printf \citep{Pierce:2004:ATT:1076265}.  
+The printf in the C programming language is vararg (variable length argument) function, 
+and it simply trusts the format string to accurately describe the arguments.  However, 
+sometimes this trust can be exploited during the execution of a program by deliberately 
+making sure that  the formal string does not describe the arguments accurately.  Therefore,
+ our goal is to generate compiler error when the given format string and the type of 
+ corresponding input values (arguments)  
+ do not match,  e.g. printf "\%d \%s" "hello Coq" 42 should be compiler error because
+ \%d is a directive for integer value,  but the type of input, "hello Coq", is string.  In addition, 
+ type-safe printf should print the arguments when the format string is aligned with type of arguments, e.g.
  printf "\%s \%d" "hello Coq" 42 should print the string "hello Coq  42" because the first directive 
  of format string, \%s, and type of input, "hello Coq", are aligned. Similarly, the second directive 
  of format string, \%d, is also aligned with the type of input, 42.
@@ -579,23 +585,40 @@ while second one is successfully printed as string.
  formalization).
  
 \begin{minted}{coq}
-(* proof written using Gallina *)
-Lemma addition_commutative_gallina : 
-    forall (n m : nat), n + m = m + n.
-refine
-      (fix Fn (n : nat) : forall m : nat, n + m = m + n :=
-        match n as n0 
-              return (forall m : nat, n0 + m = m + n0) with
-        | 0 => fun m : nat => 
-           eq_ind_r (fun n0 : nat => m = n0) 
-                     	eq_refl (Nat.add_0_r m)
-        | S n' =>
-          fun m : nat =>
-            eq_ind_r (fun n0 : nat => S n0 = m + S n')
-                     (eq_ind_r (fun n0 : nat => S (m + n') = n0) 
-                     eq_refl (Nat.add_succ_r m n')) (Fn n' m)
-        end).
+(* proof written using the combination of Gallina  terms 
+   and tactics. The reason for using tactics is that  
+   in the inductive case, terms are complicated 
+   and difficult to handle  *)
+Lemma add : forall n m : nat, n + m = m + n.
+Proof.
+  refine (fix Fn n :=
+            match n as n' return (n = n' -> forall m, n' + m = m + n') with
+            | 0 =>
+              fun H => fix Fm m : 0 + m = m + 0 :=
+                match m as mt return 0 + mt = mt + 0 with
+                | 0 => eq_refl
+                | S m' => eq_ind (0 + m')
+                                (fun t : nat => S m' = S t)
+                                eq_refl
+                                (m' + 0)
+                                (Fm m')
+                end                  
+            | S n' =>
+              fun H => fix Fm m : S n' + m = m + S n' :=
+                 match m as mt return S n' + mt = mt + S n' with
+                 | 0 =>  eq_ind_r (fun t : nat => S t = S n')
+                                 eq_refl (Fn n' 0)
+                 | S m' => _
+                 end                
+            end eq_refl).
+  simpl. rewrite <- (Fm m').
+  rewrite (Fn n' (S m')).
+  simpl.
+  repeat apply f_equal.
+  rewrite (Fn n' m').
+  exact eq_refl.
 Qed.
+
 
 (* proof written using tactics *)
 Lemma addition_commutative_tactics :
@@ -842,7 +865,7 @@ Qed.
 	      \end{displayquote}
 	     
 	     
-	     If we multiply these two cipher together pairwise, we get ($g^{r_{1}+ r_{2}}, m_{1} * m_{2} *  h^{r_{1} + r_{2}}$). 
+	     If we multiply these two ciphers together pairwise, we get ($g^{r_{1}+ r_{2}}, m_{1} * m_{2} *  h^{r_{1} + r_{2}}$). 
 	     After decrypting this combined ciphertext, we will get $m_{1} * m_{2}$. In this scheme, $\bigotimes$ is multiplication $*$ and 
 	     $\bigoplus$ is also multiplication $*$.  Furthermore,  
 	     if our end goal is  to achieve multiplication on a bunch of plaintext,  rather than decrypting the corresponding ciphertext individually 
