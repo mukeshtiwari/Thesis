@@ -1044,7 +1044,7 @@ Qed.
       As a consequence, there is no longer any interaction with verifier.  
       
       \begin{itemize}
-     \item Prover $P$ randomly selects an element $r$ from [0 $\dotsb$ q), computes $a = g^r$
+     \item Prover $P$ randomly selects an element $r$ from $Z_{q}$, computes $a = g^r$
      \item Prover $P$ computes $c =  H(a || x)$ where $H$ is a hash function and $||$ is concatenation function. 
      \item Prover $P$ computer $z = r + c  * w $
      \end{itemize}
@@ -1058,27 +1058,27 @@ Qed.
       Commitment schemes are cryptographic primitives equivalent to real life sealed lock-box.
       Once the lock-box is locked and sealed, the content inside  can not be changed without breaking the lock and seal. 
       In general, commitment primitives 
-      are backbone of any cryptographic protocol between two parties, communicating over Internet, to force them  to  follow the 
+      are backbone of any cryptographic protocol between two parties, communicating over the Internet, to force them  to  follow the 
       protocol honestly, even they would have a huge gain from deviating 
-      from protocol. For example, in order to save some time before a match, Indian cricket team captain (coin tossing captain), living in Delhi, and Australian cricket 
-      team captain (calling captain), living in Canberra, decide 
+      from the protocol. For example, in order to save some time before a match, Indian cricket team captain (the coin tossing captain), living in Delhi, and Australian cricket 
+      team captain (the calling captain), living in Canberra, decide 
       to toss a coin in advance over the Internet, using a mobile application  called toss-app, for a  upcoming series of one-day matches
       \footnote{
       In a cricket match, which is very popular sport in India and Australia, both captains meet in the ground and toss a coin to 
       decide who would have the first call.}.  Assuming the workings of toss-app is naive and all the messages posted in 
-      chat box are in plaintext.   Using the toss-app,  both captains, the coin tossing captain and the calling captain,  post their 
+      the chat box of toss-app are in plaintext.   Using the toss-app,  both captains, the coin tossing captain and the calling captain,  post their 
       outcome in the chat box,  and the toss winner is decided based on the messages posted by the two captains.  
 	 How likely would be the case where both captains are honest, if the toss plays a major role in winning the series? 
 	 We can not expect them to be honest because they both have incentive (winning the series) to cheat during the 
 	 protocol (coin toss).      
       
       The question is can we devise some scheme which would force the both parties to behave honestly? 
-      The answer is yes, we can devise such scheme.  We would use the sealed lock-box concept, albeit digital one. Moreover, 
+      The answer is yes, we can devise such scheme.  We would use sealed lock-box concept, albeit digital one. Moreover, 
       the first captain would put his call in a digitally sealed lock-box and post it in the chat box. Because it is sealed and 
       locked, the other captain would have no idea what is the content inside it. Furthermore, it is impossible to break 
       the lock-box, so it is fruitless and waste of time for the other captain to even try. The other captain will toss the coin 
-      and post the outcome in a separate digital sealed lock-box  in the chat box.  Now that we two digital sealed lock-box which can 
-      only be opened by the respective owners, they would move for the next phase of coin tossing  called reveal phase. 
+      and post the outcome in a separate digital sealed lock-box  in the chat box.  Now that there are two digital sealed lock-box, which can 
+      only be opened by the respective owners,  posted in the chat box,  the captains would move for the next phase of coin tossing  called reveal phase. 
       In the reveal phase, they both would open their sealed locked box to show that what they have locked, 
       and the decision would be taken accordingly \footnote{Story influenced by Manuel Blum's coin flipping by telephone}. 
       
