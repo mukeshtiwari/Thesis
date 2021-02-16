@@ -6,29 +6,29 @@
 
 \section{Introduction}
 As we stated in the  summary of last chapter that plaintext could lead to 
-privacy problems, e.g. ballot identification (italian attack) \cite{Otten}. 
-In this chapter, we will try to achieve privacy by using encryption, (tallied-as-cast) 
-verifiability by using zero knowledge proof, and correctness of implementation 
+privacy problems, e.g. ballot identification (Italian attack) \cite{Otten}. 
+In this chapter, we achieve privacy by using encryption, (tallied-as-cast) 
+verifiability by using zero-knowledge proof, and correctness of implementation 
 by proving the correctness properties inside the Coq theorem prover. 
 One important point to note that we do not formalize any cryptographic primitive inside the Coq, but 
-took an axiomatic approach, i.e. we assumed the existence of cryptographic 
-primitives and postulated their correctness property (axiomatisation of 
-cryptographic primitives). We took the axiomatic approach 
-because our goal was not to formalize cryptographic primitives, but use these primitives
-to conduct an election which has all three ingredient privacy, verifiability, 
+take an axiomatic approach, i.e. we assume the existence of cryptographic 
+primitives and postulate their correctness property (axiomatisation of 
+cryptographic primitives).  The reason for axiomatic approach is
+because our goal is to not formalise the cryptographic primitives, but use these primitives
+to conduct an election which has all three ingredients, privacy, verifiability, 
 and correctness. We then obtain, via program extraction, a
 provably correct implementation of vote counting, that we turn
-into executable code by providing implementations of the primitives
+into executable code by providing implementations of the cryptographic primitives
 based on a standard cryptographic library (Unicrypt). 
 We conclude by presenting
-experimental results, and discuss trust the trust base, security and
+experimental results, and discuss the trust base, security, and
 privacy as well as the applicability of our work to real-world
 scenarios. 
 
 
 
 
-\textbf{Chapter Outline:} In the Section \ref{sec:verifiable_homomorphic}, 
+\textbf{Chapter Outline:} In Section \ref{sec:verifiable_homomorphic}, 
 we discuss the technique to achieve verifiable homomorphic tally. In order to do so, 
 we discuss why do we need our ballot to have a matrix representation 
 and not a ranking function. Moreover, we discuss the concept 
@@ -38,18 +38,18 @@ to achieve all the required functionality. Section \ref{sec:realisation}
 takes a step forward and makes every concept from the previous section
 concrete using the Coq theorem prover. One important point 
 in this section is our inductive data type \textit{ECount}
-augmented with verification data in form of zero-knowledge-proof 
+augmented with verification data in form of zero-knowledge proof 
 for various claims made during the counting 
 ($ECount$ is conceptually similar to the $Count$ (Section \ref{sec:inductive_type}), but 
 in terms of data, $ECount$ has state data related to counting and verification data
-in form of zero-knowledge proof related to claims made by us, while $Count$ 
-has just state data).  In the Section \ref{sec:correct}, we present
+in form of zero-knowledge proof, while $Count$ 
+has just state data).  In Section \ref{sec:correct}, we present
 our main theorem which states that for any set of given encrypted ballots, 
 a winner can always be found. Apart from the main theorem, this section 
 also incorporates the proof of correctness by stating 
 the winners produced by encrypted ballots are same as 
- the plain-text ballots (Section \ref{sec:all_winners}) if 
- encrypted ballots are aligned (decrypt) with plain-text ballot. 
+plaintext ballots (Section \ref{sec:all_winners}) if 
+ the encrypted ballots decrypt to the plaintext ballot. 
  Section \ref{sec:extract} focuses on extraction, instantiating 
  the cryptographic primitives with UniCrypt library, and 
  experimental results. Finally, Section \ref{sec:summary_homomorphic} 
@@ -63,7 +63,7 @@ the winners produced by encrypted ballots are same as
 Secure elections are a balancing act between integrity and privacy:
 achieving either is trivial but their combination is notoriously hard.
 One of the key challenges faced by both paper based and electronic
-elections is that results must substantiated with
+elections is that results must be substantiated with
 verifiable evidence of their correctness while retaining the secrecy
 of the individual ballot \citep{Bernhard:2017:PES}. 
 The combination of privacy and integrity can be realised using cryptographic techniques, where
@@ -73,7 +73,7 @@ the correctness of the final tally is substantiated, using
 homomorphic encryption \citep{Hirt:2000:ERF} and verifiable shuffling
 \citep{Bayer:2012:EZK}. (Separate techniques exist to prevent ballot
 box stuffing and to guarantee cast-as-intended.)
-Integrity can then be guaranteed by means of Zero Knowledge Proofs
+Integrity can then be guaranteed by means of zero-knowledge proofs
 (ZKP),
 first studied by Goldwasser, Micali, and Rackoff~\citep{Goldwasser:1985:STOC}.
 Informally, a ZKP is a probabilistic and interactive proof where one
@@ -82,69 +82,83 @@ no information other than that the statement being proved is true with
 overwhelming probability. 
 Later results~\citep{Ben-Or:1988:CRYPTO,Goldreich:1991:ACM}
 showed that 
-all problems for which solutions can be efficiently verified have zero knowledge
-proof (In practice, sigma protocol is used prove the knowledge of witness $w$ for a public input $x$, 
+all problems for which solutions can be efficiently verified have zero-knowledge
+proof (In practice,  Sigma protocol \citep{10.1007/3-540-48658-5_19} is used 
+to prove the knowledge of a (private) witness $w$ for a public input $x$, 
 and it is required to be zero-knowledge against the honest verifier).
 
   
  \section{Verifiable Homomorphic Tallying}
 \label{sec:verifiable_homomorphic}
 The realisation of verifiable homomorphic tallying that we are about to
-describe follows the same two phases as the algorithm (Section \ref{sec:schulze_algorithm}): 
-We first homomorphically compute the margin matrix from encrypted ballots, and then compute
+describe follows the same two phases as the Schulze algorithm, described in Section \ref{sec:schulze_algorithm},: 
+we first homomorphically compute the margin matrix from encrypted ballots, and then compute
 winners on the basis of the (decrypted) margin. Moreover, the computation also
 produces a verifiable certificate that leaks no information about
 choices in individual ballots other than the (final) margin matrix, which in
 turn leaks no information about individual ballots if the number of
-voters is large enough. 
+voters is large enough.  
 
 
 \smallskip\noindent\emph{Format of Ballots.} Recall that in preferential voting
 schemes, ballots are rank-ordered lists of candidates. For the
 Schulze Method, we require that all candidates are ranked, and two
 candidates may be given the same rank. That is, a ballot is most
-naturally represented as a function $b: C \to Nat$ that assigns a
+naturally represented as a function $b: C \to \mathbb{N}$ that assigns a
 numerical rank to each candidate, and the computation of the margin
 amounts to computing the sum
 \[ m(x, y) = \sum_{b \in B} \begin{cases} +1 & b(x) > b(y) \\ 0 &
 b(x) = b(y) \\ -1 & b(x) < b(y) \end{cases} \]
 where $B$ is the multi-set of ballots, and each $b \in B$ is a
-ranking function $b: C \to Nat$ over a (finite) set $C$ of
+ranking function $b: C \to  \mathbb{N}$ over a (finite) set $C$ of
 candidates. 
 
 Ideally, we could have copied the same ballot structure in a homomorphic Schulze method, 
-but encrypting the choices, i.e. the ballot would have been represented as $b: C \to EncryptedNaturalNumber$
-where $EncryptedNaturalNumber$ is the encrypted representation of a choice (natural number).
+but encrypting the choices, i.e. the ballot would have been represented as $b: C \to EncryptedNat$
+where $EncryptedNat$ is the encrypted representation of a choice (natural number).
 However, we note that this representation of ballots is not well suited for
 homomorphic computation of the margin matrix as practically feasible
 homomorphic encryption schemes do not support comparison operators
 and case distinctions as used in the formula above (to the best of our knowledge).
 
-We instead represent ballots as candidate indexed matrices
-$b(x, y)$ where $b(x, y) = +1$ if $x$ is preferred
-over $y$, $b(x, y) = -1$ if $y$ is preferred over $x$ and $b(x, y) =
+We instead represent ballots as candidate indexed matrices, 
+$bm: C \times C \to \mathbb{N}$,
+$bm(x, y)$ where $bm(x, y) = +1$ if $x$ is preferred
+over $y$, $bm(x, y) = -1$ if $y$ is preferred over $x$ and $bm(x, y) =
 0$ if $x$ and $y$ are equally preferred. The downside of this representation 
 is that it takes $O(n^2)$ space to represent a ballot where $n$ is the number 
 of candidate participating in election. 
 
-While the advantage of the first representation is that each ranking
+While the advantage of the first representation, $b: C \to \mathbb{N}$,  is that each ranking
 function is necessarily a valid ranking and is linear space ($O(n))$) in the number 
 of candidates, $n$, the advantage of the matrix 
-representation is that the computation of
+representation, $bm: C \times C \to \mathbb{N}$,  is that the computation of
 the margin matrix is simple, that is
-\[ m(c, d) = \sum_{b \in B} b(x, y) \]
-where $B$ is the multi-set of ballots (in matrix form), and can
-moreover be transferred to the encrypted setting in a straight
-forward way: if ballots are matrices $e(x,y)$ where $e(x,y)$ is the
-encryption of an integer in $\lbrace -1, 0, 1 \rbrace$, then
+\[ m(x, y) = \sum_{bm \in B} bm(x, y) \]
+where $B$ is the multi-set of ballots (in matrix form). 
+The major benefit of this
+matrix representation is that it can  be transferred to the encrypted setting in a straight
+forward way by encrypting all the entries in the matrix $bm$.  We take the advantage of 
+matrix representation and represent our encrypted ballot as $encb: C \times C \to \mathbb{Z}$. 
+Following this representation of encrypted ballot,  the encrypted margin can be computed as:
 \begin{equation}\label{eqn:enc-mm}
-encm = \bigoplus_{encb \in EncB} encb(x, y) 
+encm(x, y) = \bigoplus_{encb \in EncB} encb(x, y) 
 \end{equation}
 where $\oplus$ denotes homomorphic addition, $encb$ is an encrypted
-ballot in matrix form (i.e. decrypting $encb(x, y)$ indicates
-whether $x$ is preferred over $y$), and $EncB$ is the multi-set of
-encrypted ballots. The disadvantage is that we need to verify that a
-matrix ballot is indeed valid, that is
+ballot in matrix form and $EncB$ is the multi-set of
+encrypted ballots.  In an idea world where there is no cheating, 
+every entry in $encb$ is either the encryption of -1, 0, or 1. 
+Moreover, if we interpret $encb$ as a adjacency matrix of a graph representation, 
+$encb$ should be acyclic (lets call it valid or desirable  ballot).  
+If we think carefully,  we definitely do not want to be 
+in a situation where a voter prefers $A$ over $B$,  $B$ over $C$, 
+and finally $C$ over $A$, for some candidates $A$, $B$, and $C$.  
+How would we interpret a ballot having cycles? One possible interpretation 
+is ranking all the candidates equal appearing a cycle; however, we 
+decided to make it invalid (lets call it invalid undesirable ballot). 
+Now during the counting, we need to distinguish between a  desirable 
+ballot, i.e.  valid ballot, and an undesirable ballot, i.e. invalid ballot.   
+To make this distinction,  we verify that an encrypted matrix ballot $encb$ is valid only if:
 \begin{itemize}
 \item that the decryption of $encb(x, y)$ is indeed one of $1, 0$ or
 $-1$
@@ -232,25 +246,25 @@ other primitives fall into one of three categories.
 \emph{Verification primitives} are used to syntactically define
 the type of valid certificates. For example, when publishing the
 decrypted margin matrix in Item \ref{it:pub-dm} above, we require
-that the zero knowledge proof in fact evidences correct decryption.
+that the zero-knowledge proof in fact evidences correct decryption.
 To
 guarantee this, we need a verification primitive that -- given
-ciphertext, plaintext and zero knowledge proof -- verifies whether the supplied proof
+ciphertext, plaintext and zero-knowledge proof -- verifies whether the supplied proof
 indeed evidences that the given ciphertext corresponds to the given
 plaintext. In particular, verification primitives are always boolean
 valued functions. While verification primitives \emph{define} valid
 certificates, \emph{generation primitives} are used to
 \emph{produce} valid certificates. In the example above, we need a
 decryption primitive (to decrypt the homomorphically computed
-margin) and a primitive to generate a zero knowledge proof (that
+margin) and a primitive to generate a zero-knowledge proof (that
 witnesses correct decryption). Clearly verification and generation
 primitives have a close correlation, and we need to require, for
-example, that zero knowledge proofs obtained via a generation
+example, that zero-knowledge proofs obtained via a generation
 primitive has to pass muster using the corresponding verification
 primitive. 
 
 The three primitives described above (decryption, generation of a
-zero knowledge proof, and verification of this proof) already allow
+zero-knowledge proof, and verification of this proof) already allow
 us  to implement the entire protocol with exception of ballot
 shuffling (Item \ref{it:shuff} above).  Here, the situation is more
 complex. While existing mixing schemes (e.g. \citep{Bayer:2012:EZK}) permute 
@@ -274,12 +288,12 @@ permutation
 
 \noindent
 A combination of Pedersen's commitment scheme 
-with a zero knowledge proof leads to a similar two step protocol, also known 
+with a zero-knowledge proof leads to a similar two step protocol, also known 
 as commitment-consistent proof of shuffle \citep{Wikstrom:2009:CPS}.
 
 \begin{itemize}
 \item Commit to a secret permutation and publish the commitment (hiding).
-\item Use a zero knowledge proof to show that shuffling has used 
+\item Use a zero-knowledge proof to show that shuffling has used 
       the same permutation which we committed to in previous step (binding).
 \end{itemize}  
 
@@ -289,29 +303,29 @@ permutation $\pi$ which is used to shuffle every row and column of the ballot.
 We hide $\pi$ by committing it using Pedersen's 
 commitment scheme 
 and record the commitment $c_{\pi}$ in the certificate. However, for the binding step, rather 
-than opening $\pi$ we generate a zero knowledge proof, $zkp_{\pi}$, 
+than opening $\pi$ we generate a zero-knowledge proof, $zkp_{\pi}$, 
 using $\pi$ and $c_{\pi}$, which can 
 be  used to prove that $c_{\pi}$ is indeed the commitment to some permutation
 used in the (commitment consistent) shuffling 
  without being opened \citep{Wikstrom:2009:CPS}. We can now use the
  permutation that we have committed to for 
 shuffling each row and column of a ballot, and evidence the
-correctness of the shuffle via a zero knowledge proof.
+correctness of the shuffle via a zero-knowledge proof.
 %
 To evidence validity (or otherwise) of a (single) ballot, we
 therefore:
 \begin{enumerate}
   \item generate a (secret) permutation and publish a commitment to this
-  permutation, together with a zero knowledge proof that evidences commitment
+  permutation, together with a zero-knowledge proof that evidences commitment
   to a permutation
   \item for each row of the ballot, publish a shuffle of the row with
-  the permutation committed to, together with a zero knowledge proof
+  the permutation committed to, together with a zero-knowledge proof
   that witnesses shuffle correctness
   \item for each column of the row shuffled ballot, publish a
-  shuffle of the column, also together with a zero knowledge proof of
+  shuffle of the column, also together with a zero-knowledge proof of
   correctness 
   \item publish the decryption the ballot shuffled in this way, together with a
-  zero knowledge proof that witnesses honest decryption
+  zero-knowledge proof that witnesses honest decryption
   \item decide the validity of the ballot based on the decrypted
   shuffle.
 \end{enumerate}
@@ -321,9 +335,9 @@ The cryptographic primitives needed to implement this again fall
 into the same classes. To define validity of certificates, we need
 verification primitives
 \begin{itemize}
-  \item to decide whether a zero knowledge proof evidences that a
+  \item to decide whether a zero-knowledge proof evidences that a
   given commitment indeed commits to a permutation 
-  \item to decide whether a zero knowledge proof evidences the
+  \item to decide whether a zero-knowledge proof evidences the
   correctness of a shuffle relative to a given permutation
   commitment.
 \end{itemize}
@@ -339,7 +353,7 @@ ability to
 \end{itemize}
 
 \noindent
-Again, both need to be coherent in the sense that the zero knowledge
+Again, both need to be coherent in the sense that the zero-knowledge
 proofs produced by the generation primitives need to pass
 validation. In summary, we require an additively homomorphic
 cryptosystem that implements the following:
@@ -347,14 +361,14 @@ cryptosystem that implements the following:
 \begin{description}
 \item[Decryption Primitives.]
   decryption of a ciphertext, creation and verification of
- honest decryption zero knowledge proofs. 
+ honest decryption zero-knowledge proofs. 
 
 \item[Commitment Primitives.]
   generating permutations, creation and verification of commitment
-  zero knowledge proofs
+  zero-knowledge proofs
 \item[Shuffling Primitives.]
   commitment consistent shuffling, creation and verification of
-  commitment consistent zero knowledge shuffle proofs 
+  commitment consistent zero-knowledge shuffle proofs 
 \end{description}
 
 \smallskip\noindent\emph{Witnessing of Winners.}
@@ -439,7 +453,7 @@ the above, the first two functions, \texttt{decrypt\_message} and
 \texttt{verify\_zero} \texttt{\_knowledge} \linebreak
 \texttt{\_decryption} \texttt{\_proof} is a
 \emph{verification} primitive. We have two coherence axioms. The
-first says that if the verification of a zero knowledge proof of
+first says that if the verification of a zero-knowledge proof of
 honest decryption succeeds, then the ciphertext indeed decrypts to
 the given plaintext. The second stipulates that generated zero
 knowledge proofs indeed verify. 
@@ -522,11 +536,11 @@ the count and ensures that
 \begin{description}
   \item[state data:] here, the list of uncounted and invalid ballots,
   and the encrypted homomorphic margin
-  \item[verification data:] a zero knowledge proof that the encrypted
+  \item[verification data:] a zero-knowledge proof that the encrypted
   homomorphic margin is indeed an encryption of the zero margin
   \item[correctness constraints:] here, the constructor may only be applied if
   the list of uncounted ballots is equal to the list of ballots
-  cast, and the fact that the zero knowledge proofs indeed verify
+  cast, and the fact that the zero-knowledge proofs indeed verify
   that the initial margin matrix is identically zero.
 \end{description}
 
@@ -534,7 +548,7 @@ the count and ensures that
 The main difference between the correctness condition, and the
 verification data is that the former can be simply be inspected
 (here by comparing lists) whereas the latter requires additional
-data (here  in the form of a zero knowledge proof). In Coq, 
+data (here  in the form of a zero-knowledge proof). In Coq, 
 this constructor can be encoded as:
 
 \begin{minted}{coq}
@@ -564,8 +578,8 @@ evidenced. As before, we have:
   a commitment to a (secret) permutation, a row permutation of the
   ballot being counted, and a column permutation of this, and a
   decryption of the row- and column permuted ballot (all with
-  accompanying zero knowledge proofs)
-  \item[correctness constraints:] all the zero knowledge proofs
+  accompanying zero-knowledge proofs)
+  \item[correctness constraints:] all the zero-knowledge proofs
   verify, the new margin is the homomorphic addition of the previous
   margin and the counted ballot, and the decrypted (shuffled)
   ballot is indeed valid. 
@@ -638,9 +652,9 @@ Also here, we have
   \item[state data:] the decrypted margin matrix, plus evidence
   that a state with no more uncounted ballots has been obtained
   correctly
-  \item[verification data:] a zero knowledge proof that demonstrates
+  \item[verification data:] a zero-knowledge proof that demonstrates
   honest decryption of the final margin matrix
-  \item[correctness constraints:] the given zero knowledge proof
+  \item[correctness constraints:] the given zero-knowledge proof
   verifies, i.e. the given decrypted margin is indeed the decryption
   of the (last) homomorphically computed margin matrix.
 \end{description} 
@@ -733,8 +747,8 @@ Lemma encryption_schulze_winners (group : Group)
 The proof proceeds by successively building an inhabitant of
 \texttt{EState} by homomorphically computing the margin matrix, then
 decrypting and determining the winners. Within the proof, we use
-both generation primitives (e.g. to construct zero knowledge proofs)
-and coherence axioms (to ensure that the zero knowledge proofs
+both generation primitives (e.g. to construct zero-knowledge proofs)
+and coherence axioms (to ensure that the zero-knowledge proofs
 indeed verify). 
 
 The correctness of our entire approach stands or falls with the
@@ -795,7 +809,7 @@ Crucially, \texttt{Count} is verified against a formal specification
 of the Schulze Method. Both theorems are proven by induction on the
 definition of the respective data types, where the key step is to
 show that the (decrypted) final margins agree. The key ingredient
-here are the coherence axioms that stipulate that zero knowledge
+here are the coherence axioms that stipulate that zero-knowledge
 proofs that verify indeed evidence shuffle and/or honest decryption.
 
 
@@ -823,7 +837,7 @@ embodied in the correctness constraints can be verified with minimal
 computational overhead, given the state and the verification data.
 For example, it can simply be verified whether or not a zero
 knowledge proof indeed verifies honest decryption by running
-it through a verifier.  On the other hand, the zero knowledge proof
+it through a verifier.  On the other hand, the zero-knowledge proof
 itself (which is part of the verification data) is crucially needed
 to be able to verify that a plaintext is the honest decryption of a
 ciphertext, and hence cannot be erased during extraction.
@@ -842,7 +856,7 @@ To fill this hole, we implement the cryptoraphic primitives with
 help of the UniCrypt library\citep{LocherH14}.
 UniCrypt is a freely available library, written in Java,  that provides nearly all of
 the required functionality, with the exception of honest decryption
-zero knowledge proofs.  We extract our proof development into OCaml
+zero-knowledge proofs.  We extract our proof development into OCaml
 and use Java/OCaml bindings~\citep{OCamlJava} to make the UniCrypt
 functionality available to our OCaml program. Due to differences
 in the type structure between Java and OCaml, mainly in the context
@@ -856,7 +870,7 @@ Java data structures.  After instantiating the
  below:
  it is trace of computation which can be used as a checkable record to verify
  the outcome of election. We elide the cryptographic detail, e.g.
- the concrete representation of zero knowledge proofs.
+ the concrete representation of zero-knowledge proofs.
  A certificate
  is be obtained from the type \texttt{ECount} where the head
  of the certificate corresponds to the base case of the inductive
@@ -879,7 +893,7 @@ Java data structures.  After instantiating the
  
  \mbox{}\\[-5ex]
  Note that one can verify the fact that the initial encrypted margin
- is in fact the zero margin by just verifying the zero knowledge
+ is in fact the zero margin by just verifying the zero-knowledge
  proofs. Successive entries in the certificate will generally be
  obtained by counting valid, and discarding invalid ballots. If a
  valid ballot is counted after the counting commences, the
@@ -911,7 +925,7 @@ Java data structures.  After instantiating the
  respect to the permutation committed to by \texttt{C} above. The
  following two lines achieve the same for subsequently permuting the
  columns of the (row permuted) ballot. Finally, \texttt{D} is the
- decrypted permuted ballot, and \texttt{Z} a zero knowledge proof of
+ decrypted permuted ballot, and \texttt{Z} a zero-knowledge proof of
  honest decryption. We end with an updated homomorphic margin
  matrix \texttt{M}. Again, we note that the validity of the
  decrypted ballot can be checked easily, and validating zero
@@ -1095,11 +1109,11 @@ basing our implementation on a purpose-specific existing library
 
 
 \smallskip\noindent\emph{Modelling Assumptions.} In our modelling of
-the cryptographic primitives, in particular the zero knowledge
+the cryptographic primitives, in particular the zero-knowledge
 proofs, we assumed properties which in reality only hold with
 very high probability. As a
 consequence our correctness assertions only hold to the level
-of probability that is guaranteed by zero knowledge proofs (sigma 
+of probability that is guaranteed by zero-knowledge proofs (sigma 
 protocols).
 
 \smallskip\noindent\emph{Scalability.} We have analysed the
