@@ -247,17 +247,15 @@ the (secret) permutation is never revealed.
 
 
 In summary, the evidence of correct (homomorphic) counting starts
-with an encryption of the zero margin $encm$, and for each
-ciphertext ballot $encb$ contains
+with an encryption of the zero margin $encm : C \times C \to CT$ (every entry in 
+the $encm$ is an encrypted value of 0), and for each
+ciphertext ballot $ctballot : C \times C \to CT $ contains
 \begin{enumerate}
-\item \label{it:shuff} a shuffle of $encb$ together with a ZKP of 
-correctness
-\item decryption of the  shuffle, together with a ZKP of
-correctness
-\item \label{it:upd-marg} the updated margin matrix, if the decrypted ballot
-was valid, and
-\item the unchanged margin matrix, if the decrypted
-ballot is not valid.
+\item generation of secret permutation $\pi$  together with a commitment proof and zero-knowledge proof that is a valid permutation
+\item \label{it:shuff} $ctballot'$, a shuffle of $ctballot$ by $\pi$ together with a zero-knowledge proof that $ctballot'$ is a shuffle of $ctballot$
+\item $ptballot'$, decryption of $ctballot'$, together with a zero-knowledge proof that  $ptballot'$ is  honest decryption of $ctballot'$
+\item \label{it:upd-marg}  if $ptballot'$ is valid,  we homorphically  update the margin matrix $encm$,  i.e.   \[ encm(x, y) = encm(x, y) \bigoplus  ctballot(x, y) \]
+\item  if the decrypted ballot $ptballot'$ is invalid,  the margin matrix $encm$ remains unchanged
 \newcounter{mycnt}
 \setcounter{mycnt}{\value{enumi}}
 \end{enumerate}
@@ -266,13 +264,13 @@ determines winners and contains
 winners by exhibiting
 \begin{enumerate}
 \setcounter{enumi}{4}
-\item \label{it:pub-dm} the fully constructed margin, together with its decryption  
-  and a ZKP of honest decryption after counting all the ballots     
-\item publishes the winner(s), together with evidence to substantiate the
-    claim
+\item \label{it:pub-dm} the final tally $encm$, together with its decryption  
+  and a zero-knowledge proof of honest decryption     
+\item publishes the winner(s), together with evidence to substantiate the claim (existence of strongest path the winner to the loser 
+and absence of such path from the loser to the winner,  section \ref{sec:evidence}).
 \end{enumerate}
 
-\smallskip\noindent\emph{Cryptographic primitives.}
+\subsection{Cryptographic primitives}
 We require an additively homomorphic cryptosystem to
 compute the (encrypted) margin matrix according to Equation
 \ref{eqn:enc-mm} (this implements Item \ref{it:upd-marg} above). All
@@ -405,7 +403,7 @@ cryptosystem that implements the following:
   commitment consistent zero-knowledge shuffle proofs 
 \end{description}
 
-\smallskip\noindent\emph{Witnessing of Winners.}
+\subsection{Witnessing of Winners}
 Once all ballots are counted, the computed margin is decrypted, and
 winners (together with evidence of winning) are computed using 
 plaintext counting. We discuss this part only briefly, for sake of completeness,
@@ -413,7 +411,8 @@ plaintext counting. We discuss this part only briefly, for sake of completeness,
  For each of the winners $w$ and each
 candidate $x$ we publish
 \begin{itemize}
-\item a natural number $k(w, x)$ and a path $w = x_0, \dots, x_n = x$ of strength $k$
+\item a natural number $k(w, x)$ and a path $x_0, \dots, x_n $ of strength $k$, where $x_0 = w$ 
+and $x_n = x$
 \item a set $C(w, x)$ of pairs of candidates that is $k$-coclosed
 and contains $(x, w)$
 \end{itemize}
@@ -445,7 +444,7 @@ cryptographic library that we could, in a later step, verify the
 implementation of a cryptosystem against.  In particular, this
 allows us to not commit to any particular cryptosystem in particular
 (although our development, and later instantiation, is geared
-towards El Gamal \citep{DBLP:conf/crypto/Gamal84}).
+towards ElGamal \citep{elgamal1985public}).
 
 The first part of our formalisation concerns the cryptographic
 primitives that we collect in a separate module. Below is an example
@@ -754,7 +753,7 @@ Schulze Method, on the basis of encrypted ballots. To obtain an
 executable that in fact \emph{produces} a verifiable (and provably
 correct) count, we can proceed in either of two ways:
 \begin{enumerate}
-  \item implement a function that -- give a list \texttt{bs} of
+  \item implement a function that -- given a list \texttt{bs} of
   ballots -- produces a boolean function \texttt{w} (for winners) and an
   element of the type \texttt{ECount bs (winners w)}. This gives
   both the election winners (\texttt{w}) as well as evidence (the
@@ -851,7 +850,7 @@ proofs that verify indeed evidence shuffle and/or honest decryption.
 
 As discussed in the Section \ref{sec:typeprop}, 
 we are using  the Coq extraction
-mechanism\citep{Letouzey:2003:NEC}  to extract programs from
+mechanism \citep{Letouzey:2003:NEC}  to extract programs from
 existence proofs\footnote{https://github.com/mukeshtiwari/EncryptionSchulze/tree/master/code/Workingcode}.
 In particular, we extract the proof of the Theorem
 \texttt{pschulze\_winners}, given in Section \ref{sec:correct} to a
@@ -887,9 +886,9 @@ primitives need to be supplied to fill the holes and indeed be able
 to compile and execute the extracted program.  
 
 To fill this hole, we implement the cryptoraphic primitives with
-help of the UniCrypt library\citep{LocherH14}.
+help of the UniCrypt library \citep{LocherH14}.
 UniCrypt is a freely available library, written in Java,  that provides nearly all of
-the required functionality, with the exception of honest decryption
+the required functionalities, with the exception of honest decryption
 zero-knowledge proofs.  We extract our proof development into OCaml
 and use Java/OCaml bindings~\citep{OCamlJava} to make the UniCrypt
 functionality available to our OCaml program. Due to differences
@@ -967,7 +966,7 @@ Java data structures.  After instantiating the
  shuffle of the original one. Homomorphic addition can simply be
  re-computed.
 
- The steps where invalid ballots are being detected is similar, with
+ The steps where invalid ballots are being detected are similar, with
  the exception of not updating the margin matrix. Once all ballots
  are counted, the only applicable constructor is \texttt{ecdecrypt},
  the data content of which would continue a certificate
@@ -1147,7 +1146,7 @@ the cryptographic primitives, in particular the zero-knowledge
 proofs, we assumed properties which in reality only hold with
 very high probability. As a
 consequence our correctness assertions only hold to the level
-of probability that is guaranteed by zero-knowledge proofs (sigma 
+of probability that is guaranteed by zero-knowledge proofs (Sigma 
 protocols).
 
 \smallskip\noindent\emph{Scalability.} We have analysed the
@@ -1155,12 +1154,12 @@ feasibility of the extracted code by counting an increasing number
 of ballots. While this demonstrates a proof of concept, our results
 show that the bindings used to couple the cryptographic layer with
 our code adds significant overhead compared
-to plaintext tallying (\ref{cha:schulze_method}). Given that both
+to plaintext tallying in Schulze method (\ref{cha:schulze_method}).  Given that both
 parts are practically efficient by themselves, scalability is merely
 the question of engineering a more efficient coupling. 
 
 
-In a nutshell, the achieved and failed part of this formalization:
+In a nutshell, the achieved and failed parts of this formalization:
 
 \begin{itemize}
 \item Achieved
@@ -1175,7 +1174,7 @@ In a nutshell, the achieved and failed part of this formalization:
                  
 \item Verifiability: The outcome of any election can be verified by any third party because 
           of the generated certificates. However,
-          the nature of certificates in this case is very complex, and they can only be scrutinize 
+          the nature of certificates in this case is very complex and can only be scrutinize 
           by someone having specialized knowledge of cryptography which decreases the pool of potential 
           scrutinizers dramatically.
 
@@ -1194,7 +1193,7 @@ In a nutshell, the achieved and failed part of this formalization:
 
 
 \noindent
-Our formalization leaves some gaps which needed to be filled:
+Our formalization leaves some gaps which needs to be filled:
 \begin{itemize}
 \item A formally verified cryptographic library to fill the \textit{correctness gap}.
 \item A formally verified checker to ease the auditing of election to fill the \textit{scrutineers} gap
