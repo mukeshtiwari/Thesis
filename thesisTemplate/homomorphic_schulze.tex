@@ -91,7 +91,7 @@ and it is required to be zero-knowledge against the honest verifier).
  \section{Verifiable Homomorphic Tallying}
 \label{sec:verifiable_homomorphic}
 The realisation of verifiable homomorphic tallying that we are about to
-describe follows the same two phases as the Schulze algorithm, described in Section \ref{sec:schulze_algorithm},: 
+describe follows the same two phases as the Schulze algorithm (described in section \ref{sec:schulze_algorithm}): 
 we first homomorphically compute the margin matrix from encrypted ballots, and then compute
 winners on the basis of the (decrypted) margin. Moreover, the computation also
 produces a verifiable certificate that leaks no information about
@@ -100,7 +100,8 @@ turn leaks no information about individual ballots if the number of
 voters is large enough.  
 
 
-\smallskip\noindent\emph{Format of Ballots.} Recall that in preferential voting
+\subsection{Format of Ballots} 
+Recall that in preferential voting
 schemes, ballots are rank-ordered lists of candidates. For the
 Schulze Method, we require that all candidates are ranked, and two
 candidates may be given the same rank. That is, a ballot is most
@@ -121,9 +122,9 @@ homomorphic computation of the margin matrix as practically feasible
 homomorphic encryption schemes do not support comparison operators
 and case distinctions as used in the formula above (to the best of our knowledge).
 
-We instead represent ballots as candidate indexed matrices, 
-$bm: C \times C \to \mathbb{N}$,
-$bm(x, y)$ where $bm(x, y) = +1$ if $x$ is preferred
+We instead represent ballots as candidate indexed matrices (represented as function from a pair of candidates to a natural number), 
+$C \times C \to \mathbb{N}$,
+$bm$ where $bm(x, y) = +1$ if $x$ is preferred
 over $y$, $bm(x, y) = -1$ if $y$ is preferred over $x$ and $bm(x, y) =
 0$ if $x$ and $y$ are equally preferred. The downside of this representation 
 is that it takes $O(n^2)$ space to represent a ballot where $n$ is the number 
@@ -152,7 +153,7 @@ encrypted ballots.
 every entry in $encb$ is either the encryption of -1, 0, or 1. 
 Moreover, if we interpret $encb$ as a adjacency matrix of a graph representation, 
 $encb$ should be acyclic (lets call it valid or desirable  ballot).  
-If we think carefully,  we definitely do not want to be 
+In addition,  we definitely do not want to be 
 in a situation where a voter prefers $A$ over $B$,  $B$ over $C$, 
 and finally $C$ over $A$, for some candidates $A$, $B$, and $C$.  
 How would we interpret a ballot having cycles? One possible interpretation 
@@ -175,8 +176,9 @@ an encrypted (matrix) ballot $eballot : C \times C \to CT$ is valid only if:
 More importantly,  to achieve verifiability, we not only need \emph{verify}
 that a ballot is valid, we also need to \emph{evidence} its validity
 (or otherwise) in the scrutiny sheet.   However,  the issue with the above 
-definition, to verify the validity of a ballot, is that if we decrypt 
-the ballot $eballot$ to get the plaintext ballot $pballot$ to evidence the validity,   
+definition,  verification of the validity of an encrypted ballot, is that if we decrypt 
+the $eballot$ to the ballot $pballot$ and publish $pballot$  in the scrutiny sheet 
+to evidence the validity $eballot$,   
 we would reveal the (secret) preference of the voter,  who cast this ballot. 
 Therefore, we cannot decrypt the $eballot$, and we need a better way to evidence 
 the validity of an encrypted ballot. 
@@ -216,7 +218,7 @@ ideas, we can evidence the validity of the encrypted ballot,  $ctballot : C \tim
 The ballot $ctballot$ is valid if and only if its decryption  i.e. the plaintext ballot 
 $ptballot (x, y) = decb(ctballot (x, y)$ is valid, where $decb : C \times C \to \mathbb{Z}$ 
 denotes decryption function, and $x$ and $y$ ranges over the list of candidates. 
-However, we cannot publish the $ptballot$ as an evidence of validity of 
+However,  as we stated previously, we cannot publish the $ptballot$ as an evidence of validity of 
 the $ctballot$ in the scrutiny sheet because then it will leak the 
 voter's preference. Thus we generate a secret permutation, $\pi$,  and  subsequently, 
 we publish $ctballot'$,  row and column permuted ballot 
@@ -228,7 +230,7 @@ decryption,  the commitment of the secret permutation $\pi$,  etc.
 In a nutshell, we can evidence the validity
 of a ciphertext ballot $ctballot$ by
 \begin{itemize}
-  \item generating a secret permutation, $\pi$, and publishing its commitment.
+  \item generating a secret permutation, $\pi$ and evidence that it is a valid permutation.
   \item publishing the shuffled version $ctballot'$ of $ctballot$, that is
   shuffled by the secret permutation $\pi$, together with
   evidence that $ctballot'$ is indeed a shuffle of $ctballot$.
@@ -266,7 +268,7 @@ winners by exhibiting
 \setcounter{enumi}{4}
 \item \label{it:pub-dm} the final tally $encm$, together with its decryption  
   and a zero-knowledge proof of honest decryption     
-\item publishes the winner(s), together with evidence to substantiate the claim (existence of strongest path the winner to the loser 
+\item publishes the winner(s), together with evidence to substantiate the claim (existence of strongest path from the winner to the loser 
 and absence of such path from the loser to the winner,  section \ref{sec:evidence}).
 \end{enumerate}
 
