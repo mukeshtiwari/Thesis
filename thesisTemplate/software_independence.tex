@@ -8,11 +8,11 @@
 \section{Introduction}
 
 
-One of the major disadvantage of using cryptography 
+One of the major disadvantages of using cryptography 
 to achieve privacy (using encryption to make the 
-content of ballot private)  and verifiability (using zero-knowledge-proof for verification of claims) makes the verification 
+content of ballot private)  and verifiability (using zero-knowledge proof for verification of claims) makes the verification 
 process cumbersome. As a consequence, the verification process (checking the scrutiny sheet) is only viable for
-tiny fraction of general population, cryptographers, results into a sharp decrease in number of scrutineers. 
+tiny fraction of general population, cryptographers,  and results into a sharp decrease in number of scrutineers. 
 While it is not very difficult to find cryptographers to verify the election, 
 they are, off course, not the representative population in any democracy. 
 In order to increase the number of scrutineers and subsequently confidence in electronic voting, we follow the 
@@ -29,7 +29,7 @@ reference certificate checker which anyone can inspect and run on the election d
   should we provide a reference certificate checker, but it should be a formally verified one. 
   Additionally, a formally verified reference certificate checker would open the gate for
   debate in case of someone's implementation for checking certificate diverges from the reference checker.
-In the case of a diverging situation, there are two possibility, either the reference checker is verified 
+In the case of a diverging situation, there are two possibilities, either the reference checker is verified 
 using wrong assumptions,  or the implementation itself is wrong.  The first situation is certainly 
 not very pleasant because it would deteriorate the public trust in the system, but nonetheless, it is always
 good to  have openness in democracy to make it more strong. 
@@ -38,66 +38,65 @@ good to  have openness in democracy to make it more strong.
 
 In this chapter, we discuss the concepts required to develop a verified certificate checker for the certificate we generated 
 in the last chapter. Moreover, we sketch pseudo code (and pen-and-paper proof) as well for these concepts 
-which can be easily translated into the Coq code.  We have already explained our certificate in the Section \ref{sec:extract}, 
+which can be easily translated into the Coq code.  We have already explained our certificate in section \ref{sec:extract}, 
 but intuitively,  checking our certificate amounts to proving that  the homomorphic margin has been 
-computed correctly and zero-knowledge-proof for every claim is correct. In a nutshell, 
+computed correctly and zero-knowledge proof for every claim is correct. In a nutshell, 
 our claims were:
 \begin{enumerate}
-\item honest decryption zero-knowledge-proof: every encrypted value is decrypted honestly 
-\item shuffle zero-knowledge-proof:
+\item honest decryption zero-knowledge proof: every encrypted value is decrypted honestly 
+\item shuffle zero-knowledge proof:
   a ballot has been permuted by the same permutation whose commitment is published (commitment consistent shuffle \citep{Wikstrom:2009:CPS}).
 \item final homomorphic tally is computed correctly
 \end{enumerate}
 
 \noindent
-We sketch the encoding of Pedersen's commitment, one of the primitives of shuffle zero-knowledge-proof, in Coq, 
-but we leave the other details of shuffle zero-knowledge-proof algorithm \citep{Wikstrom:2009:CPS}. Moreover, we
+We sketch the encoding of Pedersen's commitment \citep{Pederson}, one of the primitives of shuffle zero-knowledge proof, in Coq, 
+but we leave the other details of shuffle zero-knowledge proof algorithm \citep{Wikstrom:2009:CPS}. Moreover, we
 encode the sigma protocol in Coq as a record and give various examples of concrete sigma protocol including 
-the honest decryption zero-knowledge-proof.  Finally, all 
+the honest decryption zero-knowledge proof.  Finally, all 
 the concepts explained in this chapter are sufficient to develop the formally verified 
-certificate checker for IACR election 
-\footnote{https://vote.heliosvoting.org/helios/elections/60a714ea-ce6d-11e8-8248-76b4ab96574c/view} 
+certificate checker for International Association for Cryptologic Research (IACR) election 
+\footnote{\url{https://vote.heliosvoting.org/helios/elections/60a714ea-ce6d-11e8-8248-76b4ab96574c/view}} 
 and our proof development can be accessed 
-\footnote{https://github.com/mukeshtiwari/secure-e-voting-with-coq}.
+\footnote{\url{https://github.com/mukeshtiwari/secure-e-voting-with-coq}}.
 
 
-\textbf{Chapter Outline:} In the Section $\ref{sec:algebra}$, we discuss the underlying algebraic structures needed for various 
+\textbf{Chapter Outline:} In section $\ref{sec:algebra}$, we discuss the underlying algebraic structures needed for various 
  cryptographic operations. Section $\ref{sec:pedersen}$ focuses on generalizing the Pedersen commitment scheme for 
  a matrix. In the following Section $\ref{sec:sigma_coq}$, we discuss the details of sigma protocol, and its formalization 
- in Coq. In order to eschew the (monadic) probabilistic reasoning of sigma protocols, we use the standard trick of making the randomness 
+ in Coq. In order to eschew the (monadic) probabilistic reasoning of sigma protocol, we use the standard trick of making the randomness 
  explicit to make the reasoning easier
- without losing the meaning of sigma protocol. In the Section $\ref{sec:conc_sigma}$, we show 
+ without losing the meaning of sigma protocol. In section $\ref{sec:conc_sigma}$, we show 
  how to make a concrete instance of sigma protocol by giving an example of discrete logarithm. In addition, 
  we show the protocol needed for honest decryption (Section $\ref{sec:dec_sigma}$). Section $\ref{sec:homo_tally}$ sketches 
- the homomorphically tally based on additive ElGamal scheme. Finally, we discuss the IACR scrutiny sheet in the Section $\ref{sec:election_iacr}$, 
- and we summarize the chapter in the Section $\ref{sec:summary_software}$
+ the homomorphically tally based on additive ElGamal scheme. Finally, we discuss the IACR scrutiny sheet in section $\ref{sec:election_iacr}$, 
+ and we summarize the chapter in section $\ref{sec:summary_software}$
 
 
 \section{Algebraic Structures: Building Blocks}
 \label{sec:algebra}
-The basic building blocks any cryptographic system are algebraic structures, specifically cyclic group of prime order, field and vector space. In general, 
+The basic building blocks of any cryptographic system are algebraic structures, specifically cyclic group of prime order, field and vector space. In general, 
 we do not need vector space, and group and field are sufficient for most of the cryptographic purposes. However,
 vector space  of a cyclic group of prime order over the field of integers modulo the same order is nicer to work 
 because multiplying a group element by a field element can be abstracted over scalar multiplication of vector space.
 
 \begin{definition}[Group] 
-A group is a set $G$, with a binary operator $\cdot : G \rightarrow G \rightarrow G$, identity element $e$, and inverse operator $inv : G \rightarrow G$ such 
+A group is a set $G$, with a binary operator $\cdot : G \rightarrow G \rightarrow G$, identity element $e$, and inverse operator $inv : G \rightarrow G$ (denoted as $^{-1}$) such 
     that the following laws hold:  \end{definition} 
     \begin{itemize}
-     \item \textit{Associativity}: $\forall$  a b c $\in G,$  $a \cdot (b \cdot c) = (a \cdot b) \cdot c$
-    \item \textit{Closure}: $\forall$ a b $\in G,$  $a \cdot b \in G$
-    \item \textit{Inverse Element}: $\forall$ a $\in G$, $a \cdot (inv \text{ } a) = (inv \text{ } a) \cdot a = e$
-    \item \textit{Identity}: $\forall$ a $\in G,$  $a \cdot e = e \cdot a  = a$
+     \item \textit{Associativity}: $\forall \text{  }a \text{  }b \text{  }c \text{  } \in G,$  $a \cdot (b \cdot c) = (a \cdot b) \cdot c$
+    \item \textit{Closure}: $\forall \text{  } a \text{  } b \text{  } \in G,$  $a \cdot b \in G$
+    \item \textit{Inverse Element}: $\forall \text{  } a \text{  } \in G$, $a \cdot \text{ } a^{-1} = \text{ } a^{-1} \cdot a = e$
+    \item \textit{Identity}: $\forall \text{  } a \text{  } \in G,$  $a \cdot e = e \cdot a  = a$
     \end{itemize}
   
     \noindent
-    If the group is commutative, i.e. $\forall$ a b $\in  G,$  $a \cdot b = b \cdot a$, then we call it Abelian group.  We can represent the Abelian group in Coq by using the 
+    If the group is commutative, i.e. $\forall \text{  } a \text{  }b \text{  }\in  G, \text{   } a \cdot b = b \cdot a$, then we call it Abelian group.  We can represent the Abelian group in Coq by using the 
     record data type. 
  
  \begin{minted}{Coq}
 
-Record AbelGroup (G : Type) 
-    (Hdec : forall x y : G, {x = y} + {x <> y}) 
+Record AbelGroup (G : Type)
     (dot : G -> G -> G)  (inv : G -> G) (e : G) :=
   {
     dot_associativity : forall x y z, 
@@ -112,14 +111,13 @@ Record AbelGroup (G : Type)
 \end{minted}
 
 \noindent
-Our Coq encoding is slight different from the definition of the group we gave above, mainly that \textit{G : Type} "read it as A has the type Type" and 
-\textit{(Hdec : forall x y : G, {x = y} + {x <> y})}. Because of the theoretical foundations of Coq, every term in Coq has to have a type;
-hence we need to explicitly state the type of term $G$, and we assume a decidable equality $Hdec$ on the elements of $G$.  
-In a nutshell, Type is used to represent sets. 
+Our Coq encoding is slight different from the definition of the group we gave above, mainly that \textit{G : Type} (read it as G has the type Type). 
+Because of the underlying foundation of Coq is type theory, every term in Coq has a type;
+hence we need to explicitly state the type of term $G$.  In a nutshell, Type is used to represent sets.  
 
 \begin{definition}[Field] 
-A field  is a set $\mathbb{F}$, with two binary operator $+ : \mathbb{F} \rightarrow \mathbb{F} \rightarrow \mathbb{F}$,  and $\cdot : \mathbb{F} \rightarrow \mathbb{F} \rightarrow \mathbb{F}$, 
-two identity element $0$ and $1$, and two unary operator $- : \mathbb{F} \rightarrow \mathbb{F}$, $1/ : \mathbb{F} \rightarrow \mathbb{F}$  such that:
+A field  is a set $\mathbb{F}$, with two binary operators $+ : \mathbb{F} \rightarrow \mathbb{F} \rightarrow \mathbb{F}$,  and $\cdot : \mathbb{F} \rightarrow \mathbb{F} \rightarrow \mathbb{F}$, 
+two identity elements $0$ and $1$, and two unary operator $- : \mathbb{F} \rightarrow \mathbb{F}$, $1/ : \mathbb{F} \rightarrow \mathbb{F}$  such that:
 \end{definition} 
  \begin{itemize}
  \item ($\mathbb{F}$, +, 0, -) forms an abelian group.
@@ -130,16 +128,18 @@ two identity element $0$ and $1$, and two unary operator $- : \mathbb{F} \righta
  
 
 \begin{definition}[Vector Space]
-A set $V$ with two binary operation $+ : V \rightarrow V \rightarrow V$ and $\cdot : \mathbb{F}  \rightarrow V \rightarrow V$, 
+A set $V$ with two binary operations,  vector addition $+ : V \rightarrow V \rightarrow V$  and scalar multiplication $\cdot : \mathbb{F}  \rightarrow V \rightarrow V$, 
 is  a vector space over a field $\mathbb{F}$ if the following properties hold:
 \end{definition} 
 \begin{itemize}
- \item Closure under addition: (V, +) forms an abelian group. 
- \item Scalar  distribute  with respect  to  vector  addition: $\forall$  $r \in \mathbb{F}$, $u$ $v$ $\in V$,  $r \cdot (u + v) = r \cdot u + r \cdot v$
- \item Scalar distribute with respect to field addition: 
-                $\forall$  $a$ $b$ $\in \mathbb{F}$, $u$ $\in V$, $(a +_{\mathbb{F}} b) \cdot u = a \cdot u + b \cdot v$
+ \item Closure under vector addition: (V, +) forms an abelian group. 
+ \item Scalar multiplication distributes  with respect  to  vector  addition: $\forall$  $r \in \mathbb{F}$, $u$ $v$ $\in V$,  $r \cdot (u + v) = r \cdot u + r \cdot v$.
+ \item Scalar multiplication distributes with respect to field addition: 
+                $\forall$  $a$ $b$ $\in \mathbb{F}$, $u$ $\in V$, $(a +_{\mathbb{F}} b) \cdot u = a \cdot u + b \cdot v$, where $+_{\mathbb{F}} : \mathbb{F} \to \mathbb{F} \to \mathbb{F} $ is 
+                field addition. 
   \item Scalar multiplication is associative with respect to field multiplication:
-         $\forall$ $a$ $b$ $\in  \mathbb{F}$, $u$ $\in V$ , $(a \cdot_{\mathbb{F}} b) \cdot u = a \cdot (b \cdot u)$
+         $\forall$ $a$ $b$ $\in  \mathbb{F}$, $u$ $\in V$ , $(a \cdot_{\mathbb{F}} b) \cdot u = a \cdot (b \cdot u)$, where $\cdot_{\mathbb{F}} : \mathbb{F} \to \mathbb{F} \to \mathbb{F} $ is 
+                field  multiplication. 
   \item Identity: $\forall a \in V, 1_{\mathbb{F}} \cdot a = a$
 
 \end{itemize}
@@ -149,33 +149,33 @@ is  a vector space over a field $\mathbb{F}$ if the following properties hold:
 \section{Pedersen Commitment Scheme}
 \label{sec:pedersen}
 Recall that in the last chapter to prove that if a ballot was valid or invalid, we generated a secret permutation $\pi$ and published its commitment using 
-Pedersen commitment scheme. Later, we use this to shuffle each row and column of the ballot by this (secret) permutation. 
+Pedersen commitment scheme \citep{Pederson}.  Later, we use this to shuffle each row and column of the ballot by this (secret) permutation. 
 In the shuffle algorithm \citep{Wikstrom:2009:CPS}), the data structure of permutation $\pi$ is matrix (a permutation matrix to be precise).
-In this section, we discuss that how to use generalize Pedersen commitment scheme for matrix data structure. 
+In this section, we discuss that how to generalized Pedersen commitment scheme for matrix data structure. 
 
-A Pedersen commitment for any two give group element $g$ $h$ $\in G$, a message $m \in \mathbb{F}$, and a random element 
-$r \in \mathbb{F}$ is $g^r \cdot h^m$ ($\cdot$ is the group operation). In Coq, it can be encoded as follows:  
+A Pedersen commitment for any two given group elements $g$ $h$ $\in G$, a message $m \in \mathbb{F}$ (the field of integers), and a random element 
+$r \in \mathbb{F}$ (the field of integers) is $g^r \cdot h^m$ ($\cdot$ is the group operation).  In Coq, it can be encoded as follows (simplified for presentation):  
 
 
 \begin{minted}{coq}
 
-Definition ped_commitment {F G} (fn : G -> F -> G) 
-  (gn : G -> G -> G) (g h : G) (r m : F) : G := 
-    gn (fn g r) (fn h m).
+Definition ped_commitment {F G : Type} (H1 : Group G) 
+	(H2 : Field F) (H3 : Vector_Space F G) 
+	(^ : G -> F -> G) (dot : G -> G -> G) 
+	(g h : G) (r m : F) : G :=  dot (g ^ r) (h ^ m).
 
 
 \end{minted}
 
 \noindent
-The function $fn$ (exponentiation operator) can be abstracted as a  scalar binary operator $\cdot$ and the 
-function $gn$ (group operator) can be 
-abstracted as addtion binary operator $+$ of vector space (vector space of a cyclic group $G$ of prime 
-order over the field of integers $\mathbb{F}$ modulo the same order).  
+The exponentiation function (NOT RENDERING)  is the scalar multiplication $\cdot$ and the 
+function $dot$ is the vector addition $+$ of a vector space of a cyclic group $G$ of prime 
+order over the field of integers $\mathbb{F}$ modulo the same prime order.  
 Even though this abstraction is not necessary, but it 
 provides a clean way to work with a \textit{Group} and \textit{Field}. 
 We can extend the Pedersen commitment for a group element $g$, 
-vector of $n$ group element $h_{1}, h_{2} \dots h_{n}$, vector of $n$ 
-field element $m_{1}, m_{2} \dots m_{n}$, and a random field element 
+vector of $n$ group elements $h_{1}, h_{2} \dots h_{n}$, vector of $n$ 
+field elements $m_{1}, m_{2} \dots m_{n}$, and a random field element 
 $r$ is $g^r \cdot \prod_{i = 1}^n  h_{i}^{m_{i}}$. 
 The $\prod_{i = 1}^n  h_{i}^{m_{i}}$ function can be written in Coq as 
 (this program is written using Equation library \citep{Sozeau:2019:ERH:3352468.3341690}):
@@ -183,11 +183,14 @@ The $\prod_{i = 1}^n  h_{i}^{m_{i}}$ function can be written in Coq as
 \begin{minted}{coq}
 
 
-Equations prod {F G n}  (fn : G -> F -> G) (gn : G -> G -> G)
-  (hi : Vector.t G (S n)) (mi : Vector.t F (S n)) :  G :=
-  prod fn gn (vcons h vnil) (vcons m vnil) := fn h m;
-  prod fn gn (vcons h hs)  (vcons m ms)  := 
-         gn (fn h m) (prod fn gn hs ms).
+Equations prod  {F G : Type} {n : nat} 
+	(H1 : Group G) (H2 : Field F)
+	(H3 : Vector_Space F G)  (^ : G -> F -> G) 
+	(dot : G -> G -> G) (hi : Vector.t G (S n)) 
+	(mi : Vector.t F (S n)) :  G :=
+	prod (^) dot (vcons h vnil) (vcons m vnil) := h ^ m;
+	prod (^) dot (vcons h hs)  (vcons m ms)  := 
+         dot (h ^ m) (prod (^) dot hs ms).
 
 
 \end{minted}
@@ -210,7 +213,7 @@ Finally, to commit a matrix of size $N \times N$, we need to call
 $ped\_gen\_commitment$ on each column of matrix. Consequently, 
 we  would get a vector of commitments of size N.
 
-\section{Sigma Protocol: Efficient Zero-Knowledge-Proof}
+\section{Sigma Protocol: Efficient Zero-Knowledge Proof}
 \label{sec:sigma_coq}
 A sigma protocol is a two party protocol, a prover $P$ and a verified $V$, where prover $P$ tries to convince the verifier $V$ that she 
 holds a private input $x$ for some public input $w$ such that a binary relation $R$ holds, i.e. $(x, w) \in R$.  Sigma protocol, 
@@ -682,7 +685,7 @@ yes, which asserts that the result produced were correct.
 In this chapter, we have sketched the ideas for developing a formally verified certificate checker
 for the certificate we produced in the last chapter. However, due to time constraint and 
 complexity of shuffle primitive, 
-we ended up verifying a simple certification, which did not not involve any zero-knowledge-proof 
+we ended up verifying a simple certification, which did not not involve any zero-knowledge proof 
 of shuffle.  Finally, in this chapter we closed the loop of decrease in number of scrutineers because 
 any one can run the certificate checker. Moreover, we open sourced 
 \footnote{https://github.com/mukeshtiwari/secure-e-voting-with-coq} the checker, so 
