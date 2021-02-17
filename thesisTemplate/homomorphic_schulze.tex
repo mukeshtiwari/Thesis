@@ -83,7 +83,7 @@ overwhelming probability.
 Later results~\citep{Ben-Or:1988:CRYPTO,Goldreich:1991:ACM}
 showed that 
 all problems for which solutions can be efficiently verified have zero-knowledge
-proof (In practice,  Sigma protocol \citep{10.1007/3-540-48658-5_19} is used 
+proof (in practice,  Sigma protocol \citep{10.1007/3-540-48658-5_19} is used 
 to prove the knowledge of a (private) witness $w$ for a public input $x$, 
 and it is required to be zero-knowledge against the honest verifier).
 
@@ -104,18 +104,18 @@ voters is large enough.
 schemes, ballots are rank-ordered lists of candidates. For the
 Schulze Method, we require that all candidates are ranked, and two
 candidates may be given the same rank. That is, a ballot is most
-naturally represented as a function $b: C \to \mathbb{N}$ that assigns a
+naturally represented as a function, $C \to \mathbb{N}$, that assigns a
 numerical rank to each candidate, and the computation of the margin
 amounts to computing the sum
-\[ m(x, y) = \sum_{b \in B} \begin{cases} +1 & b(x) > b(y) \\ 0 &
-b(x) = b(y) \\ -1 & b(x) < b(y) \end{cases} \]
+\[ m(x, y) = \sum_{b \in B} \begin{cases} +1 & b(x) < b(y) \\ 0 &
+b(x) = b(y) \\ -1 & b(x) > b(y) \end{cases} \]
 where $B$ is the multi-set of ballots, and each $b \in B$ is a
 ranking function $b: C \to  \mathbb{N}$ over a (finite) set $C$ of
 candidates. 
 
 Ideally, we could have copied the same ballot structure in a homomorphic Schulze method, 
-but encrypting the choices, i.e. the ballot would have been represented as $b: C \to EncryptedNat$
-where $EncryptedNat$ is the encrypted representation of a choice (natural number).
+but encrypting the choices, i.e. the ballot would have been represented as a function $C \to CT$
+where $CT$ (ciphertext) is the encrypted representation of a choice (natural number).
 However, we note that this representation of ballots is not well suited for
 homomorphic computation of the margin matrix as practically feasible
 homomorphic encryption schemes do not support comparison operators
@@ -132,21 +132,23 @@ of candidate participating in election.
 While the advantage of the first representation, $b: C \to \mathbb{N}$,  is that each ranking
 function is necessarily a valid ranking and is linear space ($O(n))$) in the number 
 of candidates, $n$, the advantage of the matrix 
-representation, $bm: C \times C \to \mathbb{N}$,  is that the computation of
+representation, $C \times C \to \mathbb{N}$,  is that the computation of
 the margin matrix is simple, that is
 \[ m(x, y) = \sum_{bm \in B} bm(x, y) \]
-where $B$ is the multi-set of ballots (in matrix form). 
+where $bm$ is plaintext ballot in matrix form,  and $B$ is the multi-set of ballots (in matrix form). 
 The major benefit of this
 matrix representation is that it can  be transferred to the encrypted setting in a straight
-forward way by encrypting all the entries in the matrix $bm$.  We take the advantage of 
-matrix representation and represent our encrypted ballot as $encb: C \times C \to \mathbb{Z}$. 
+forward way by encrypting all the entries in $bm$.  We take the advantage of 
+matrix representation and represent our encrypted ballot as a matrix of ciphertext, $C \times C \to CT$ (CT stands for ciphertext). 
 Following this representation of encrypted ballot,  the encrypted margin can be computed as:
 \begin{equation}\label{eqn:enc-mm}
 encm(x, y) = \bigoplus_{encb \in EncB} encb(x, y) 
 \end{equation}
 where $\oplus$ denotes homomorphic addition, $encb$ is an encrypted
 ballot in matrix form and $EncB$ is the multi-set of
-encrypted ballots.  In an idea world where there is no cheating, 
+encrypted ballots. 
+
+ In an ideal world where every voter is honest, 
 every entry in $encb$ is either the encryption of -1, 0, or 1. 
 Moreover, if we interpret $encb$ as a adjacency matrix of a graph representation, 
 $encb$ should be acyclic (lets call it valid or desirable  ballot).  
@@ -154,54 +156,86 @@ If we think carefully,  we definitely do not want to be
 in a situation where a voter prefers $A$ over $B$,  $B$ over $C$, 
 and finally $C$ over $A$, for some candidates $A$, $B$, and $C$.  
 How would we interpret a ballot having cycles? One possible interpretation 
-is ranking all the candidates equal appearing a cycle; however, we 
-decided to make it invalid (lets call it invalid undesirable ballot). 
-Now during the counting, we need to distinguish between a  desirable 
-ballot, i.e.  valid ballot, and an undesirable ballot, i.e. invalid ballot.   
-To make this distinction,  we verify that an encrypted matrix ballot $encb$ is valid only if:
+is ranking all the candidates equal appearing a cycle, but clearly it is not a
+reasonable interpretation, therefore we 
+decided to not include it in final tally (lets call it invalid or undesirable ballot). 
+Now during the course of counting encrypted ballots, we need to 
+distinguish between a  desirable 
+ballot, i.e.  valid ballot, and an undesirable ballot, i.e. invalid ballot.  
+To make this distinction,  we verify that 
+an encrypted (matrix) ballot $eballot : C \times C \to CT$ is valid only if:
 \begin{itemize}
-\item that the decryption of $encb(x, y)$ is indeed one of $1, 0$ or
-$-1$
-\item that $encb$ indeed corresponds to a ranking function.
+\item  the decryption of $eballot(x, y)$ is indeed one of $1, 0$ or $-1$, where $x$ and $y$ ranges over the list of all candidates
+\item  $eballot$ is acyclic (the idea here is that if $eballot$ is acyclic,  then for its decryption, $pballot: C \times C \to \mathbb{Z}$, 
+	we can find a ranking function from candidates to natural number, $C \to \mathbb{N}$,  i.e. we can rank all the candidates in a
+	linear order (explained in section \ref{sec:valid-pb})).
 \end{itemize}
 
 \noindent
-Indeed, to achieve verifiability, we not only need \emph{verify}
+More importantly,  to achieve verifiability, we not only need \emph{verify}
 that a ballot is valid, we also need to \emph{evidence} its validity
-(or otherwise) in the certificate.  
+(or otherwise) in the scrutiny sheet.   However,  the issue with the above 
+definition, to verify the validity of a ballot, is that if we decrypt 
+the ballot $eballot$ to get the plaintext ballot $pballot$ to evidence the validity,   
+we would reveal the (secret) preference of the voter,  who cast this ballot. 
+Therefore, we cannot decrypt the $eballot$, and we need a better way to evidence 
+the validity of an encrypted ballot. 
 
-\smallskip\noindent\emph{Validity of Ballots.} By a plaintext
-(matrix) ballot
-we simply mean a function $b: C \times C \to Z$,
-where $C$ is the (finite) set of candidates. A 
-plaintext ballot $b(x, y)$ 
+
+\subsection{Validity of Ballots}
+\label{sec:valid-pb}
+A plaintext ballot $ptballot : C \times C \to \mathbb{Z}$ 
 is \emph{valid} if it is induced by a ranking function, i.e.
-there exists a function $f: C \to Nat$ such that $b(x, y) = 1$ if
-$f(x) < f(y)$, $b(x, y) = 0$ if $f(x) = f(y)$ and $b(x, y) = -1$ if
-$f(x) > f(y)$. A \emph{ciphertext (matrix) ballot} is a function
-$encb: C \times C \to CT$ (where $CT$ is a chosen set of
-ciphertexts), and it is valid if its decryption,  i.e. the plaintext
-ballot $b(x, y)  = dec(encb(x, y))$ is valid (where $dec$ denotes
-decryption).
+there exists a function $f: C \to \mathbb{N}$ such that $ptballot(x, y) = 1$ if
+$f(x) < f(y)$, $ptballot(x, y) = 0$ if $f(x) = f(y)$ and $ptballot(x, y) = -1$ if
+$f(x) > f(y)$.  In symbols:
 
-For a plaintext ballot, it is easy to decide whether it is
-valid (and should be counted) or not (and should be discarded). We
-use shuffles (ballot permutations) to evidence the validity of
-encrypted ballots. One observes that a matrix ballot is valid if and
-only if it is valid after permuting both rows and columns with the
-same permutation. That is, $b(x,y)$ is valid if and only if $b'(x,y)$
-is valid, where
-\[ b'(x,y) = b(\pi(x), \pi(y)) \]
-and $\pi: C \to C$ is a permutation of candidates. (Indeed, if $f$
-is a ranking function for $b$, then $f \circ \pi$ is a ranking
-function for $b'$). As a consequence, we can evidence the validity
-of a ciphertext ballot $encb$ by
+\[ ptballot(x, y) =  \exists f : C \to \mathbb{N}  \begin{cases} +1 & f(x) < f(y) \\ 0 &
+f(x) = f(y) \\ -1 & f(x) > f(y) \end{cases} \]
+
+
+
+\noindent
+For a plaintext ballot, it is easy to decide if is valid 
+or not valid.  One crucial observation is that if $pballot$ is valid, 
+it also valid after permuting its each row and column with the 
+same permutation, i.e.  $ptballot$ is valid if and only if $ptballot'$ is 
+valid, where
+\[ ptballot'(x,y) = ptballot(\pi(x), \pi(y)) \]
+and $\pi: C \to C$ is a permutation of candidates.
+In fact, if $f : C \to \mathbb{N}$ is a ranking function for $ptballot$, 
+$f \circ \pi$ is a ranking function for $ptballot'$.   Also, notice that
+if $ptballot$ is the decryption of  $ctballot : C \times C \to CT$
+and $ptballot'$ is the decryption of $ctballot' : C \times C \to CT$,  
+the following holds:
+\[ ctballot'(x,y) = ctballot(\pi(x), \pi(y)) \]
+
+
+Using these 
+ideas, we can evidence the validity of the encrypted ballot,  $ctballot : C \times C \to CT$. 
+The ballot $ctballot$ is valid if and only if its decryption  i.e. the plaintext ballot 
+$ptballot (x, y) = decb(ctballot (x, y)$ is valid, where $decb : C \times C \to \mathbb{Z}$ 
+denotes decryption function, and $x$ and $y$ ranges over the list of candidates. 
+However, we cannot publish the $ptballot$ as an evidence of validity of 
+the $ctballot$ in the scrutiny sheet because then it will leak the 
+voter's preference. Thus we generate a secret permutation, $\pi$,  and  subsequently, 
+we publish $ctballot'$,  row and column permuted ballot 
+of $ctballot$ by the secret permutation $\pi$,  and its decryption $ptballot'$, 
+row and column permutation of $ptballot$ by the same secrete permutation $\pi$. 
+Moreover,  we augment the scrutiny sheet with the zero-knowledge proofs about various claim, 
+e.g. we have decrypted the $ctballot'$ honestly and $ptballot'$ is indeed an honest 
+decryption,  the commitment of the secret permutation $\pi$,  etc.  
+In a nutshell, we can evidence the validity
+of a ciphertext ballot $ctballot$ by
 \begin{itemize}
-  \item publishing a shuffled version $encb'$ of $encb$, that is
-  shuffled by a secret permutation, together with
-  evidence that $encb'$ is indeed a shuffle of $encb$
-  \item publishing the decryption $b'$ of $encb'$ together with
-  evidence that $b'$ is indeed the decryption of $encb'$.
+  \item generating a secret permutation, $\pi$, and publishing its commitment.
+  \item publishing the shuffled version $ctballot'$ of $ctballot$, that is
+  shuffled by the secret permutation $\pi$, together with
+  evidence that $ctballot'$ is indeed a shuffle of $ctballot$.
+  \item publishing the decryption $ptballot'$ of $ctballot'$ together with
+  evidence that $ptballot'$ is indeed the decryption of $ctballot'$.
+  \item evidencing if $ptballot'$ is valid (or otherwise) by showing the 
+  existence of ranking function $f : C \to \mathbb{N}$ (or otherwise).
 \end{itemize}
 
 \noindent
