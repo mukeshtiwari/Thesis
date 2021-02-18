@@ -5,12 +5,12 @@
 {\textit{Steve Jobs}} 
 
 
- Since the beginning of democracy, social scientist are constantly looking for methods  which would 
- aggregate the individual choice  to arrive at acceptable group decisions. 
+ Since the beginning of democracy, social scientists are constantly looking for methods  which would 
+ aggregate the individual choices  to arrive at acceptable group decisions. 
  In general, these acceptable group decisions were based on intuition of the society at that time,
  but not backed by mathematical theory. The first mathematical 
  treatment to combine the individual choices (social mathematics)  can be 
- attributed to french philosopher and mathematician Marquis de Condorcet (Condorcet method, 1785) and his contemporary
+ attributed to French philosopher and mathematician Marquis de Condorcet (Condorcet method, 1785) and his contemporary
  and co-national mathematician Jean-Charles de Borda (Borda count, 1770). However, the first formal system, foundational cornerstone
  of modern social choice theory, for collective preference was given by Kenneth Arrow. In 1950, Kenneth Arrow 
  published a paper titled \textit{A Difficulty in the Concept of Social Welfare} \citep{arrow1950difficulty}. 
@@ -20,7 +20,7 @@
  \item Unrestricted domain
  \item Non-dictatorship
  \item Pareto efficiency
- \item Independence of irrelevant alternatives
+ \item Independence of Irrelevant Alternatives
  \end{itemize}
  
  Moreover, he showed no preferential voting method which can combine or aggregate the individual choices into a community wide 
@@ -58,13 +58,13 @@ Definition condorcet_winner (c : cand)
   Informally, the definition, \textit{condorcet\_winner}, states that 
   if a candidate $c$  is \textit{condorcet winner}, then she has been ranked higher against
   every other candidate.  Having the definition of  condorcet winner, our goal is to concluded that if there is 
- 	a condorcet winner, the Schulze methods always elects it as a winner.  
+ 	a Condorcet winner, the Schulze method always elects it as a winner.  
  	
 \begin{minted}{coq}
-(* if candidate c is condorcet winner then it's winner of election *)
+(* if candidate c is Condorcet winner then it's winner of election *)
  Lemma condorcet_winner_implies_winner (c : cand) 
     (marg : cand -> cand -> Z) :  condorcet_winner c marg ->
-    c_wins marg c = true. 
+    c_wins c = true. 
 Proof.
       intros Hc. 
       pose proof  condorcet_winner_genmarg.
@@ -85,7 +85,7 @@ Qed.
  
  
  It is not very hard to see these two facts based on the definition of generalized margin. Intuitively, 
- if a candidate $c$ is the condorcet winner, then the strongest path between her and every other 
+ if a candidate $c$ is the Condorcet winner, then the strongest path between her and every other 
  candidate, say $d$,  would be either a direct path, $marg$ $c$ $d$, or a more stronger path, $M (c, d)$, 
  via some other intermediate candidates. 
   
@@ -109,7 +109,7 @@ nodes, i.e.
  Lemma gen_marg_gt0 :
    forall c d n marg, 
    condorcet_winner c marg -> 
-   M marg n c d >= 0.
+   M n c d >= 0.
 Proof. 
    unfold condercet_winner.
    intros c d n marg Hc.
@@ -142,7 +142,7 @@ Proof.
 Qed.
 \end{minted}   
  
- Using these two key facts, we concluded that for any condorcet winner candidate $c$, 
+ Using these two key facts, we concluded that for any Condorcet winner candidate $c$, 
  the generalized margin between her and every other opponent is greater than or equal 
  to reverse generalized margin between every other candidate and her.  Formally, 
  in Coq we prove the following theorem, \textit{condorcet\_winner\_genmarg}, on which  the proof of 
@@ -190,7 +190,7 @@ If we reverse each ballot from the ballot set, then the new margin function, den
 \] 
 
 This fact can also be demonstrated using a single ballot $ABC$. The interpretation is $A$ is strictly preferred over $B$, 
-and $B$ is preferred over $C$ (but we don not need strict preferences to have this property). 
+and $B$ is preferred over $C$ (but we do not need strict preferences to have this property). 
 The margin function constructed from this ballot is: 
 
 \[
@@ -276,8 +276,8 @@ Using the lemma $path\_with\_rev\_marg$, we can conclude that if the strength of
 a path going from $c$ to $d$ with respect to $marg$ is greater than or equal to $k$ 
 (by definition of $Path$ inductive type), then the strength of a reverse path from $d$ to 
 $c$ would also be greater than or equal to $k$ with respect $rev\_marg$. 
-Using all this fact, and some auxiliary  lemma 
-the proof of reversal symmetry is mere rewriting the facts
+Using all these facts, and some auxiliary  lemma 
+the proof of reversal symmetry is merely rewriting the facts
 \footnote{At the time of writing this thesis, proof of reversal 
 symmetry hinges on a auxiliary lemma which 
 is fairly intuitive, but demands a lot of  Coq machinery (a typical situation 
