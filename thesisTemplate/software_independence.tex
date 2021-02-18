@@ -190,46 +190,52 @@ extraction where we instantiated the $Cand$ type with concrete candidates
 and discharged all the proof obligation).
 
 
-We can extend the Pedersen commitment for a group element $g$, 
+We can extend the Pedersen commitment to commit a vector instead of 
+just a scalar.  To commit a
 vector of $n$ group elements $h_{1}, h_{2} \dots h_{n}$, vector of $n$ 
-field elements $m_{1}, m_{2} \dots m_{n}$, and a random field element 
-$r$ is $g^r \cdot \prod_{i = 1}^n  h_{i}^{m_{i}}$.  This commitment is 
-known as vector Pedersen commitment. 
-The $\prod_{i = 1}^n  h_{i}^{m_{i}}$ function can be written in Coq as 
+field elements $m_{1}, m_{2} \dots m_{n}$,  a group element $g$,  and a random field element 
+$r$,  we compute  $g^r \cdot \prod_{i = 1}^n  h_{i}^{m_{i}}$.  This commitment is 
+known as vector Pedersen commitment.  
+The $\prod_{i = 1}^n  h_{i}^{m_{i}}$ can be computed in Coq as 
 (this program is written using Equation library \citep{Sozeau:2019:ERH:3352468.3341690}):
 
 \begin{minted}{coq}
 
 
-Equations vector_ped_commitment  {F G : Type} {n : nat} 
+Equations prod_vh_commitment  {F G : Type} {n : nat} 
 	(H1 : Group G) (H2 : Field F)
 	(H3 : Vector_Space F G)  (^ : G -> F -> G) 
 	(dot : G -> G -> G) (hi : Vector.t G (S n)) 
 	(mi : Vector.t F (S n)) :  G :=
-	vector_ped_commitment (^) dot (vcons h vnil) (vcons m vnil) := h ^ m;
-	vector_ped_commitment (^) dot (vcons h hs)  (vcons m ms)  := 
-         dot (h ^ m) (vector_ped_commitment (^) dot hs ms).
+prod_vh_commitment (^) dot (vcons h vnil) (vcons m vnil) := 
+	h ^ m;
+prod_vh_commitment (^) dot (vcons h hs)  (vcons m ms)  := 
+	dot (h ^ m) (prod_vh_commitment ^ dot hs ms).
 
 
 \end{minted}
 
-
-Now we can define  generalized Pedersen commitment ( $g^r \cdot  \prod_{i = 1}^n  h_{i}^{m_{i}}$) as:
+\noindent
+Now we can compute the vector Pedersen commitment ($g^r \cdot  \prod_{i = 1}^n  h_{i}^{m_{i}}$) as:
 
 \begin{minted}{coq}
 
-Definition ped_gen_commitment {F G n}
-           (fn : G -> F -> G) (gn : G -> G -> G)
-           (g : G) (r : F) (hs : Vector.t G (S n))
-           (ms : Vector.t F (S n)) :=
-  gn (fn g r) (prod fn gn hs ms).
-  
+Definition ped_vec_commitment {F G : Type} {n : nat} 
+	(H1 : Group G) (H2 : Field F)
+	(H3 : Vector_Space F G)  (^ : G -> F -> G)
+	(g : G) (r : F) (hs : Vector.t G (n + 1))
+	(ms : Vector.t F (n + 1)) := 
+	dot (g ^ r) 
+	(prod_vh_commitment H1 H2 H3 ^ dot hs ms)  
 \end{minted}
   
  
-Finally, to commit a matrix of size $N \times N$, we need to call 
-$ped\_gen\_commitment$ on each column of matrix. Consequently, 
-we  would get a vector of commitments of size N.
+\noindent
+Finally,  we can extend the idea of vector Pedersen commitment to commit a matrix of size  $N \times N$,  for some arbitrary natural number $N$.
+To do so, we can call the $ped\_vec\_commitment$ on every column of the matrix.   Consequently, 
+we  will get a vector of commitments of size $N$.
+
+
 
 \section{Sigma Protocol: Efficient Zero-Knowledge Proof}
 \label{sec:sigma_coq}
@@ -237,19 +243,21 @@ A sigma protocol is a two party protocol, a prover $P$ and a verified $V$, where
 holds a private input $x$ for some public input $w$ such that a binary relation $R$ holds, i.e. $(x, w) \in R$.  Sigma protocol, 
 in general, is a three step protocol:
 \begin{enumerate}
-\item Initialisation: $P$ generates a random message $r$, commits it, and send the committed message to $V$
-\item Challenge: $V$ generates a random message $c$, and sends it to $V$
+\item Initialisation: $P$ generates a random challenge $r$, commits it, and sends the committed message to $V$
+\item Challenge: $V$ generates a random challenge$e$, and sends it to $V$
 \item Response: $P$ sends a response $z$ to $V$
 \end{enumerate} 
 
 \noindent
-Upon receiving the response $z$, $V$ either accepts the proof or rejects the proof.  Now we define the sigma protocol in 
-Coq by using record data type.
+Finally, upon receiving the response $z$ and other public inputs, $V$ 
+either accepts the proof or rejects the proof,  depending on if the public inputs are consistent with protocol or not.  The verification step is 
+modelled as a boolean function that takes all the public inputs and returns true or false.  
+Now we define the sigma protocol in Coq by using record data type.
 
 \begin{minted}{coq}
 Record SigmaProtocol (Statement : Type) (* Statement x *)
        (Witness : Type) (* witness w *)
-       (Rel : Statement -> Witness -> bool) (* decidable relation *)
+       (R : Statement -> Witness -> bool) (* decidable relation *)
        (RandCoin : Type) (* random coin *) 
        (Commitment : Type) (* commitments *)
        (Challenge : Type) (* challenges *) 
@@ -276,7 +284,7 @@ Record SigmaProtocol (Statement : Type) (* Statement x *)
 
   (* Completness *)
   Completness : forall (s : Statement) (w : Witness)
-    (r : RandCoin) (e : Challenge),vRel s w = true -> 
+    (r : RandCoin) (e : Challenge),  R s w = true -> 
     verify (s, initial r, e, response s w r e) = true;
 
  (* Special Soundness *)
@@ -284,13 +292,13 @@ Record SigmaProtocol (Statement : Type) (* Statement x *)
     e1 <> e2 ->
     verify (s, c, e1, r1) = true ->
     verify (s, c, e2, r2) = true ->
-    Rel s (extractor e1 r1 e2 r2) = true;
+    R s (extractor e1 r1 e2 r2) = true;
   
  (* Special honest verifier zero knowledge proof. Explicit 
     randomness makes it nicer to work in theorem prover  *)
   Special_Honest_Verifier_ZKP  (s : Statement) 
     (w : Witness) (e : Challenge): 
-    Rel s w = true -> forall (r : RandCoin), 
+    R s w = true -> forall (r : RandCoin), 
     verify (s, initial r, e, response s w r e) = true <->
     forall (z : Response), verify (simulator s e z) = true;
   
@@ -303,152 +311,60 @@ Record SigmaProtocol (Statement : Type) (* Statement x *)
 
 
 \noindent
-The record \textit{SigmaProtocol} is indexed by \textit{Statement}, the public input 
-known to $P$ and $V$, \textit{Witness}, secret input known to $P$, 
-\textit{Rel} such that $(x, w) \in Rel$, \textit{RandCoin}, the private 
-random coin toss of $P$, \textit{Commitment}, commitment computed 
-by $P$ based on the random coin toss of itself, 
-\textit{Challenge}, the random challenge of $V$ to $P$, 
-\textit{Response}, the response of $P$ send to $V$. Moreover, 
-the body of record \textit{SigmaProtocol} contains
-functions \textit{initial}, \textit{challenge}, \textit{response}, and \textit{verify}
-to reflect the three steps of sigma protocol with two auxiliary 
-functions \textit{simulator} and \textit{extractor}.  The 
-reason for having \textit{simulator} and \textit{extractor} 
-to prove the property of special honest verifier zero knowledge proof 
-and special soundness of 
-the sigma protocol. Finally, we have four properties \textit{Completeness}, 
-\textit{Special\_Soundness}, \textit{Special\_Honest\_Verifier\_ZKP}
-and \textit{Simulator\_correct}. 
-\textit{Completeness} states that if $P$ and $V$ follow the protocol, then 
-verifier would accept the proof. \textit{Special\_Soundness},
-expresses that if $P$ is able to convince $V$ with two 
+The record \textit{SigmaProtocol} is indexed by:
+\begin{itemize}
+\item $Statement$, the public input known to $P$ and $V$
+\item $Witness$, secret input known to $P$
+\item $R$ such that $(x, w) \in R$, known to $P$ and $V$
+\item $RandCoin$, the private random coin toss of $P$
+\item $Commitment$, commitment computed by $P$ based on the random coin toss
+\item $Challenge$, the random challenge of $V$ to $P$
+\item $Response$, the response of $P$ send to $V$
+\end{itemize}
+
+\noindent
+The body of record SigmaProtocol contains
+functions $initia$,  $challenge$, and $response$
+to reflect the three steps of sigma protocol with three auxiliary 
+functions  and $verify$,  $simulator$, and $extractor$.  
+The  $verify$, a boolean  function, checks if the data produced 
+during the protocol is consistent or not, $simulator$ function produces 
+a transcript and used for proving the special honest verifier zero knowledge proof, 
+and $extractor$ function produces a witness  and used in special soundness of 
+sigma protocol. 
+
+\noindent
+We have four correctness properties about sigma protocol:
+\begin{enumerate}
+\item $Completeness:$ if $P$ and $V$ follow the protocol, then 
+verifier would accept the proof. 
+\item $Special\_Soundness:$ if $P$ is able to convince $V$ with two 
 accepting transcript for the same commitment, then $V$ can extract the witness.
-Recall that \textit{special honest 
-verifier zero knowledge proof} amounts to a probabilistic polynomial time simulator 
+\item $Special\_Honest\_Verifier\_ZKP:$ recall that  special honest 
+verifier zero knowledge proof amounts to a probabilistic polynomial time simulator 
 $S$ which would generate a proof transcript for some statement 
 $s$  with same probability distribution as if there were a real 
 conversation between a prover $P$ and a verifier $V$ 
 for the statement $s$ and witness $w$ such that $(s, w) \in  R$.
 Informally, the real proof transcript depends on statement $s$, witness $w$,  
-and challenge $e$, 
-while the simulated proof transcript depends on statement $s$ and challenge $e$. 
+and challenge $e$,  while the simulated proof transcript depends on statement $s$ and challenge $e$. 
 (simulator does have not access to witness $w$, so to generate a accepting 
 proof just by using $s$ and $e$, it uses a concept call rewinding.)
-In our definition of \textit{Special\_Honest\_Verifier\_ZKP}, we eschew the 
+In our definition of $Special\_Honest\_Verifier\_ZKP$, we eschew the 
 probabilistic reasoning by making randomness explicit, and it
 states that for any  given 
-fixed statement $s$, witness $w$, challenge $e$ and assumption that $Rel$ $s$ $w$ holds, 
-then for every random coin $r$  and a accepting real transcript, simulator can construct 
-an accepting transcript from all random response drawn from response space. 
-The \textit{Correct\_simulator} property states that the simulator is correct, i.e.
-any transcript created by simulator checks out. 
+fixed statement $s$, witness $w$, challenge $e$ and assumption that $R$ $s$ $w$ holds, 
+then for every random challenge $r$  and a accepting real transcript, simulator can construct 
+an accepting transcript from all random responses drawn from response space. 
+\item $Simulator\_correct:$ simulator is correct,  i.e. any transcript created by simulator checks out. 
+
+\end{enumerate}
+ 
 
 
-
-%\noindent
-%Our definition of sigma protocol is almost complete except we have not given 
-%the special honest verifier zero knowledge proof axiom.  Recall that special honest 
-%verifier zero knowledge proof amounts to a probabilistic polynomial time simulator 
-%$S$ which would generate a proof transcript for some statement 
-%$s$  with same probability distribution as if there were a real 
-%conversation between a prover $P$ and a verifier $V$ 
-%for the statement $s$ and witness $w$ such that $(s, w) \in  R$.
-%Informally, the real proof transcript depends on statement $s$, witness $w$,  
-%and challenge $e$, 
-%while the simulated proof transcript depends on statement $s$ and challenge $e$. 
-%(simulator does have not access to witness $w$, so to generate a accepting 
-%proof just by using $s$ and $e$, it uses a concept call rewinding.)
-%
-%
-%If we were doing probabilistic reasoning, we could have represent the real view and 
-%simulator's view as following (not a real code, but inspired by Haskell):
-%
-%\begin{minted}{coq}
-%Real_view (s : Statement) (w : Witness) (e : Challenge) := do
-%  r <- G (* generate a random value from some group G *)
-%  let a := g^r (* commitment *)
-%  let z := r + e * w  (* compute the response *)
-%  return (s, a, e, z)
-%\end{minted}
-%
-%
-%\begin{minted}{coq}
-%Simulator_view (s : Statement) (e : Challenge) := do
-% z <- G (* random element from some group G *)
-% return (s, g^z * s^(-e), e, z)
-%\end{minted}
-%
-%\begin{minted}{coq}
-%
-% Special_Honest_Verifier_ZKP  (s : Statement) (w : Witness) 
-%  (e : Challenge) (H : Rel s w = true) := 
-%  Pr [Real_view  s w e] = 
-%  Pr [Simulator_view s e]
-%
-%\end{minted}
-%
-%\noindent
-%Based on these two probabilistic view, we could have shown that two are equal. Intuitively, 
-%in $Real\_view$, statement $s$, witness $w$, and the challenge $e$ is fixed, so the only thing that vary is the
-%random coin drawn uniformly from some group $G$. The probability of drawing an element uniformly 
-%from a given set $S$ is 1/|S| (| | represent the cardinality of a set), so the value of Pr [Real\_view  s w e] = 1/|G|. 
-%By the same token of reasoning, Pr [Simulator\_view s e] = 1/|G| which concludes that 
-%both probabilities are equal. However, the only problem is that we are not doing probabilistic reasoning, 
-%but not all all hope is lost.
-%One key observation to escape this probabilistic reasoning is 
-%that we can make the randomness $r$ and response $z$ as 
-%explicit parameter. Consequently, our probabilistic program would turn into 
-%a deterministic Coq program. 
-%
-%
-%\begin{minted}{coq}
-%Real_view (s : Statement) (w : Witness) (e : Challenge) 
-%  (r : RandCoin):=
-%  let a := g^r in (* commitment *)
-%  let z := r + e * w in  (* compute the response *)
-%  (s, a, e, z)
-%\end{minted}
-%
-%
-%\begin{minted}{coq}
-%Simulator_view (s : Statement) (e : Challenge) 
-% (z : Response) :=
-% (s, g^z s^(-e), e, z)
-%
-%\end{minted}
-%
-%
-%
-%Now that our views are deterministic, we need to find a way to model 
-%the probability distribution of the two views. We solve this problem 
-%by showing a bi-implication  between  the real view and simulated view.
-%We show that real view and simulator's view align with each other. 
-%In terms of Coq, it is expressed as:
-%
-%\begin{minted}{coq}
-% (* Probablistic Reasoning could have made it nicer *)
-%Special_Honest_Verifier_ZKP  (s : Statement) 
-%(w : Witness) (e : Challenge): 
-%Rel s w = true -> forall (r : RandCoin), 
-%verify (s, initial r, e, response s w r e) = true <->
-%forall (z : Response), verify (simulator s e z) = true;
-%
-%\end{minted}
-
-%
-%The axiom $Special\_Honest\_Verifier\_ZKP$ says that for any  given 
-%fixed statement $s$, witness $w$, challenge $e$ and assumption that $Rel$ $s$ $w$ holds, 
-%then for every random coin $r$  and a accepting real transcript, simulator can construct 
-%an accepting transcript from all random response drawn from response space. 
-%We add this axiom to the record data type $SigmaProtocol$ to make it 
-%complete. 
-
-Finally, we can use our construction, \textit{SigmaProtocol}, as building block 
-for composing different sigma protocols, which we are not explaining 
-here.  For example, 
-we can define AND composition,
-EQ composition, OR composition, etc.
+Finally, we can use our construction,  $SigmaProtocol$, as a building block 
+for composing different kinds of sigma protocols, which we are not explaining 
+here.  For example,  we can define AND composition, EQ composition, OR composition, etc.
 
 \subsection{Concrete Sigma Protocol: Discrete Logarithm}
 \label{sec:conc_sigma}
@@ -456,36 +372,36 @@ One of the most basic sigma protocol is proof of knowledge of
 discrete logarithm, i.e. given two elements $g$ and $h$ of 
 a group $G$, prover convinces the verifier that 
 she knows the discrete logarithm ($\log_g h$) in zero 
-knowledge. In Camenisch-Stadler notation\citep{camenisch1997proof} of zero knowledge proof, it is represented as:
+knowledge. In Camenisch-Stadler notation \citep{camenisch1997proof} of zero knowledge proof, it is represented as:
 $ZKPoK \lbrace w \text{ | } h = g^w \rbrace$. We can show 
-that this is a sigma protocol inside Coq by 
+that this is a sigma protocol inside Coq
 by encoding all the  functions 
 and proving all the axioms mentioned in 
 our record type $SigmaProtocol$.  For example,
- we can write the $initial$ function as taking a input 
-random coin $r$ as input and computing 
+ we can write the $initial$ function as taking a input $r$ 
+ and computing 
 $g^r$, $challenge$ as a function which simply returns 
 a challenge $e$, and so forth: 
 
 
 \begin{displayquote}
 
-$\text{initial r := } g^r}$  
+$\text{initial g r := } g^r$  
 
 $\text{challenge := } e$
 
 $\text{response h w r e := } r + e \cdot w$
 
-$\text{verify h a e z  := } g^z = a \cdot h^e$
+$\text{verify g h a e z  := } g^z = a \cdot h^e$
 
-$\text{simulator s e z := } (g^z \cdot h^{-e}, e, z)$
+$\text{simulator g h s e z := } (g^z \cdot h^{-e}, e, z)$
 
 $\text{extractor }  $c_{1}$ $z_{1}$ $c_{2}$ $z_{2}$ := (z_{1} - z_{2}) \cdot (c_{2} - c_{1})^{-1}$
 
 \end{displayquote}
 
-Based on these definitions, we can easily discharge the three proofs, \textit{Completeness}, 
-\textit{Special Soundness}, and \textit{Special Honest Verifier Zero Knowledge} axiom by simple 
+Based on these definitions, we can easily discharge the three proofs,  $Completeness$, 
+$Special\_Soundness$,  $Special\_Honest\_Verifier\_Zero\_Knowledge$, and $Simulator\_correct$ axioms by simple 
 algebraic manipulation.
 
 \subsection{Honest Decryption Zero Knowledge Proof}
@@ -493,7 +409,7 @@ algebraic manipulation.
 We have sigma protocol at our arsenal, we focus on honest decryption 
 problem. How can we convince someone that for a given group 
 $(G, g, p, h)$ and private key $x$ ($h := g^x$), the message $m$ is the 
-honest decryption of ElGamal cipher text $(c_{1}, c_{2})$ (which is $(g^r, g^m \cdot h^r)$ for some randomness $r$) 
+honest decryption of ElGamal ciphertext $(c_{1}, c_{2})$ (which is $(g^r, g^m \cdot h^r)$ for some randomness $r$
 with revealing 
 our private key $x$? To solve this problem, we use a well known protocol
 for proving equality of the discrete logarithm \citep{10.1007/3-540-69053-0_9}.
@@ -520,7 +436,7 @@ this tuple can be written as $(g, h, g^r, g^m \cdot h^r \cdot g^{-m})$ for some
 random $r$. A further simplification leads to $(g, h, g^r, h^r)$, and 
 this tuple is clearly a \textit{Diffie Hellman} tuple, where $u = g^r$ and $v = h^r$. 
 We could not have been able to construct a  \textit{Diffie Hellman} tuple and proved 
-the equality of discrete log if we had claimed anything other than the origin value $m$. For example, 
+the equality of discrete logarithm if we had claimed anything other than the origin value $m$. For example, 
 suppose a cheating prover  claims that $m_{1}$ (different from $m$) is the honest decryption of $(c_{1}, c_{2})$.
 Following the cheating prover claim, we construct the \textit{Diffie Hellman} tuple 
  $(g, h, g^r, g^{m} \cdot h^r \cdot g^{-m_{1}})$. 
@@ -537,14 +453,14 @@ tally sheet is  computing the final tally homomorphically.  Since our encryption
 is additive ElGamal, and recall that our ballot is a matrix of ciphertexts: 
 
 \begin{pmatrix}
-  (g^{r_{11}}, g^{m_{11}} * h^{r_{11}})&  (g^{r_{12}}, g^{m_{12}} * h^{r_{12}}) & \cdots &  (g^{r_{1n}}, g^{m_{1n}} * h^{r_{1n}}) \\
- (g^{r_{21}}, g^{m_{21}} * h^{r_{21}})&  (g^{r_{22}}, g^{m_{22}} * h^{r_{22}}) & \cdots &  (g^{r_{2n}}, g^{m_{2n}} * h^{r_{2n}}) \\
+  (g^{r_{11}}, g^{m_{11}} * h^{r_{11}})&  (g^{r_{12}}, g^{m_{12}} * h^{r_{12}}) & \cdots &  (g^{r_{1N}}, g^{m_{1N}} * h^{r_{1N}}) \\
+ (g^{r_{21}}, g^{m_{21}} * h^{r_{21}})&  (g^{r_{22}}, g^{m_{22}} * h^{r_{22}}) & \cdots &  (g^{r_{2N}}, g^{m_{2N}} * h^{r_{2N}}) \\
   \vdots  & \vdots  & \ddots & \vdots  \\
-  (g^{r_{n1}}, g^{m_{n1}} * h^{r_{n1}})&  (g^{r_{n2}}, g^{m_{n2}} * h^{r_{n2}}) & \cdots &  (g^{r_{nn}}, g^{m_{nn}} * h^{r_{nn}}) \\
+  (g^{r_{N1}}, g^{m_{N1}} * h^{r_{N1}})&  (g^{r_{N2}}, g^{m_{N2}} * h^{r_{N2}}) & \cdots &  (g^{r_{NN}}, g^{m_{NN}} * h^{r_{NN}}) \\
  \end{pmatrix}
 
 
-To compute the finally tally, all we have to do is stack all the valid
+To compute the finally tally, all we have to do is to stack all the valid
 ballots (matrices) together and multiply the corresponding ciphertexts 
 together to get the final tally matrix (point wise matrix multiplication). 
 The final computed tally can be 
@@ -589,13 +505,13 @@ final decrypted tally. A drawback of this method is that if the number of candid
 
 \section{IACR 2018 Election}
 \label{sec:election_iacr}
-We followed some of these techniques explained above write a formal 
+We follow some of these techniques explained above to write a formal 
 certificate checker for  IACR 2018 directors election scrutiny sheet
-\footnote{https://vote.heliosvoting.org/helios/elections/60a714ea-ce6d-11e8-8248-76b4ab96574c/view}.  
+\footnote{\url{https://vote.heliosvoting.org/helios/elections/60a714ea-ce6d-11e8-8248-76b4ab96574c/view}}.  
 The 2018  IACR directors election considered seven 
  candidates to fill three positions on the board of directors.   The voting 
- style was approval voting where all the eligible voters, IACR members, 
- could vote for as many candidates as they liked. After the counting, 
+ style is approval voting where all the eligible voters, IACR members, 
+ could vote for as many candidates as they like. After the counting, 
  the top three members were elected to fill the positions. 
  
 The Helios voting system \citep{Helios:2016:HVS}  was used for the election, and the system
@@ -603,42 +519,46 @@ was configured with four authorities, who generated an ElGamal \citep{elgamal198
 key such that all four authorities were required to decrypt efficiently.    
 Every eligible voter received the credentials by email which they used 
 to cast their ballot from their personal computer. 
-During the cast process, each voter created seven ElGamal cipher texts, 
+During the cast process, each voter created seven ElGamal ciphertexts, 
 encrypting either zero or one, for the seven participating candidates. 
 Since the vote was exponent, the ElGamal cryptosystem became 
-homomorphic additive. At this point,  the voter is then offered the chance to audit 
+homomorphic additive.  During this point,  the voter was then offered the chance to audit 
 her encrypted ballot to check that
-it does indeed contain the vote she intended. If she chooses to audit, she must
-discard this ballot and asked to  cast 
-a fresh ballot. This mechanism is called called Benaloh challenge, 
+it indeed had the vote of her choice. If she chose to audit,  she had to
+discard this ballot and asked to cast 
+a fresh ballot (this mechanism is called called Benaloh challenge, 
 and the purpose of this challenge is to catch "cheating machines". 
 Moreover, this method ensures the cast-as-intended because 
 a cheating machine would not know when a voter would 
 cast her ballot, so, in the most likely scenario, a voter would 
-end up cast her true intentions. Once she has an 
-unaudited ballot with which she is happy, she casts it. 
-The Helios website maintains an append-only bulletin board on which the voter's
-encrypted ballot appears.  
-After the voting period is over,
-all the encrypted ballots corresponding to all candidates are multiplied together; so that there is 
-now a single ciphertext for each candidate, encoding the number of votes for
-that candidate.  The authorities then decrypt 
-these (seven) ciphertexts, announce the results and prove,
-using a sigma protocol, that the announced result is the 
+end up cast her true intentions).  Once she had an 
+unaudited ballot with which she was happy,  she cast it. 
+The Helios website maintained an append-only bulletin board on which the voter's
+encrypted ballot appeared.  
+After the voting period was over,
+all the encrypted ballots corresponding to all candidates were multiplied together; so that there was 
+a single ciphertext for each candidate, encoding the number of votes for
+that candidate.  The authorities then decrypted 
+these (seven) ciphertexts, announced the result and proved,
+using a sigma protocol, that the announced result was the 
 correct decryption.
 
 
-Now we focus on three aspects of verifiability: cast-as-intended, collected-as-cast, 
-and tallied-as-collected. The cast-as-intended has already been assured 
+Now that we have already explained the workings of IACR 2018 directors election,
+we focus on 
+three aspects of verifiability: cast-as-intended, collected-as-cast, 
+and tallied-as-collected.  
+The cast-as-intended has already been assured 
 by Benaloh challenges, and collect-as-cast is ensured by every voter 
 checking her ballot on the bulletin board. 
-The more complicated step is the counted-as-collected
+The more complicated step is the tallied-as-cast
 check.  In order to verify the tallied-as-cast, a scrutineer has to check 
 only the valid ballots (those which are encryption of either zero or one) 
 has contributed to final tally, the final tally has been calculated 
 correctly, and the final tally has been decrypted honestly. 
 
-At this stage, there is a published list of encrypted ballots on the bulletin board
+The algorithm, in more detail,  to ascertain the tallied-as-cast, 
+there is a published list of encrypted ballots on the bulletin board
 and a published result.  Moreover, to enable scrutiny, the election authority publishes, 
 non-interactive, sigma protocol transcripts for correct encryption and decryption. 
 Using these transcripts,  the scrutineer can verify the election by checking the following
@@ -651,7 +571,7 @@ combined ciphertexts with respect to the announced result.  These  three checks
 suffice to ensure that the ballots were counted-as-collected. 
 
 
-IACR used Schnorr group to avoid attacks various attacks on solving the discrete 
+IACR used Schnorr group \citep{10.1007/0-387-34805-0_22} to avoid attacks various attacks on solving the discrete 
 logarithm problem.  A Schnorr group is a multiplicative Abelian subgroup of prime order q of the field of 
 integers modulo a prime p, where p = k * q + 1 for some integer.   In IACR election, 
 the primes used were:
@@ -693,9 +613,9 @@ Lemma Q_prime : prime Q.
 \end{minted}
 
 
-Finally, we extracted the Coq code as a OCaml and wrote a main file to glue the 
-extracted code and parsing code. Upon execution, the code returned 
-yes, which asserts that the result produced were correct. 
+Finally, we extract the OCaml code from Coq proof scripts and write a main file to glue the 
+extracted code and parsing code. Upon execution, the code returns 
+yes, which asserts that the results produced are correct. 
 
 
 \section{Summary}
@@ -703,13 +623,13 @@ yes, which asserts that the result produced were correct.
 In this chapter, we have sketched the ideas for developing a formally verified certificate checker
 for the certificate we produced in the last chapter. However, due to time constraint and 
 complexity of shuffle primitive, 
-we ended up verifying a simple certification, which did not not involve any zero-knowledge proof 
+we ended up verifying a simple certification, which did not involve any zero-knowledge proof 
 of shuffle.  Finally, in this chapter we closed the loop of decrease in number of scrutineers because 
 any one can run the certificate checker. Moreover, we open sourced 
 \footnote{https://github.com/mukeshtiwari/secure-e-voting-with-coq} the checker, so 
 that it can be inspected by anyone (we would like to call it correctness by democratic 
 process).  One thing we would like to emphasize that cryptographic concepts are 
-inherently very complex, so running a certificate checker certainly not amounts 
+inherently very complex, so running a certificate checker certainly does not amounts 
 to understanding the various bits of cryptography and formal method used to develop the
 certificate checker.
 
