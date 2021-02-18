@@ -75,10 +75,20 @@ and our proof development can be accessed
 
 \section{Algebraic Structures: Building Blocks}
 \label{sec:algebra}
-The basic building blocks of any cryptographic system are algebraic structures, specifically cyclic group of prime order, field and vector space. In general, 
+The basic building blocks of any cryptographic system are algebraic structures, specifically cyclic group (of prime order), field, and vector space. In general, 
 we do not need vector space, and group and field are sufficient for most of the cryptographic purposes. However,
-vector space  of a cyclic group of prime order over the field of integers modulo the same order is nicer to work 
-because multiplying a group element by a field element can be abstracted over scalar multiplication of vector space.
+vector space  of a cyclic group of prime order over the field of integers (vector element) modulo the same field of integers of same prime order (scalar element)
+is nicer to work because the operation involving an element from group and an element from field can be abstracted over 
+the scalar multiplication operator of vector space.   For example,  in elliptic curve cryptography,  for a given curve $E$ over a finite field,   
+there are two main operations: i) point-addition (adding two points $P$ and $Q$, given of the curve $E$),  and ii) point-multiplication (multiplying a field element, 
+$a$, with a point, $P$, on the curve $E$).  Moreover,  there is also a point at infinity (denoted by $O$) which acts as an identity element.   
+We can easily implement these functions using the suitable data-structure from the Coq theorem prover and prove theorems about them.  
+Nonetheless,  during the process of proving these theorems a lot of details about 
+the internal implementation of these functions would make it unnecessarily complicated \footnote{it is more likely to be the case that some key lemma required would be missing from the library,  
+and it will some effort to prove it}, while if we abstract the point-addition and   point-multiplication as  vector-addition and scalar-multiplication, respectively, 
+of a vector space, we can prove theorems about these functions,   point-addition and  point-multiplication , using just axioms of vector space.  
+The proof process would be much smoother,  but more importantly, the proof would just require the axioms of vector space and field.
+This was the major motivation behind abstracting the group and field over a vector space.  Now we briefly explain the group, field, and vector space. 
 
 \begin{definition}[Group] 
 A group is a set $G$, with a binary operator $\cdot : G \rightarrow G \rightarrow G$, identity element $e$, and inverse operator $inv : G \rightarrow G$ (denoted as $^{-1}$) such 
@@ -154,8 +164,11 @@ In the shuffle algorithm \citep{Wikstrom:2009:CPS}), the data structure of permu
 In this section, we discuss that how to generalized Pedersen commitment scheme for matrix data structure. 
 
 A Pedersen commitment for any two given group elements $g$ $h$ $\in G$, a message $m \in \mathbb{F}$ (the field of integers), and a random element 
-$r \in \mathbb{F}$ (the field of integers) is $g^r \cdot h^m$ ($\cdot$ is the group operation).  In Coq, it can be encoded as follows (simplified for presentation):  
-
+$r \in \mathbb{F}$ (the field of integers) is $g^r \cdot h^m$ ($\cdot$ is the group operation).   
+As we explained above that we can just work with group and field, but abstracting the group operation ($\cdot : G \to G \to G$) as 
+a vector-addition and exponentiation operation ($\textasciicircum : \mathbb{F} \to G \to G$) as scalar-multiplication would make the 
+proofs more tractable.  Finally we can encode the Pedersen commitment in the Coq 
+theorem prover (simplified for the presentation):
 
 \begin{minted}{coq}
 
@@ -164,33 +177,38 @@ Definition ped_commitment {F G : Type} (H1 : Group G)
 	(^ : G -> F -> G) (dot : G -> G -> G) 
 	(g h : G) (r m : F) : G :=  dot (g ^ r) (h ^ m).
 
-
 \end{minted}
 
 \noindent
-The exponentiation function (NOT RENDERING)  is the scalar multiplication $\cdot$ and the 
-function $dot$ is the vector addition $+$ of a vector space of a cyclic group $G$ of prime 
-order over the field of integers $\mathbb{F}$ modulo the same prime order.  
-Even though this abstraction is not necessary, but it 
-provides a clean way to work with a \textit{Group} and \textit{Field}. 
+The Coq definition of Pedersen commitment assume the existence of two types
+$F$ and $G$, together with hypothesis that $G$ is group, $F$ is field, and the combination 
+of both, $F$ and $G$, forms a vector space (we are not giving any concrete implementation, 
+but an abstract representation.  During the code extraction,  we would instantiation all 
+these types and operations with a concrete representation and discharging the proof 
+obligation to make sure that the assumptions hold, very similar to the Schulze algorithm 
+extraction where we instantiated the $Cand$ type with concrete candidates 
+and discharged all the proof obligation).
+
+
 We can extend the Pedersen commitment for a group element $g$, 
 vector of $n$ group elements $h_{1}, h_{2} \dots h_{n}$, vector of $n$ 
 field elements $m_{1}, m_{2} \dots m_{n}$, and a random field element 
-$r$ is $g^r \cdot \prod_{i = 1}^n  h_{i}^{m_{i}}$. 
+$r$ is $g^r \cdot \prod_{i = 1}^n  h_{i}^{m_{i}}$.  This commitment is 
+known as vector Pedersen commitment. 
 The $\prod_{i = 1}^n  h_{i}^{m_{i}}$ function can be written in Coq as 
 (this program is written using Equation library \citep{Sozeau:2019:ERH:3352468.3341690}):
 
 \begin{minted}{coq}
 
 
-Equations prod  {F G : Type} {n : nat} 
+Equations vector_ped_commitment  {F G : Type} {n : nat} 
 	(H1 : Group G) (H2 : Field F)
 	(H3 : Vector_Space F G)  (^ : G -> F -> G) 
 	(dot : G -> G -> G) (hi : Vector.t G (S n)) 
 	(mi : Vector.t F (S n)) :  G :=
-	prod (^) dot (vcons h vnil) (vcons m vnil) := h ^ m;
-	prod (^) dot (vcons h hs)  (vcons m ms)  := 
-         dot (h ^ m) (prod (^) dot hs ms).
+	vector_ped_commitment (^) dot (vcons h vnil) (vcons m vnil) := h ^ m;
+	vector_ped_commitment (^) dot (vcons h hs)  (vcons m ms)  := 
+         dot (h ^ m) (vector_ped_commitment (^) dot hs ms).
 
 
 \end{minted}
