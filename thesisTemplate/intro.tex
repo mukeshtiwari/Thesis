@@ -7,7 +7,7 @@
 A democracy can be best described as a system where all eligible voters have equal rights to express their opinion(s) on different matters. 
 One of the most important example of expressing opinion is by holding election to elect the leader of country. During the 
 election, all eligible voters express their opinion on a paper,  known as ballot,  in a manner, depending on the voting method, 
-which reflects their true opinion.  For example, if the voting method is \textit{ranked voting (preferential voting)},  the voters rank the 
+which reflects their true intention.  For example, if the voting method is \textit{ranked voting (preferential voting)},  the voters rank the 
 candidates according to their preference, and if the method is \textit{first past the post},  each voter selects one candidate by marking
 against the candidate name on the ballot. Later, once the ballot cast finishes, a candidate is elected as a winner from  the participating
 candidates by combing the choices of all the voters. 
@@ -52,7 +52,7 @@ thousands of man hours, 11,000 working days, by using electronic voting \citep{E
  \begin{itemize}
  
   \item Correctness:
- 	The produced results are correct, and convincing to all leaving no  ground for suspicion. 
+ 	The produced results are correct and convincing to all leaving no  ground for suspicion. 
 
  \item Coercion-resistance: A voter can not cooperate with a coercer to prove anything about her choices.
  
@@ -122,8 +122,10 @@ Our choice of voting protocol is the   Schulze method \citep{Schulze:2011:NMC} a
 the tool is Coq \citep{Bertot:2004:ITP} theorem prover  for implementing and proving 
 the correctness of  the Schulze method.
 Even though the Schulze method is not used in any democratic election to public office,
-it has many interesting properties and, 
- at the same time, it is non-trivial.  
+it is one of the most popular method to elect candidates for various organisations, e.g. Debian, GnuPG, 
+KDE,  etc., over the Internet and political groups, pirate party of Australia, Belgium, Brazil, 
+Germany, etc\footnote{\url{https://en.wikipedia.org/wiki/Schulze_method#Users}}.
+One of the major reason for its popularity is that it has many desirable properties.
 While no preferential voting scheme can guarantee all desirable properties that one would
 like to impose due to Arrow’s theorem \citep{Arrow:1950:DCS}, the Schulze method offers a good compromise, 
 with a number of important properties already  established  in  Schulze’s  original  paper. 
@@ -132,6 +134,8 @@ i.e. it elects a single winner under the assumption that number of voters are mu
  number of candidates (and in case of a tie, when there is more than one winner, a random vote can be 
 selected to declare the winner.  However, our formalization 
 has not taken the randomness into account, so it can produce more than one winner). 
+
+
 Coq is a theorem prover (proof assistant) based on the \textit{Calculus of Inductive Construction (CIC)} 
 \citep{Coquand:1988:CC:47724.47725} \citep{coquand1988inductively}. 
 The calculus of inductive construction is a highly expressive formal system (type system) 
@@ -155,13 +159,13 @@ electronic voting. We achieve the following:
 \item \textit{Verifiability} by tabulating the relevant data of an election (which we call the scrutiny-sheet/certificate).
    Achieving verifiability in a plaintext ballot counting is fairly straightforward. 
    To achieve verifiability in encrypted ballot counting, 
-   we augment the scrutiny sheet with zero-knowledge-proofs for each claim we make during the 
+   we augment the scrutiny sheet with zero-knowledge proofs for each claim we make during the 
    counting, which can  later be checked by any auditor.  
 \end{itemize}
 
 
 
-In addition to demonstrating correctness, privacy and verifiability, we have also developed a formally verified certificate 
+In addition to demonstrating correctness, privacy, and verifiability, we have also developed a formally verified certificate 
 checker. Moreover, we have shown that our implementation adheres to the various properties established by Schulze in 
 his original paper. 
 
@@ -174,13 +178,13 @@ plaintext ballots simply requires the knowledge of basic arithmetic, e.g.~additi
 and virtually anyone can audit the election based on the data produced in the scrutiny sheet by
 using a calculator or by writing a simple program in her preferred language. 
 However, an encrypted ballot election scrutiny sheet involves various
-cryptographic concepts (homomorphic encryption, zero-knowledge-proof, commitment scheme, etc.) 
+cryptographic concepts (homomorphic encryption, zero-knowledge proof, commitment scheme, etc.) 
 which are accessible to very few voters, mainly cryptographers,  so auditing it 
 requires a deep understanding of cryptographic principals. To ease this situation, we have developed a formally verified 
 certificate checker as a proof of concept for automating the audit of an election, conducted on encrypted ballots. 
 Having said that,  our certificate generated by encrypted ballots is very complex, and formalizing all the cryptographic 
 primitives involved would be fairly time consuming, so we have developed a proof of concept 
-formally verified certificate checker for the International Association of Cryptographic Research (IACR) 2018 election
+formally verified certificate checker for the International Association of Cryptologic Research (IACR) 2018 election
 scrutiny sheet (the IACR scrutiny sheet is relatively simple compared to our certificate).
 
 \noindent
@@ -190,21 +194,20 @@ of the Schulze method inside the Coq theorem prover (ongoing work).
 
 \section{Cryptographic Blackbox}
 Since the beginning of this project, our primary goal was 
-to achieve privacy (using encryption) and verifiability (using zero-knowledge-proof) in electronic voting 
+to achieve privacy (using encryption) and verifiability (using zero-knowledge proof) in electronic voting 
 using cryptographic primitives (but not the verification of primitives itself). 
 To achieve this goal, we have 
 taken the axiomatic approach and assumed the existence of cryptographic primitives 
 inside Coq. Moreover, we assume axioms about their correctness behaviour, e.g.~decryption 
 is left inverse of encryption. These primitives, in general, provide functionality 
-of generating a random permutation, encrypting a plaintext data, decrypting a cipher-text data, 
-producing commitment of a value, constructing a zero-knowledge-proof, 
-and verifying a zero-knowledge-proof. Later, in extracted OCaml code from Coq code, these functions are instantiated 
-with Unicrypt \citep{LocherH14} functions. 
-\footnote{Formalizing the whole cryptographic stack used in our 
+of generating a random permutation, encrypting a plaintext data, decrypting a ciphertext data, 
+producing commitment of a value, constructing a zero-knowledge proof, 
+and verifying a zero-knowledge proof. Later, in extracted OCaml code from Coq code, these functions are instantiated 
+with Unicrypt \citep{LocherH14} functions\footnote{Formalizing the whole cryptographic stack used in our 
 project would be very time consuming (probably a PhD itself), but it would be worth trying. 
-Although, we have formalized the (ElGamal) encryption, and decryption inside Coq, but we still 
+Although, we have formalised the (ElGamal) encryption, and decryption inside Coq, but we still 
 are very far from achieving the goal of fully verified cryptographic stack.  We leave the formalisation 
-of cryptographic primitives for future work (work in progress).}
+of cryptographic primitives for future work (work in progress).}.
 
 
 
@@ -283,7 +286,7 @@ of cryptographic primitives for future work (work in progress).}
  need to show her photo ID multiple times at the counting booth. Mathematical proof theory has 
  been used by \citep{Pattinson:2015:VCM}  to treat the vote counting as a mathematical 
  proof, and in the same vein, 
- \citep{Ghale:2017:FVS} have formalized single transferable vote in Coq and 
+ \citep{Ghale:2017:FVS} have formalised single transferable vote in Coq and 
  extracted Haskell code from the formalization. The extracted Haskell code produces the result 
  and a certificate for a given set of input ballots. This certificate can be used by any third party to verify 
  or audit the outcome of the election result.  In further research, \citep{10.1007/978-3-030-03592-1_5} 
