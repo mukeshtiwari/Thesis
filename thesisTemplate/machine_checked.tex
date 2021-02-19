@@ -28,15 +28,15 @@
 
 
  In the light of impossibility theorem, Schulze method, a preferential voting method, can not have all the properties, and it fails on 
- Independence of irrelevant alternatives (IIA) criterion. Despite the fact that Schulze method fails on IIA,  it has plenty of other desirable
+ Independence of Irrelevant Alternatives (IIA) criterion. Despite the fact that Schulze method fails on IIA,  it has plenty of other desirable
  properties established in the social choice theory. In this chapter, we will discuss some of 
  the properties.  Moreover, we will show that our implementation adheres to these properties. 
  
  \section{Condorcet Winner}
 	A \textit{Condorcet winner} is a candidate who beats every other candidate in pairwise comparison (also known as head to head competition). 
-	Recall that in Schulze method, the pairwise comparison method was margin function, denoted as $marg$, which defined as:
+	Recall that in Schulze method, the pairwise comparison method was margin matrix, denoted as $marg$, which defined as:
 	\begin{displayquote}
-	Given a set of ballots $P$ and candidate set $C$, we construct graph $G$ based on the margin function $marg: C \times C \to \mathbb{Z}$. Given two candidates $c, d \in C$,
+	Given a set of ballots $P$ and candidate set $C$, we construct graph $G$ based on the margin matrix $marg: C \times C \to \mathbb{Z}$. Given two candidates $c, d \in C$,
 the \emph{margin} of $c$ over $d$ is
 the number of voters that prefer $c$ over $d$, minus the number of voters that prefer $d$ over $c$. 
 In symbols:
@@ -48,14 +48,14 @@ In symbols:
  
  \end{displayquote}
   
-	 
-  Now we define the \textit{Condorcet winner} in Coq as:
+\noindent	 
+Now we define the \textit{Condorcet winner} in Coq as:
  \begin{minted}{coq}
 Definition condorcet_winner (c : cand) 
-  (marg : cand -> cand -> Z) := forall d, marg c d >= 0.
+  (marg : cand * cand -> Z) := forall d, marg (c, d) >= 0.
 \end{minted}
 
-  Informally, the definition, \textit{condorcet\_winner}, states that 
+  Informally, the definition,  $condorcet\_winner$, states that 
   if a candidate $c$  is \textit{condorcet winner}, then she has been ranked higher against
   every other candidate.  Having the definition of  condorcet winner, our goal is to concluded that if there is 
  	a Condorcet winner, the Schulze method always elects it as a winner.  
@@ -63,8 +63,8 @@ Definition condorcet_winner (c : cand)
 \begin{minted}{coq}
 (* if candidate c is Condorcet winner then it's winner of election *)
  Lemma condorcet_winner_implies_winner (c : cand) 
-    (marg : cand -> cand -> Z) :  condorcet_winner c marg ->
-    c_wins c = true. 
+    (marg : cand * cand -> Z) :  condorcet_winner c marg ->
+    c_wins marg c = true. 
 Proof.
       intros Hc. 
       pose proof  condorcet_winner_genmarg.
@@ -86,7 +86,7 @@ Qed.
  
  It is not very hard to see these two facts based on the definition of generalized margin. Intuitively, 
  if a candidate $c$ is the Condorcet winner, then the strongest path between her and every other 
- candidate, say $d$,  would be either a direct path, $marg$ $c$ $d$, or a more stronger path, $M (c, d)$, 
+ candidate, say $d$,  would be either a direct path, $marg (c, d)$, or a more stronger path, $M (c, d)$, 
  via some other intermediate candidates. 
   
  \begin{displayquote}
@@ -107,9 +107,9 @@ nodes, i.e.
  
  \begin{minted}{coq}
  Lemma gen_marg_gt0 :
-   forall c d n marg, 
+   forall c d  marg, 
    condorcet_winner c marg -> 
-   M n c d >= 0.
+   M (c, d) >= 0.
 Proof. 
    unfold condercet_winner.
    intros c d n marg Hc.
@@ -121,9 +121,9 @@ Proof.
 Qed.
 
 Lemma gen_marg_lt0 :
-   forall c d n marg , 
+   forall c d marg , 
    condorcet_winner c marg ->
-   M marg n d c <= 0.
+   M (d, c) <= 0.
 Proof.
   unfold condercet_winner.
   intros c d n marg Hc.
@@ -150,9 +150,9 @@ Qed.
  
 \begin{minted}{coq}
  Lemma condorcet_winner_genmarg :
-      forall c d n marg, 
+      forall c d marg, 
       condorcet_winner c marg -> 
-      M marg n d c <= M marg n c d.  
+      M  (d, c) <= M (c, d).  
  Proof.
    intros c d n marg Hc.
    pose proof (gen_marg_gt0 c d n marg Hc).
@@ -168,30 +168,30 @@ Qed.
  
  \begin{minted}{coq}
  Definition unique_winner 
- (marg : cand -> cand -> Z) (c : cand) :=
-  c_wins marg c = true /\
+ (marg : cand * cand -> Z) (c : cand) :=
+  c_wins marg  c = true /\
   (forall d, d <> c -> c_wins marg d = false).
 \end{minted}  
 
 Informally, our definition of \textit{unique\_winner} states that the candidate $c$ is a unique winner
-if it wins the election with respect to computed margin function, $marg$, and every other candidate 
+if it wins the election with respect to computed margin matrix, $marg$, and every  candidate 
 other than $c$ loses the election. 
 
-We capture the ballot reversal in terms of margin function. For any given ballot set, if the computed 
+We capture the ballot reversal in terms of margin matrix. For any given ballot set, if the computed 
 margin between two candidates $c$ and $d$ is: 
 \[
   marg(c, d) = \sharp \lbrace b \in P \mid c >_b d \rbrace -
             \sharp \lbrace b \in P \mid d >_b c \rbrace
 \] 
 
-If we reverse each ballot from the ballot set, then the new margin function, denoted as $rev\_marg$, would be:
+If we reverse each ballot from the ballot set, then the new margin matrix, denoted as $rev\_marg$, would be:
 \[
   rev\_marg(c, d) = -1 * marg (c, d)
 \] 
 
 This fact can also be demonstrated using a single ballot $ABC$. The interpretation is $A$ is strictly preferred over $B$, 
 and $B$ is preferred over $C$ (but we do not need strict preferences to have this property). 
-The margin function constructed from this ballot is: 
+The margin matrix constructed from this ballot is: 
 
 \[
 \bordermatrix{ & A & B & C \cr
@@ -200,7 +200,7 @@ The margin function constructed from this ballot is:
       C & -1 & -1 & 0 }
       \]
       
-After reversing the original ballot, we get $CBA$ and the margin function is:
+After reversing the original ballot, we get $CBA$ and the margin matrix is:
 \[
 \bordermatrix{ & A & B & C \cr
       A & 0 & -1 & -1 \cr
@@ -232,10 +232,10 @@ The proof for this lemma is fairly intuitive, but it takes some efforts to prove
 In this lemma, we assume the 
 existence of unique winner, say $c$ with respect to $marg$, which means that the generalize 
 margin between her and every other candidate would be greater than the reverse generalized 
-margin, i.e.  $\forall d$, $M \text{ marg } (c, d)$ > $M \text{ marg } (d, c)$. 
+margin, i.e.  $\forall d$, $M (c, d)$ > $M (d, c)$. 
 If we compute the generalize margin with respect to $rev\_marg$, then 
 for the candidate $c$ it would be the case that:  
-$\forall d$, $M \text{ rev\_marg } (c, d)$ <  $M \text{ rev\_marg } (d, c)$. 
+$\forall d$, $M\_rev (c, d)$ <  $M\_rev (d, c)$. 
 One key observation is that the graph we get after computing the generalized margin with respect to $rev\_marg$ is 
 simply a mirror image, every path is reversed, of the graph we get after computing the generalize margin with respect to $marg$. 
 In terms of Coq, it is:
