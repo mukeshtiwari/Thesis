@@ -77,14 +77,14 @@ Qed.
  		
  The proof of this theorem hinges on the two key facts:
  \begin{enumerate}
-  \item If a canddiate beats everyone in pairwise comparison, then generalized margin between her and every other candidate would 
+  \item If a canddiate beats everyone in pairwise comparison, then generalised margin between her and every other candidate would 
       be  greater than or equal to 0.
-  \item If a canddiate beats everyone in pairwise comparison, then generalized margin between every other candidate and her would 
+  \item If a canddiate beats everyone in pairwise comparison, then generalised margin between every other candidate and her would 
       be  less than or equal to 0.
  \end{enumerate}
  
  
- It is not very hard to see these two facts based on the definition of generalized margin. Intuitively, 
+ It is not very hard to see these two facts based on the definition of generalised margin. Intuitively, 
  if a candidate $c$ is the Condorcet winner, then the strongest path between her and every other 
  candidate, say $d$,  would be either a direct path, $marg (c, d)$, or a more stronger path, $M (c, d)$, 
  via some other intermediate candidates. 
@@ -97,9 +97,9 @@ of candidates with $c_0 = c$ and $c_{n+1} = d$ ($n \geq 0$), and the
 nodes, i.e.
 \[ st(c_0, \dots, c_{n+1}) = \min \lbrace m (c_i, c_{i+1}) \mid 0
 \leq i \leq n \rbrace. \]
-\item For candidates c and d, let $M(c, d)$ denote the maximum strength, or generalized margin of a path
-	from c to d i.e. 
-	\[ M(c, d) = \max \lbrace st (p) : \text{p is path from c to d in G} \rbrace\]
+\item For candidates $c$ and $d$, let $M(c, d)$ denote the maximum strength, or generalised margin of a path
+	from $c$ to $d$ i.e. 
+	\[ M(c, d) = \max \lbrace st (p) : p \text{  is path from } c \text{ to } d \text{ in G} \rbrace\]
   
    \end{displayquote}
    
@@ -143,8 +143,8 @@ Qed.
 \end{minted}   
  
  Using these two key facts, we concluded that for any Condorcet winner candidate $c$, 
- the generalized margin between her and every other opponent is greater than or equal 
- to reverse generalized margin between every other candidate and her.  Formally, 
+ the generalised margin between her and every other opponent is greater than or equal 
+ to reverse generalised margin between every other candidate and her.  Formally, 
  in Coq we prove the following theorem, \textit{condorcet\_winner\_genmarg}, on which  the proof of 
  \textit{condorcet\_winner\_implies\_winner} hinges. 
  
@@ -230,13 +230,13 @@ to $rev\_marg$ (computed from reversing all the entries in the ballot set $P$).
 
 The proof for this lemma is fairly intuitive, but it takes some efforts to prove it in Coq. 
 In this lemma, we assume the 
-existence of unique winner, say $c$ with respect to $marg$, which means that the generalize 
-margin between her and every other candidate would be greater than the reverse generalized 
-margin, i.e.  $\forall d$, $M (c, d)$ > $M (d, c)$. 
+existence of unique winner, say $c$ with respect to $marg$, which means that the generalised
+margin between her and every other candidate would be greater than 
+between the every other candidate and her, i.e.  $\forall d$, $M (c, d)$ > $M (d, c)$. 
 If we compute the generalize margin with respect to $rev\_marg$, then 
 for the candidate $c$ it would be the case that:  
 $\forall d$, $M\_rev (c, d)$ <  $M\_rev (d, c)$. 
-One key observation is that the graph we get after computing the generalized margin with respect to $rev\_marg$ is 
+One key observation is that the graph we get after computing the generalised margin with respect to $rev\_marg$ is 
 simply a mirror image, every path is reversed, of the graph we get after computing the generalize margin with respect to $marg$. 
 In terms of Coq, it is:
 \begin{minted}{coq}
