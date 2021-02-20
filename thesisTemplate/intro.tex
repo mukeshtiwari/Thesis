@@ -123,7 +123,7 @@ the tool is Coq \citep{Bertot:2004:ITP} theorem prover  for implementing and pro
 the correctness of  the Schulze method.
 Even though the Schulze method is not used in any democratic election to public office,
 it is one of the most popular method to elect candidates for various organisations, e.g. Debian, GnuPG, 
-KDE,  etc., over the Internet and political groups, pirate party of Australia, Belgium, Brazil, 
+KDE,  etc., over the Internet and political groups,  e.g.  pirate party of Australia, Belgium, Brazil, 
 Germany, etc\footnote{\url{https://en.wikipedia.org/wiki/Schulze_method#Users}}.
 One of the major reason for its popularity is that it has many desirable properties.
 While no preferential voting scheme can guarantee all desirable properties that one would
@@ -155,7 +155,9 @@ electronic voting. We achieve the following:
  we use to extract proofs into OCaml programs, and using these extracted OCaml programs, we 
  have counted the ballots from an election to produce the result. 
  \item \textit{Privacy and Coercion-resistance} by encryption. We use homomorphic encryption to compute the 
-  final tally without decrypting any individual ballot. 
+  final tally without decrypting any individual ballot.  The encryption hides the preference of voters, facilitating 
+  ballot privacy and preventing any possible coercion.  
+  
 \item \textit{Verifiability} by tabulating the relevant data of an election (which we call the scrutiny-sheet/certificate).
    Achieving verifiability in a plaintext ballot counting is fairly straightforward. 
    To achieve verifiability in encrypted ballot counting, 
@@ -189,8 +191,12 @@ scrutiny sheet (the IACR scrutiny sheet is relatively simple compared to our cer
 
 \noindent
 \textit{Properties of Schulze Method:} We have proved two properties, Condercet winner and Reversal symmetry, 
-of the Schulze method inside the Coq theorem prover (ongoing work).
- 
+of the Schulze method inside the Coq theorem prover (ongoing work).  These properties could be seen as an 
+ultimate stress testing for an implementation, and we have shown that our implementation of the Schulze 
+method follows two important properties,  i.e.  Condercet winner and Reversal symmetry.  Ideally,  sometime in 
+future,  we would like to prove that our implementation follows all the properties established in the Schulze's 
+paper  \citep{Schulze:2011:NMC}. 
+
 
 \section{Cryptographic Blackbox}
 Since the beginning of this project, our primary goal was 
