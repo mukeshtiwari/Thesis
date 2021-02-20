@@ -30,23 +30,23 @@
  
  
 \textbf{Chapter Outline:}
- In the Section \ref{secback:electronic_voting}, we discuss 
+ In section \ref{secback:electronic_voting}, we discuss 
  the major concern in electronic voting, bugs in the software/hardware, 
  by high lighting the 
  state of electronic voting in Australia, Germany, India, 
- and Netherlands. In the following Section \ref{secback:correctness_formal}, we  give 
+ and Netherlands. In the following section \ref{secback:correctness_formal}, we  give 
  two anecdotes that how formal verification helped in achieving 
- the correctness and eliminating bug in \textit{CompCert} \citep{DBLP:conf/popl/Leroy06},  a formally verified C compiler, 
- and \textit{Athelon}, a microprocessor designed by Advanced Micro Devices (AMD), with 
+ the correctness and eliminating bug in CompCert \citep{DBLP:conf/popl/Leroy06},  a formally verified C compiler, 
+ and Athelon, a microprocessor designed by Advanced Micro Devices (AMD), with 
  the emphasis that we should formally verify the software programs
  used in electronic voting to alleviate the concerns of 
  software/hardware bug. Section \ref{secback:varifiability} 
- emphasizes that formal verification is not enough
+ emphasizes that formal verification alone is not enough
  to establish the trust and puts forward the concept of 
  scrutiny sheet (\ref{secback:scruntiny_sheet}), which 
  can be used independently to attest the result of an election, 
- to achieve verifiability. Finally, we summarize in the Section \ref{secback:summary_back}
- by emphasizing that formal verification and verifiability both are needed 
+ to achieve verifiability. Finally, we summarize in the section \ref{secback:summary_back}
+ by emphasizing that formal verification and verifiability, both are needed 
  to ensure the trust in electronic voting. 
  
   
@@ -149,7 +149,7 @@
   instructions over wireless channel by using a simple hand-held device and 
   can  manipulate the results in their favour \footnote{https://indiaevm.org/}.
   India is mainly criticised for keeping the design of electronic voting machines 
-  a closely guard secrets (security by obscurity). However, it is not impossible to get access of 
+  a closely guard secret (security by obscurity). However, it is not impossible to get access of 
   these machines as shown by \citep{Wolchok:2010:SAI:1866307.1866309}. 
   The worst part, the design of these machines were never audited by 
   any independent third party. 
@@ -158,7 +158,7 @@
 
  \textbf{Australia:}
   In March, 2015 state election 
-  of New South Wales, Australia, a Internet voting system, iVote,    
+  of New South Wales, Australia,  the Internet voting system, iVote,    
   was used and 280,000 votes were cast through it. NSW Election 
   commissioner claimed that it was:
   
@@ -194,8 +194,8 @@
    \end{displayquote}
   
   \noindent
-  Basically, New South Wales ran a online election for 6 days on 
-  buggy software which was susceptible to many attacks with a possible 
+  Basically, New South Wales ran an online election for 6 days on 
+  bug-ridden software program which was susceptible to many attacks with a possible 
   outcome of tampered ballot without anyone noticing it. 
 
    We do not have to think very hard to figure out the reasons for 
@@ -204,7 +204,7 @@
    common denominator among all these debacles,
    which contributed significantly,  is the software/hardware used in the election process 
    had numerous  bugs. 
-   But, this begs the question: why various governments 
+   But this begs the question: why various governments 
    were (Germany, Netherlands)/are (Australia, India) using such poor quality software programs
    in the first place for conducting elections? 
    In general, no entity related to government or electoral commission develops the software programs 
@@ -233,11 +233,11 @@
    process.  Overall, the whole process lacks transparency, which 
    violates the fundamental principals of democracy, i.e. openness. 
   
-   The process  of turning a  idea into a 
+   The process  of turning an  idea into a 
    concrete software, also known as software development process, involves 
    requirement gathering, software design, implementation, testing, and maintenance. 
    During this whole process of software development, there are various factors 
-   which affects the quality of software.  However, 
+   which affect the quality of software.  However, 
    throughout this entire software development (and maintenance life) cycle,
    software testing is the only mechanism for quality assurance, but
    it is not enough for 
@@ -256,7 +256,8 @@
    by using formal verification techniques \citep{BECKERT2014115}.
    Furthermore, we will argue that  having a formal verification software development methodology \citep{10.1007/978-3-319-95582-7_38}
     would alleviate 
-	the bug problem with two case studies, \textit{CompCert} \citep{DBLP:conf/popl/Leroy06} and \textit{Athelon}, as a supporting evidence. The success of these 
+	the bug problem with two case studies, CompCert \citep{DBLP:conf/popl/Leroy06} and Athelon, 
+	as a supporting evidence. The success of these 
 	case studies should be a good motivation for us to adopt formal method for electronic voting software development. 
    
    
@@ -284,11 +285,11 @@
 	Friedrichshafen\footnote{https://www.absint.com/compcert/},  Fiat-crypto is used 
 	in the Google's BoringSSL library for elliptic-curve 
 	arithmetic\footnote{https://deepspec.org/entry/Project/Cryptography}. 
-	Based on the cost and efforts of these project, 
+	
+	
+	Based on the cost and efforts of these projects, 
 	the very basic question to ponder about using formal method to develop 
-	software:  does formal verification produce bug free software?
-	
-	
+	software:  does formal verification produce bug free software?	
 	We give two anecdotes to answer this question. 
 	One of the most basic way to 
 	break the software is generating random tests and throwing it to 
@@ -299,7 +300,7 @@
 	bugs in various compiler including 
 	GCC\footnote{https://embed.cs.utah.edu/csmith/gcc-bugs.html} and 
 	LLVM\footnote{https://embed.cs.utah.edu/csmith/llvm-bugs.html}; however, 
-	they could not find any bug in verified component of CompCert. 
+	they could not find any bug in the verified component of CompCert. 
 	In their own words \citep{Yang:2011:FUB:1993316.1993532}:
 	
 	\begin{displayquote}
@@ -316,7 +317,7 @@
 	
 	\end{displayquote}
 	
-	\noindent
+	
 	Formal verification is not only helpful in proving the correctness, 
 	but sometimes, it helps in uncovering the bugs in design of
 	software. ACL2, a Lisp based theorem prover, helped 
@@ -349,7 +350,7 @@
 	In order to ascertain that the formal verification of voting software has been 
 	carried out diligently, one therefore needs to
 	\begin{enumerate}
-	\item read, understand and validate the formal specification: is it 
+	\item read, understand, and validate the formal specification: is it 
 	error free, and does it indeed reflect the intended functionality?
 	\item scrutinize the formal correctness proof: has the verification
 	been carried out with due diligence, is the proof complete or does
@@ -409,7 +410,7 @@
     Using a formally 
     verified software program to count the ballots would increase the confidence 
     of an electoral commission that it has announced and published the correct result. 
-    Moreover,  the published result always verifies.  Therefore,  it would increase the confidence
+    Moreover,  the published result always verifies, which  boost the confidence
     of voters in the system. 
 	 
 	 
@@ -430,7 +431,7 @@
    \subsection{Scrutiny Sheet}
    \label{secback:scruntiny_sheet}
    A scrutiny sheet is the tabulation of relevant data to verify the result of election. 
-   The idea of requiring that computations provide not only results, but also a witness attesting
+   The idea of requiring that computations provide not only results but also a witness attesting
     to the correctness of the computation is not new
 	and has been put forward in \citep{89397}
 	\citep{MCCONNELL2011119}
@@ -444,14 +445,14 @@
 	\begin{figure}[!h]
 	\centering
   \includegraphics[width=0.5\linewidth]{figs/function_fx.png}
-  \caption{Function f computing y on input x}
+  \caption{Function $f$ computing $y$ on input $x$}
   \label{fig:fnxy}
   \end{figure} 
   
   \begin{figure}[!h]
   \centering
   \includegraphics[width=0.5\linewidth]{figs/funcxy.png}
-  \caption{Function f computing y and producing witness w on input x}
+  \caption{Function $f$ computing $y$ and producing witness $w$ on input $x$}
   \label{fig:fnxyw}
   \end{figure} 
 
@@ -501,7 +502,7 @@
    helpful to put forward the usefulness of certificate in perspective.
    However, this approach, generating a certificate to certify the computation later, is very useful in context 
    of complicated and unverified  programs.   One such example is algorithmic library  
-   LEDA \citep{Mehlhorn:1995:LPC:204865.204889} ("Library of Efficient Data types and Algorithms") 
+   LEDA \citep{Mehlhorn:1995:LPC:204865.204889} (Library of Efficient Data Types and Algorithms) 
    written in C++.  Checkers are an integral part of the LEDA 
    which can later be invoked by user to certify that the result produced by unverified 
    code is correct. 
@@ -514,25 +515,28 @@
 	\noindent
     Later, the 
    checkers \citep{Alkassar2014} were verified by using VCC \citep{10.1007/978-3-642-03359-9_2}, 
-   and Isabelle/HOL \citep{Nipkow:2002:IPA:1791547}.  One advantages of this approach is 
-   that it is easier to formally verify the checker than the algorithm itself, because 
+   and Isabelle/HOL \citep{Nipkow:2002:IPA:1791547}.  One advantage of this approach is 
+   that it is easier to formally verify the checker than the algorithm itself because
    checkers are very simple in nature, and this approach scales very well. 
    
    One may ask the question that can we follow the same approach for vote counting,
    i.e. unverified counting code, and verified checker?  The answer is: it depends. 
    If the verified checker validates the result, i.e. it returns true on  
-   the certificate generated by a unverified 
-   vote counting program then everything is fine from every stakeholders' perspective.
+   the certificate generated by an unverified 
+   vote counting program, everything is fine from every stakeholders' perspective.
    However, what about the situation when the verified checker invalidates the result, i.e. 
    it returns false on the certificate generated by the unverified vote counting program? 
    This kind of situation must be dealt carefully by an electoral commission, and the commission should
    inspect everything carefully including the vote counting software and various other thing involved in the
-   process.
+   process.  This inspection would definitely be time consuming leading to delay in the result declaration,  
+   cost money leading to increase in the election budget, but more importantly, 
+   it would hamper the confidence of voters,  adding more scepticism to 
+   public opinion towards the electronic voting \citep{doi:10.1177/0268396218816199}. 
    To eliminate this kind of problematic situation, we propose: i) a formally verified vote counting
    software which produces the result with evidence (certificate), and ii) formally verified 
    certificate checker. The advantage of this approach is that the result produced is always correct (modulo 
    specification), a confidence building measure for electoral commission. Furthermore, the verified checker would 
-   always return true on the evidence (certificate) produced by verified vote counting program, confidence booster for 
+   always return true on the evidence (certificate) produced by the verified vote counting program, confidence booster for 
    voters into the deployed system.  
   
 
@@ -546,8 +550,8 @@
    Commission\footnote{\url{https://www.elections.act.gov.au/elections_and_voting/electronic_voting_and_counting}}
    has published all the ballots and vote counting software since 2001, the year electronic voting  was introduced 
    (surprisingly,  this year,  2020,  ACT Electoral Commission did not  publish the vote counting software, a step back than 
-   going forward).  However, for preferential voting schemes publishing all the ballots in plaintext could lead to ballot identification
-   via "Italian" attack \citep{Otten}, which we have already discussed in the previous chapter.    This may appear surprising in the 
+   forward).  However, for preferential voting schemes publishing all the ballots in plaintext could lead to ballot identification
+   via Italian attack \citep{Otten}, which we have already discussed in the previous chapter (see \ref{firstchap:italian}).    This may appear surprising in the 
    first sight,  but if we analyse it more carefully,  we can see that verifiability requirement is causing this privacy issue.   Indeed, 
    privacy and verifiability are conflicting requirements \citep{JONKER20131}.  
    On the one hand,  (end-to-end) verifiability, in a broad sense,  is about making sure that
@@ -556,10 +560,10 @@
    The only way to resolve the tension between privacy 
    and verifiability is to use various cryptographic primitives,  which hide the data  by using encryption (privacy) and 
    ensure that every claim is accompanied by a mathematical proofs (verifiability) (these proofs are in form of data which 
-   can be checked by anyone,  and one such proof system is zero-knowledge-proof).  
+   can be checked by anyone and commonly known as zero-knowledge-proof).  
    
    
-   The "Italian" attack may seem far-fetched to the reader; however,  a political scientist,  Dr. Kevin Bonham,
+   The Italian attack may seem far-fetched to the reader; however,  a political scientist,  Dr. Kevin Bonham,
     was able to link  15 ballots, when he was studying the Tasmania Senate election,  
    to its voters by looking at the preferences \citep{TasmaniaVoting}. The preferences on these 15 ballots were so rare, amongst 
    all the cast ballots,  that  he conjectured that these votes could be a recommendation from some lobby group 
@@ -570,11 +574,7 @@
    
    \begin{displayquote}
    
-   There is a minor privacy implication of the increased uniqueness of Senate votes under the new system.  In theory, coercion to 
-   vote a given way is useless in the Australian context outside of postal voting, because the ballot box is secret, so the coercer 
-   cannot establish how the person voted.  However, in the Senate it is not that difficult to establish whether or not anyone at all 
-   voted in a particular manner, so it is also often possible to confirm that there is a specific way that nobody at all (either in general or 
-   at least at a specific booth) voted.   So in theory a coercive person could direct a voter to vote in a certain way, and then check the 
+   So in theory a coercive person could direct a voter to vote in a certain way, and then check the 
    files to verify whether anyone in a booth, or at all, had voted in that way. The coercer could even choose to "sign" the directed vote 
    with an unlikely combination of candidates or an unlikely set of repetitions, not affecting the fate of the vote, to make it more likely 
    that the coerced vote would be unique in the whole state and not just at booth level.  That way if the vote did not appear, they 
