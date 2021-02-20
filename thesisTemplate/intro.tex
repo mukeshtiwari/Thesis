@@ -44,7 +44,7 @@ thousands of man hours, 11,000 working days, by using electronic voting \citep{E
   of democracy such as transparency, genuineness, and verifiability. 
   
   In order to make the electronic voting process genuine and trustworthy, the electronic voting 
-  research community has recognized some must-have properties of electronic voting protocol
+  research community has recognised some must-have properties of electronic voting protocol
   \citep{5958051}, 
    \citep{Benaloh:1994:RSE:195058.195407},  \citep{Delaune:2010:VPT}, \citep{Bernhard:2017:PES}:
   
@@ -132,7 +132,7 @@ with a number of important properties already  established  in  Schulze’s  ori
 Amongst the various  properties, the Schulze method satisfies the \textit{resolvability criterion}, 
 i.e. it elects a single winner under the assumption that number of voters are much larger than
  number of candidates (and in case of a tie, when there is more than one winner, a random vote can be 
-selected to declare the winner.  However, our formalization 
+selected to declare the winner.  However, our formalisation 
 has not taken the randomness into account, so it can produce more than one winner). 
 
 
@@ -190,12 +190,12 @@ formally verified certificate checker for the International Association of Crypt
 scrutiny sheet (the IACR scrutiny sheet is relatively simple compared to our certificate).
 
 \noindent
-\textit{Properties of Schulze Method:} We have proved two properties, Condercet winner and Reversal symmetry, 
-of the Schulze method inside the Coq theorem prover (ongoing work).  These properties could be seen as an 
+\textit{Properties of Schulze Method:} We have proved two properties,  Condercet winner and Reversal symmetry 
+amongst many, of the Schulze method inside the Coq theorem prover (ongoing work).  These properties could be seen as an 
 ultimate stress testing for an implementation, and we have shown that our implementation of the Schulze 
-method follows two important properties,  i.e.  Condercet winner and Reversal symmetry.  Ideally,  sometime in 
-future,  we would like to prove that our implementation follows all the properties established in the Schulze's 
-paper  \citep{Schulze:2011:NMC}. 
+method follows two important properties,  i.e.  Condercet winner and Reversal symmetry.  Ideally,  
+we would like to prove that our implementation follows all the properties established in the Schulze's 
+paper  \citep{Schulze:2011:NMC}.
 
 
 \section{Cryptographic Blackbox}
@@ -209,7 +209,7 @@ is left inverse of encryption. These primitives, in general, provide functionali
 of generating a random permutation, encrypting a plaintext data, decrypting a ciphertext data, 
 producing commitment of a value, constructing a zero-knowledge proof, 
 and verifying a zero-knowledge proof. Later, in extracted OCaml code from Coq code, these functions are instantiated 
-with Unicrypt \citep{LocherH14} functions\footnote{Formalizing the whole cryptographic stack used in our 
+with Unicrypt \citep{LocherH14} functions\footnote{Formalising the whole cryptographic stack used in our 
 project would be very time consuming (probably a PhD itself), but it would be worth trying. 
 Although, we have formalised the (ElGamal) encryption, and decryption inside Coq, but we still 
 are very far from achieving the goal of fully verified cryptographic stack.  We leave the formalisation 
@@ -264,7 +264,7 @@ of cryptographic primitives for future work (work in progress).}.
  proved by \citep{10.1007/978-3-319-68687-5_7}  using Tamarin \citep{10.5555/2958031.2958047}.
  Most of these works differ from ours
  in the sense that their primary focus is verification of security protocols in  
- Dolev-Yao model or  complexity-theoretic model \citep{1056650}, whereas our work is 
+ Dolev-Yao model \citep{1056650}, whereas our work is 
  more focused on verified implementation and  the verifiability  aspect of vote counting.
 
  The closest to our work are \citep{Cochran:2010:VFS} \citep{DeYoung:2012:LLV}, \citep{Pattinson:2015:VCM}, \citep{Pattinson:2016:MSP},
@@ -278,7 +278,7 @@ of cryptographic primitives for future work (work in progress).}.
  \begin{displayquote}
  Note that this automated consistency checking is not the same as providing a 
  full interactive proof of a soundness theorem in a higher-order logical framework.
- Such formalization is an interesting and useful exercise, but we did not do it for this 
+ Such formalisation is an interesting and useful exercise, but we did not do it for this 
  case study. Instead, checking the dozens of theorem stipulated in law text is more 
  akin to the kind of validation that we are advocating in this work. 
  It gives us high confidence, but not a proof, that the mechanical formalization is
@@ -288,12 +288,12 @@ of cryptographic primitives for future work (work in progress).}.
  \noindent
  Linear logic \citep{GIRARD19871} has been used by \citep{DeYoung:2012:LLV} to model the different entities in electronic voting as a resource. 
  The use of linear logic makes it very natural to capture the different entities in electronic voting,  
- depending on their usage, by means of modality e.g. a voter can cast only one vote, but she might 
+ depending on their usage, by means of modality, e.g.  a voter can cast only one vote, but she might 
  need to show her photo ID multiple times at the counting booth. Mathematical proof theory has 
  been used by \citep{Pattinson:2015:VCM}  to treat the vote counting as a mathematical 
  proof, and in the same vein, 
  \citep{Ghale:2017:FVS} have formalised single transferable vote in Coq and 
- extracted Haskell code from the formalization. The extracted Haskell code produces the result 
+ extracted Haskell code from the formalisation. The extracted Haskell code produces the result 
  and a certificate for a given set of input ballots. This certificate can be used by any third party to verify 
  or audit the outcome of the election result.  In further research, \citep{10.1007/978-3-030-03592-1_5} 
  developed a formally verified certificate checker using the theorem prover HOL4 \citep{Slind:2008:BOH:1459784.1459792}. 
@@ -313,7 +313,7 @@ of cryptographic primitives for future work (work in progress).}.
  preference options and many more incomplete  preference options  (if it is allowed) for a voter to 
  fill her ballot. Since the number of options is very large, if a candidate and a voter want 
  to collude, then the candidate would ask the voter to mark her first and every other candidate 
- in a certain order (a unique permutation). Later, once the ballots are published 
+ in a certain order (an unique permutation). Later, once the ballots are published 
  on the bulletin board, then the unique permutation can be used by the candidate to 
  identify the vote of each voter.  
  \end{displayquote}
@@ -330,10 +330,10 @@ Coq theorem prover  and cryptographic primitives.
 describes the Schulze method, its formal specification, proof of correctness, experimental results, 
 and scrutiny sheet.  
 \item Chapter \ref{cha:homormorphic_schulze} describes 
-verifiable homomorphic tally for the Schulze method, its realization in the Coq theorem prover, experimental 
+verifiable homomorphic tally for the Schulze method, its realisation in the Coq theorem prover, experimental 
 results,  instructions to audit the scrutiny sheet. 
 \item Chapter \ref{cha:software_independence} focuses on the notion of software independence, and 
-sketches details for the formalization of  cryptographic concepts involved in the 
+sketches details for the formalisation of  cryptographic concepts involved in the 
 certificate generated by encrypted ballots. 
 \item Chapter \ref{cha:machine_checked} puts forward the idea of 
 machine checked properties of electronic voting schemes and describes a couple of the 
