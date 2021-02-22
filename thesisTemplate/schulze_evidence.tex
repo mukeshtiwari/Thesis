@@ -26,18 +26,18 @@ co-operation of all on board it can be safely brought to part.}
  
  
  
- \textbf{Chapter overview:} In this chapter, we explain the Schulze method in Section \ref{sec:schulze_algorithm}, 
- and its formal specification in the Section \ref{sec:spec}. The  corner stone of our formalisation is 
+ \textbf{Chapter overview:} In this chapter, we explain the Schulze method in section \ref{sec:schulze_algorithm}, 
+ and its formal specification in section \ref{sec:spec}. The  corner stone of our formalisation is 
  a correct-by-construction dependent inductive data type 
  that represents all correct executions (\ref{sec:inductive_type}) with the formal proof of
  that every Schulze election has winners (\ref{sec:all_winners}).  Every inhabitant of 
- this dependent inductive data type not only produces a final result, but also all the 
- intermediate steps which lead to the notion of evidence or scrutiny sheet (Section 
-  \ref{sec:scrunity_sheet}).  In the Section \ref{sec:count_million}, we discuss the optimization techniques
+ this dependent inductive data type not only produces a final result but also all the 
+ intermediate steps which lead to the notion of evidence or scrutiny sheet (section 
+  \ref{sec:scrunity_sheet}).  In section \ref{sec:count_million}, we discuss the optimization techniques
    to overcome the deficiencies in extracted Haskell code from Coq formalization. Based on 
    these optimizations, the extracted Haskell code was able to count millions of ballots in few 
    minutes. 
-   Finally, we conclude the chapter in the Section \ref{sec:discussion} with 
+   Finally, we conclude the chapter in section \ref{sec:discussion} with 
    the achievements and drawbacks of our work on the scale of \textit{Correctness},
    \textit{Privacy}, and \textit{Verifiability}.
  
@@ -320,7 +320,7 @@ A \ar@/^/[rr]^{3} \ar@/_/[dr]_{3} & & B \ar@/^/[ll]^{1}
 	
 \section{Formal Specification} \label{sec:spec}
 	We start our Coq formalization assuming finite  and non-empty 
-	set of candidates. Also, we assume decidable equality on 
+	set of candidates.  Also, we assume decidable equality on 
 	candidates. For our purposes, the
 	easiest way of stipulating that a type be finite is to require
 	existence of a list containing all inhabitants of this type \citep{DBLP:conf/icfp/FirsovU15}.
@@ -437,10 +437,11 @@ Mathematically, given $k \in \mathbb{Z}$ and a margin function $m: C \times C
 \to \mathbb{Z}$, the pairs $(c, d) \in C \times C$ for which there exists a
 path of strength $\geq k$ that joins both are precisely the elements
 of the least fixpoint $LFP(V_k)$ of the monotone operator $V_k:
-Pow(C \times C) \to Pow(C \times C)$ (where $Pow$ stand for powerset) , defined by
+Pow(C \times C) \to Pow(C \times C)$ ($Pow$ stands for powerset),  defined by
 \[ V_k(R) = \lbrace (c, e) \in C \times C \mid m(c, e) \geq k \mbox{ or }
 (m(c, d) \geq k \mbox{ and } (d, e) \in R \mbox{ for some } d \in C)
 \rbrace \]
+where $R$ is a subset of $C \times C$, i.e.  $R \subseteq  C \times C$. 
 It is easy to see that this operator is indeed monotone, and that
 the least fixpoint exists, e.g. using Kleene's theorem
 \citep{Stoltenberg-Hansen:1994:MTD}.  To show that there is \emph{no}
@@ -1020,8 +1021,9 @@ election outcomes by electronic voting research community \citep{Chaum:2004:SBR}
 
 Coq's extraction mechanism then allows us to turn our main theorem, 
 %\linebreak
-\texttt{schulze\_winners}, into a
-provably correct program. When extracting, all purely propositional
+\texttt{schulze\_winners} \ref{winner-sch},  into a
+provably correct program. 
+When extracting, all purely propositional
 information is erased and given a set of incoming ballots, the ensuing program produces an inhabitant
 of the (extracted) type \texttt{Count} that records the construction
 of the margin function, together with (type level) evidence of
