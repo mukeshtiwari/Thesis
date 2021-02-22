@@ -37,8 +37,13 @@ good to  have openness in democracy to make it more strong.
 
 
 In this chapter, we discuss the concepts required to develop a verified certificate checker for the certificate we generated 
-in the last chapter. Moreover, we sketch pseudo code (and pen-and-paper proof) as well for these concepts 
-which can be easily translated into the Coq code.  We have already explained our certificate in section \ref{sec:extract}, 
+in the last chapter.  Moreover, we sketch pseudo code and pen-and-paper proof, in style of algebraic manipulation.  
+ The reason for doing this to make
+it accessible for everyone who intends to develop a formally verified certificate checker.  
+In some cases, we have translated the pseudo code in Coq code to make the idea more precise. 
+
+
+We have already explained our certificate in section \ref{sec:extract}, 
 but intuitively,  checking our certificate amounts to proving that  the homomorphic margin has been 
 computed correctly and zero-knowledge proof for every claim is correct. In a nutshell, 
 our claims were:
@@ -49,26 +54,26 @@ our claims were:
 \item final homomorphic tally is computed correctly
 \end{enumerate}
 
+
 \noindent
 We sketch the encoding of Pedersen's commitment \citep{Pederson}, one of the primitives of shuffle zero-knowledge proof, in Coq, 
 but we leave the other details of shuffle zero-knowledge proof algorithm \citep{Wikstrom:2009:CPS}. Moreover, we
-encode the sigma protocol in Coq as a record and give various examples of concrete sigma protocol including 
-the honest decryption zero-knowledge proof.  Finally, all 
-the concepts explained in this chapter are sufficient to develop the formally verified 
-certificate checker for International Association for Cryptologic Research (IACR) election 
-\footnote{\url{https://vote.heliosvoting.org/helios/elections/60a714ea-ce6d-11e8-8248-76b4ab96574c/view}} 
-and our proof development can be accessed 
-\footnote{\url{https://github.com/mukeshtiwari/secure-e-voting-with-coq}}.
-
+encode the sigma protocol in Coq as a record and give various examples of concrete sigma protocol, including 
+the honest decryption zero-knowledge proof.   We also describe the computation of homomorphic tally from the encrypted 
+ballots, without decryption any individual ballot.  Finally, all 
+these concepts are sufficient to develop the formally verified 
+certificate checker for International Association for Cryptologic Research (IACR) election\footnote{\url{https://vote.heliosvoting.org/helios/elections/60a714ea-ce6d-11e8-8248-76b4ab96574c/view}}
+because IACR uses a very simple method, compared to ours, to elect candidates,  
+and our proof development can be accessed\footnote{\url{https://github.com/mukeshtiwari/secure-e-voting-with-coq}}. 
 
 \textbf{Chapter Outline:} In section $\ref{sec:algebra}$, we discuss the underlying algebraic structures needed for various 
  cryptographic operations. Section $\ref{sec:pedersen}$ focuses on generalizing the Pedersen commitment scheme for 
- a matrix. In the following Section $\ref{sec:sigma_coq}$, we discuss the details of sigma protocol, and its formalization 
+ a matrix. In the following section $\ref{sec:sigma_coq}$, we discuss the details of sigma protocol, and its formalization 
  in Coq. In order to eschew the (monadic) probabilistic reasoning of sigma protocol, we use the standard trick of making the randomness 
  explicit to make the reasoning easier
  without losing the meaning of sigma protocol. In section $\ref{sec:conc_sigma}$, we show 
  how to make a concrete instance of sigma protocol by giving an example of discrete logarithm. In addition, 
- we show the protocol needed for honest decryption (Section $\ref{sec:dec_sigma}$). Section $\ref{sec:homo_tally}$ sketches 
+ we show the protocol needed for honest decryption (section $\ref{sec:dec_sigma}$). Section $\ref{sec:homo_tally}$ sketches 
  the homomorphically tally based on additive ElGamal scheme. Finally, we discuss the IACR scrutiny sheet in section $\ref{sec:election_iacr}$, 
  and we summarize the chapter in section $\ref{sec:summary_software}$
 
@@ -84,9 +89,9 @@ there are two main operations: i) point-addition (adding two points $P$ and $Q$,
 $a$, with a point, $P$, on the curve $E$).  Moreover,  there is also a point at infinity (denoted by $O$) which acts as an identity element.   
 We can easily implement these functions using the suitable data-structure from the Coq theorem prover and prove theorems about them.  
 Nonetheless,  during the process of proving these theorems a lot of details about 
-the internal implementation of these functions would make it unnecessarily complicated \footnote{it is more likely to be the case that some key lemma required would be missing from the library,  
+the internal implementation of these functions would make it unnecessarily complicated\footnote{it is more likely to be the case that some key lemma required would be missing from the library,  
 and it will some effort to prove it}, while if we abstract the point-addition and   point-multiplication as  vector-addition and scalar-multiplication, respectively, 
-of a vector space, we can prove theorems about these functions,   point-addition and  point-multiplication , using just axioms of vector space.  
+of a vector space, we can prove theorems about these functions,   point-addition and  point-multiplication, using just axioms of vector space.  
 The proof process would be much smoother,  but more importantly, the proof would just require the axioms of vector space and field.
 This was the major motivation behind abstracting the group and field over a vector space.  Now we briefly explain the group, field, and vector space. 
 
@@ -121,9 +126,9 @@ Record AbelGroup (G : Type)
 \end{minted}
 
 \noindent
-Our Coq encoding is slight different from the definition of the group we gave above, mainly that \textit{G : Type} (read it as G has the type Type). 
+Our Coq encoding is slight different from the definition of the group we gave above, mainly that \textit{G : Type} (read as G has the type Type). 
 Because of the underlying foundation of Coq is type theory, every term in Coq has a type;
-hence we need to explicitly state the type of term $G$.  In a nutshell, Type is used to represent sets.  
+hence we need to explicitly state the type of term $G$.  In a nutshell, Type is used to represent set.  
 
 \begin{definition}[Field] 
 A field  is a set $\mathbb{F}$, with two binary operators $+ : \mathbb{F} \rightarrow \mathbb{F} \rightarrow \mathbb{F}$,  and $\cdot : \mathbb{F} \rightarrow \mathbb{F} \rightarrow \mathbb{F}$, 
@@ -166,7 +171,7 @@ In this section, we discuss that how to generalized Pedersen commitment scheme f
 A Pedersen commitment for any two given group elements $g$ $h$ $\in G$, a message $m \in \mathbb{F}$ (the field of integers), and a random element 
 $r \in \mathbb{F}$ (the field of integers) is $g^r \cdot h^m$ ($\cdot$ is the group operation).   
 As we explained above that we can just work with group and field, but abstracting the group operation ($\cdot : G \to G \to G$) as 
-a vector-addition and exponentiation operation ($\textasciicircum : \mathbb{F} \to G \to G$) as scalar-multiplication would make the 
+a vector-addition and exponentiation operation ($\textasciicircum :  G \to \mathbb{F} \to G$) as scalar-multiplication would make the 
 proofs more tractable.  Finally we can encode the Pedersen commitment in the Coq 
 theorem prover (simplified for the presentation):
 
@@ -180,14 +185,14 @@ Definition ped_commitment {F G : Type} (H1 : Group G)
 \end{minted}
 
 \noindent
-The Coq definition of Pedersen commitment assume the existence of two types
-$F$ and $G$, together with hypothesis that $G$ is group, $F$ is field, and the combination 
-of both, $F$ and $G$, forms a vector space (we are not giving any concrete implementation, 
-but an abstract representation.  During the code extraction,  we would instantiation all 
-these types and operations with a concrete representation and discharging the proof 
+The Coq definition of Pedersen commitment assumes the existence of two types
+$F$ and $G$, together with hypothesis that $G$ is group, $F$ is field, and  
+both, $F$ and $G$, forms a vector space (we are not giving any concrete implementation of group or field, 
+but an abstract representation, assuming two abstract type $G$ and $F$.  During the code extraction,  we instantiate all 
+these types and operations with a concrete representation and discharge the proof 
 obligation to make sure that the assumptions hold, very similar to the Schulze algorithm 
-extraction where we instantiated the $Cand$ type with concrete candidates 
-and discharged all the proof obligation).
+extraction where we instantiate the $Cand$ type with concrete candidates 
+and discharge all the proof obligation).
 
 
 We can extend the Pedersen commitment to commit a vector instead of 
@@ -233,7 +238,7 @@ Definition ped_vec_commitment {F G : Type} {n : nat}
 \noindent
 Finally,  we can extend the idea of vector Pedersen commitment to commit a matrix of size  $N \times N$,  for some arbitrary natural number $N$.
 To do so, we can call the $ped\_vec\_commitment$ on every column of the matrix.   Consequently, 
-we  will get a vector of commitments of size $N$.
+we  will get a vector of commitments of length $N$.
 
 
 
@@ -417,7 +422,7 @@ We first discuss the protocol, and later we will show that how we can adopt
 the protocol for our purpose. 
 
 \textbf{Diffie Hellman Tuple:} a tuple $(g, h, u, v)$ is 
- a \textit{Diffie Hellman} tuple if there exists a $w$ such that 
+ a Diffie Hellman  tuple if there exists a $w$ such that 
  $u = g^w$ and $v = h^w$.  The protocol to prove it is:
  
  \begin{itemize}
@@ -429,19 +434,19 @@ the protocol for our purpose.
  
 
 Now we come back to our original problem, i.e. proving that $m$ is the honest 
-decryption of $(c_{1}, c_{2})$. From these values, we construct a \textit{Diffie Hellman} tuple
+decryption of $(c_{1}, c_{2})$. From these values, we construct a Diffie Hellman tuple
 by multiplying $c_{2}$ with $g^{-m}$, i.e.
 $(g, h, c_{1}, c_{2} \cdot g^{-m})$. A simple algebraic simplification shows that 
 this tuple can be written as $(g, h, g^r, g^m \cdot h^r \cdot g^{-m})$ for some 
 random $r$. A further simplification leads to $(g, h, g^r, h^r)$, and 
-this tuple is clearly a \textit{Diffie Hellman} tuple, where $u = g^r$ and $v = h^r$. 
-We could not have been able to construct a  \textit{Diffie Hellman} tuple and proved 
+this tuple is clearly a Diffie Hellman tuple, where $u = g^r$ and $v = h^r$. 
+We could not have been able to construct a  Diffie Hellman tuple and proved 
 the equality of discrete logarithm if we had claimed anything other than the origin value $m$. For example, 
 suppose a cheating prover  claims that $m_{1}$ (different from $m$) is the honest decryption of $(c_{1}, c_{2})$.
-Following the cheating prover claim, we construct the \textit{Diffie Hellman} tuple 
+Following the cheating prover claim, we construct the Diffie Hellman tuple 
  $(g, h, g^r, g^{m} \cdot h^r \cdot g^{-m_{1}})$. 
  Clearly, the tuple $(g, h, g^r, h^r \cdot g^{m - m_{1}})$ is not 
-\textit{Diffie Hellman} tuple; hence a cheating prover would not succeed. 
+Diffie Hellman tuple; hence a cheating prover would not succeed. 
 
 
 
