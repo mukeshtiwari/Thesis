@@ -11,7 +11,7 @@ A proof assistant or theorem prover is a computer program which assists users in
 of mathematical proofs. Basically, the idea of 
 developing mathematical proofs using computer goes back to Automath (automating mathematics)
 \citep{deBruijn1983} and LCF \citep{Milner:1972:IAS:942578.807067}. The 
-Automath project (1967 until the early 80's)  was initiative of De Bruijn, and the aim of the project was to 
+Automath project,  1967 until the early 80's,  was initiative of De Bruijn, and the aim of the project was to 
 develop a language for expressing mathematical theories which can be verified by aid of computer.  
 Moreover, the Automath was first 
 practical project to exploit the Curry-Howard isomorphism (proofs-as-programs and formulas-as-types). 
@@ -27,28 +27,28 @@ The Automath project can be seen as the precursor of
 
 \textbf{Chapter overview:}
  This chapter is an overview of the Coq theorem prover and cryptographic primitives. 
- In the Section \ref{sec:problemstatement}, we give a brief overview of 
+ In section \ref{sec:problemstatement}, we give a brief overview of 
  the theoretical foundation, calculus of construction and calculus of inductive 
- construction, of Coq.  In the Section \ref{sec:typeprop}, we discuss
- the difference between \texttt{Type} and \texttt{Prop}
+ construction, of Coq.  In section \ref{sec:typeprop}, we discuss
+ the difference between $Type$ and $Prop$,
  which is very crucial from program extraction point of view (the goal of 
  our formalization is  not only proving the correctness of 
- Schulze method, but extracting  OCaml/Haskell code to count 
- ballots).  In the Section \ref{sec:deplambda}, we focus 
+ Schulze method but extracting  OCaml/Haskell code to count 
+ ballots).  In section \ref{sec:deplambda}, we focus 
  on dependent type and  how it leads to correct by construction paradigm
  by demonstrating a  type safe printf function. 
  Section \ref{sec:gallina} focuses on Coq specification language 
- \texttt{Gallina} with an example showing that why writing proofs using  
- \texttt{Gallina} is difficult and cumbersome, and how it can be eased by 
- using tactics. Finally, in the Section  \ref{sec:coqproof}, we take 
- philosophical route to justify that why we should trust in Coq proofs 
+ $Gallina$ with an example demonstrating that why writing proofs using  
+ Gallina is difficult and cumbersome, and how it can be eased by 
+ using tactics. Finally, in section  \ref{sec:coqproof}, we take 
+ philosophical route to justify that why we should trust in Coq proofs, 
  even though they do not appear anywhere near to a proof written by 
  a human.  
  
- In the Section \ref{sec:cryptography}, we give some historical 
- context and modern day usage of cryptography.  In the following Section 
- \ref{sec:group}, we describe Group which is the underlying 
- algebraic structure for Diffie-Hellman construction (\ref{sec:diffie-hellman}). 
+ In section \ref{sec:cryptography}, we give some historical 
+ context and modern day usage of cryptography.  In the following section 
+ \ref{sec:group}, we describe $Group$ which is the underlying 
+ algebraic structure for the Diffie-Hellman construction (\ref{sec:diffie-hellman}). 
  In the next two sections, we describe the ElGamal encryption (\ref{sec:elgamal}) 
  and Homomorphic Encryption (\ref{sec:homomorphic-enc}). In addition, 
  we show the both, multiplicative and additive,  homomorphic property
@@ -89,7 +89,7 @@ to accommodate calculus of inductive construction.
 
 Lambda calculus was invented by Alonzo Church in the 1930s, 
 and his motive was to use lambda calculus as a foundation 
-for formal mathematics, specifically the notation of 
+for formal mathematics, specifically the notion of 
 computable function by means of an algorithm.  
 It is a simplest programming language having just 
 three constructs, i.e. variable, application, and abstraction, 
@@ -178,10 +178,10 @@ and $bool$ for type of boolean values,  we can represent an
 %        \caption{Lambda Cube}
 %      \end{figure} 
 
-All these variations of the lambda calculus can be captured into a unified framework
+All these variations of the lambda calculus can be captured into an unified framework
 known as \textit{Pure Type System} \citep{berardi1988towards} 
 \citep{Barendregt:1993:LCT:162552.162561}.  Unlike the simple typed lambda calculus ($\lambda^{\to}$) where 
-terms and types live in two disjoint world,  pure type system blurs this distinction between 
+terms and types live in two disjoint worlds,  pure type system blurs this distinction between 
 types and terms and  allows the dependencies between them.  
 The abstract syntax  of pure type system:
  \begin{displayquote}
@@ -260,9 +260,10 @@ representation more efficient.  Below is the  (incomplete) syntax of calculus of
    \end{displayquote}
  
 
-\noindent 
-Inductive Type: as we mentioned above that inductive types are basic building block for encoding various 
-data structures in the Coq (calculus of inductive construction). The keyword to declare a inductive data type in Coq is 
+ 
+\subsection{Inductive Type}
+As we mentioned above that inductive types are basic building block for encoding various 
+data structures in the Coq (calculus of inductive construction). The keyword to declare an inductive data type in Coq is 
 \textit{Inductive}. For example, a length index list
 whose elements belong to a type $A$ can defined as (also known as vector):
 
@@ -340,7 +341,7 @@ the discussion of co-inductive types is not very relevant for this thesis.
   every element of the enumerated list. 
   
   
-  Figure \ref{sec:coq-reif} is the
+  Figure \ref{sec:coq-reif} is a
   reification Coq code 
   which produces a Type level witness, \textit{existsT},
   from a Prop level witness, \textit{exists}, by iterating 
@@ -355,7 +356,8 @@ the discussion of co-inductive types is not very relevant for this thesis.
   the Prop level assertion, (exists x, In x l  $\wedge$  P x = true), 
   merely  postulate the existence of an element without telling which one, 
   and we find this element by looking over all the elements of finite type $A$, 
-  as we can see it is pretty evident from the extract OCaml code \ref{sec:ocaml-reif}
+  as we can see it is pretty evident from the extract OCaml code \ref{sec:ocaml-reif} 
+  from the Coq proof \ref{sec:coq-reif} 
   (the proofs terms are erased and only computational terms contribute to the 
    extracted function). 
 
@@ -426,11 +428,15 @@ let rec reify p = function
   We have used many standard tricks like this  
   to make  our formalization more accessible for human inspection.
   For example, we have two definitions, one in Prop and other in Type, 
-  of winner, loser and path. The rationale behind two definitions 
-  is that Prop definitions are very natural and easy to understand 
-  compared to their Type counter part. Furthermore, we have shown that they are 
+  of winner, loser, and path. The rationale behind two definitions for the same thing 
+  is that Prop definition is very natural and easy to understand 
+  compared to their Type counter part.
+  Furthermore, we have shown that they are 
   equivalent to each other and used the definitions in Type for
-  computation.  Also, there is a nice Coq library 
+  computation.  The biggest advantage of this is that anyone can 
+  understand our formalisation by just looking at the Prop definitions,  
+  without looking at the complicated Type definitions, 
+   because they are self contained.   Also, there is a nice Coq library 
   ConstructiveEpsilon\footnote{https://coq.github.io/doc/master/stdlib/Coq.Logic.ConstructiveEpsilon.html}
   which uses the similar trick as ours; however, we have not used this library in 
   our formalization. 
@@ -449,33 +455,33 @@ The printf in the C programming language is vararg (variable length argument) fu
 and it simply trusts the format string to accurately describe the arguments.  However, 
 sometimes this trust can be exploited during the execution of a program by deliberately 
 making sure that  the formal string does not describe the arguments accurately.  Therefore,
- our goal is to generate compiler error when the given format string and the type of 
- corresponding input values (arguments)  
- do not match,  e.g. printf "\%d \%s" "hello Coq" 42 should be compiler error because
- \%d is a directive for integer value,  but the type of input, "hello Coq", is string.  In addition, 
- type-safe printf should print the arguments when the format string is aligned with type of arguments, e.g.
+ our goal is to generate compiler error when the given format string does not describe the 
+ arguments accurately,  e.g. printf "\%d \%s" "hello Coq" 42 should be compiler error because
+ \%d is a directive for integer value,  but the type of argument, "hello Coq", is string.  In addition, 
+ type-safe printf should print the arguments when the format string describes the 
+ arguments accurately, e.g.
  printf "\%s \%d" "hello Coq" 42 should print the string "hello Coq  42" because the first directive 
- of format string, \%s, and type of input, "hello Coq", are aligned. Similarly, the second directive 
- of format string, \%d, is also aligned with the type of input, 42.
+ of format string, \%s, and type of argument, "hello Coq", are aligned. Similarly, the second directive 
+ of format string, \%d, is also aligned with the type of argument, 42. 
  
  The high level idea is to split the printf arguments into two parts: i) format string, 
- and ii) values to be printed. For example, printf "\%s \%d" "hello Coq" 42 would be split into "\%s \%d", and 
+ and ii) arguments (values to be printed). For example, printf "\%s \%d" "hello Coq" 42 would be split into "\%s \%d", and 
  "hello Coq" 42.  Based on the format string, we design two functions: i) a type level function, 
  and ii) a value level function. The type level function would 
- take format string and returns a variadic function type, e.g. 
- on format string "\%s \%d", it would return a function type with 
+ take a format string and returns a variadic function type, e.g. 
+ on  a format string "\%s \%d", it would return a function with type 
  signature \texttt{string -> Z  -> string}.
  The value level function, whose type signature 
- is constructed by the type level function, would take the values to printed as input. If the 
- type of values to be printed is aligned with the type constructed by the type level function,
+ is constructed by the type level function, would take the arguments, values to be printed, as input. If the 
+ type of arguments is aligned with the type constructed by the type level function on the format string,
  we proceed to print the string, otherwise we generate compiler error.  
  
 
 
-First, we defined an abstract syntax tree, \textit{format}, to make explicit the characters we 
-are interested in format string. Additionally, the \textit{format\_string} function takes the format string 
-and returns the abstract syntax tree, and the type level, \textit{interp\_format}, takes the 
-abstract syntax tree and returns the function type corresponding to format string.
+First, we defined an abstract syntax tree,  $format$, to make explicit the characters we 
+are interested in format string. Additionally, the $format\_string$ function takes a string, which represents format string, 
+and returns a $format$ data type, and the  $interp\_format$ function takes a $format$ data type
+and returns a type level function, corresponding to the $format$ data type.
 
 \begin{minted}{coq}
 (* abstract syntax tree *)
@@ -520,11 +526,12 @@ Eval compute in interp_format (format_string "%d %s %s").
 \end{minted}
 
 Now, we construct a value level function, \textit{interp\_value}, whose return 
-type, constructed by the interp\_format function, depends on the input value. 
-What it means is that for every input value f of type format,  the 
+type is constructed by the interp\_format function. 
+What it means is that for every input value $f$ of type $format$,  the 
 interp\_format  constructs a return type and 
 the  interp\_value constructs a value level function in 
-such a way that return type aligns with input values.   
+such a way that both of these values, return type  and  input values,  are
+aligned with each other.   
 
 \begin{minted}{coq}
 (* value level function whose type is constructed 
@@ -576,7 +583,7 @@ while second one is successfully printed as string.
   tactics to build the  Gallina term,  which otherwise would  
   be very laborious.
   
- We have written two proofs that addition on natural number is commutative. 
+ To demonstrate our point, we have written two proofs that addition on natural number is commutative. 
  First proof, \textit{addition\_commutative\_gallina}, is written using 
  Gallina, while the second proof, \textit{addition\_commutative\_tactics}, is written 
  using the tactics.  In general, we write programs directly in Gallina and use tactics 
@@ -637,11 +644,11 @@ Qed.
   very fundamental question is: why should we 
   accept or believe in a proof written in Coq \citep{pollack1998believe}?  Generally, the answer of 
 	accepting or trusting Coq proofs is two-fold:
-  i) is the logic (CIC) sound?, and ii) is the implementation correct?
+  i) is the logic, calculus of inductive construction, sound?, and ii) is the implementation correct?
   The logic has already been reviewed by many peers and proved correct 
   using some meta-logic, therefore the answer of our question about trusting Coq proof 
   hinges on the implementation. 
-  The Coq implementation (written in OCaml)  has two parts, the type checker (small kernel), 
+  The Coq implementation, written in OCaml,  has two parts, the type checker (small kernel), 
   and tactic language to build the proofs.
   We lay our trust in type checker because it is a small kernel and can be 
   manually inspected. Furthermore, if there
@@ -662,12 +669,12 @@ Qed.
     The word cryptography comes from the two Greek words: 
     \textit{krypt\'{o}s}, meaning \textit{hidden}, and \textit{gr\'{a}fein} meaning \textit{to write}. As a matter of 
     fact, in the past, hidden writing (cryptography), using the symbol replacement, has been used 
-    to conceal the message. For example,
+    to conceal messages. For example,
     the earliest known usage of cryptography (symbol replacement) goes back to  ancient 
     Egyptian (Khnumhotep {\rm II}, 1500 BCE); however, the purpose of replacing one symbol by other 
     was not to protect
     any sensitive information but to enhance the linguistic appeal. The first known usage of 
-    cryptography to conceal the sensitive information goes back Mesopotamians (1500 BCE) where 
+    cryptography to conceal sensitive information goes back Mesopotamians (1500 BCE), where 
     they used it to hide the formula for pottery glaze. Fast forward, around 100 BCE, 
     Julius Caesar wrote a letter to Marcus  Cicero using a method, now known 
     as \textit{Caesar cipher}, which would shift each character in letter by 3 position right with wrapping 
@@ -677,31 +684,32 @@ Qed.
     Overall, cryptography is art and science of making thing  unintelligible from everyone, except the 
     intended recipient.  	
 	    
-	The modern day cryptography originated in 1970 with two ingenious ideas, \textit{Data Encryption Standard (DES)} \citep{standard1999data} , 
+	The modern day cryptography originated in 1970 with two ingenious ideas, \textit{Data Encryption Standard (DES)} \citep{standard1999data}, 
 	and \textit{Diffie-Hellman Algorithm} \citep{Diffie:2006:NDC:2263321.2269104}.  Data Encryption Standard, developed at IBM in 1970, is a symmetric 
 	key encryption algorithm which uses the same key for encryption and decryption. Since its inception, Data Encryption Standard
-	amassed a bad reputation because of \textit{National Security Agency (NSA)} involvement; however, it had a 
+	amassed a bad reputation because of National Security Agency (NSA) involvement; however, it had a 
 	practicality issue: key management. If the two parties wanted to communicate
-	securely over insecure channel using  the Data Encryption Standard, then they needed to agree on a common key. 
+	securely over an insecure channel using  the Data Encryption Standard,  they needed to agree on a common key. 
 	In order to agree on the common key, they needed a secure channel where they could securely communicate the key. 
     The solution to this problem came from Diffie-Hellman key exchange where two parties can exchange the 
     key securely over insecure channel. Moreover, the advent of Diffie-Hellman key exchange started the 
     whole new area of public key cryptography where encryption and decryption key are different. 
     Although Diffie-Hellman key exchange suffers from  man-in-the-middle (MITM)  attack if used for keys exchange in its 
-    naivety, e.g. Logjam \citep{Adrian:2015:IFS:2810103.2813707}. Nonetheless, 
-    it is a building block ElGamal Encryption \citep{elgamal1985public}. 
+    naivety, e.g. Logjam \citep{Adrian:2015:IFS:2810103.2813707},  so precautions must be taken when using it for key exchange. 
+    In 1985, Tahir ElGamal  proposed  a new public key encryption (and decryption) scheme \citep{elgamal1985public},  based on the Diffie-Hellman algorithm, 
+    which is still used predominately to secure the electronic transactions of the Internet (in fact, Tahir ElGamal is known as "father of SSL (secure socket layer)"). 
+   
     
     
     
     In this thesis, we are mostly concerned about public key cryptography.
-    The basic working principles of modern day cryptography is based on 
-    mathematical principle, and  it is no longer just 
-    used to achieving confidentiality, but various other things, e.g. integrity,  authentication, non-repudiation 
-    protocol, digital signature, digital cash, etc.
-    These mathematical principles involve 
-    various algebraic structures and algorithms to manipulate the object from these structures.
-    For example, the underlying mathematical principal of \textit{Diffie-Hellman}  algorithm 
-    is hardness of computing discrete logarithms in finite fields.
+    The basic working principles of modern day cryptography is based on the
+    mathematical principles,  e.g.  the underlying  mathematical principal of Diffie-Hellman  algorithm 
+    is hardness of computing discrete logarithms in a finite abelian group (group of prime order).  Moreover,  it is no longer just 
+    used to achieving confidentiality or secrecy, but various other things, e.g. integrity,  authentication, non-repudiation, 
+    digital signature, digital cash, etc. These cryptographic concepts involve 
+    various algebraic structures and algorithms to manipulate the object from the algebraic structures.
+    
     
     
   
@@ -715,7 +723,7 @@ Qed.
     
     \subsection{Group}
     \label{sec:group}
-    A group is a set $G$, with a binary operator $* : G \rightarrow G \rightarrow G$, identity element $e$, and inverse operator $inv : G \rightarrow G$ such 
+    A group is a set $G$, with a binary operator $* : G \rightarrow G \rightarrow G$, identity element $e$, and inverse operator $inv : G \rightarrow G$, denoted as $^{-1}$, such 
     that the following laws hold: 
     \begin{itemize}
      \item \texttt{Associativity}: $\forall \text{  } a \text{  } b  \text{  } c \text{  } \in G,  \text{  } a * (b * c) = (a * b) * c$
@@ -727,7 +735,7 @@ Qed.
    
     \noindent
     Furthermore, if a group is commutative, i.e. 
-    $\forall \text{  } a \text{  } b \text{  } \in  G,  \text{  } a * b = b * a$, then we call it abelian group (in honour of Niels Henrik Abel). In addition, 
+    $\forall \text{  } a \text{  } b \text{  } \in  G,  \text{  } a * b = b * a$,  we call it abelian group (in honour of Niels Henrik Abel). In addition, 
     a group is \textit{cyclic group} if it can be generated by a single element, also known as generator of group 
     and denoted as $g$, by repeatedly applying the group operator $*$ to itself. Moreover, a group is \textit{finite cyclic group}
     if it is cyclic and the cardinality of the underlying set (carrier set) $G$ is finite. The cardinality is also known as order of group. 
@@ -736,7 +744,7 @@ Qed.
      
      \subsection{Diffie-Hellman Construction}
      \label{sec:diffie-hellman}
-     	Now we explain \texttt{Diffie-Hellman} construction. The construction can be divided into two steps:
+     	Now we explain Diffie-Hellman construction. The construction can be divided into two steps:
 		\begin{enumerate}
 		\item The two communicating parties, say Alice and Bob, agree with shared public parameters which 
 		are finite cyclic group $G$ of order $p$ ($p$ is a large prime) and generator element $g$.
@@ -759,24 +767,24 @@ Qed.
        During the whole process, Eve, the adversary, would have $g^{a}$ and $g^{b}$, but she can not compute the 
       $ g^{ab}$ from these two values assuming that discrete logarithm is hard to compute. 
       There are, off course, other attacks, e.g.  man in the middle attack \citep{menezes2018handbook}, Logjam \citep{Adrian:2015:IFS:2810103.2813707}, etc. 
-      The security property of \texttt{Diffie-Hellman} construction is formalized using complexity theoretic notion 
+      The security property of Diffie-Hellman construction is formalized using complexity theoretic notions, 
       given below (we would not go into the details of complexity theoretic notions):
       
      
       \textbf{DL - Discrete Logarithm problem:} 
-      An instance of \textit{DL} problem states that given a finite cyclic group $G$, a generator of $g$ of $G$, and 
+      An instance of \textit{DL} problem states that given a finite cyclic group $G$, a generator $g$ of $G$, and 
       an element $y$,  we need to find an element $x \in G$ such that $g^{x} = y$ (computing this $x$ is believed to be a 
       hard problem).
       
       
-      \textbf{CDH -Computational Diffie-Hellman problem:}
+      \textbf{CDH - Computational Diffie-Hellman problem:}
       An instance of \textit{CDH} problem   
-      states that given a finite cyclic group $G$, a generator of $g$ of $G$, 
+      states that given a finite cyclic group $G$, a generator  $g$ of $G$, 
       elements $g^{a}$ and $g^{b}$,  we need to find the element $g^{ab}$.
       
       
       \textbf{DDH - Decisional Diffie-Hellman Problem:}
-      An instance of \textit{DDH} problem states that given a finite cyclic group $G$, a generator of $g$ of $G$,
+      An instance of \textit{DDH} problem states that given a finite cyclic group $G$, a generator $g$ of $G$,
       elements $g^{a}$, $g^{b}$, and $g^{c}$,  we need to determining if $c$ is equal to $a * b$, i.e. $c = a * b$, or not, i.e.  $c \neq a * b$.
       
            	 
@@ -784,7 +792,7 @@ Qed.
      \subsection{ElGamal Encryption Scheme}
      \label{sec:elgamal}
      In 1985, Tahir ElGamal \citep{elgamal1985public} proposed a new encryption system which was based on Diffie-Hellman algorithm. 
-     \textit{ElGamal} turned the interactive  Diffie-Hellman algorithm into a non-interactive, no need for any active second party, by introducing 
+     Tahir ElGamal turned the interactive  Diffie-Hellman algorithm into a non-interactive, no need for any active second party, by introducing 
      a randomness.  The \textit{ElGamal} scheme has three phases:
      \begin{enumerate}
 		\item \textbf{Key Generation:}   
@@ -793,7 +801,7 @@ Qed.
 		Subsequently, she publishes 
 		the ($G$, $g$, $p$, $h$) and keeps $x$ private. 
 		\item \textbf{Encryption:}
-		If any party, say Bob, wants to send a encrypted message $m$ to Alice, then he would randomly select an element 
+		If any party, say Bob, wants to send an encrypted message $m$ to Alice, then he would randomly select an element 
 		r, where 1 < r < p, computes $c_{1} := g^{r}$ and $c_{2} := m * h^{r}$, and send the pair ($c_{1}, c_{2}$) to 
 		Alice. 
 		\item \textbf{Decryption:}
@@ -810,7 +818,7 @@ Qed.
     
     \subsection{Homomorphic Encryption}
     \label{sec:homomorphic-enc}
-	 Homomorphic encryption  is a encryption scheme which allows us to perform useful operation on 
+	 Homomorphic encryption  is an encryption scheme which allows us to perform useful operation on 
 	     encrypted data without decrypting the data.
 	     It was first posed by Rivest, Adleman and Dertouzos in \citep{rivest1978data}: 
       
@@ -825,7 +833,7 @@ Qed.
 	   \end{displayquote}  
 
  \noindent	     
- A encryption scheme is homomorphic if for any two plaintext $x$ and $y$:
+ An encryption scheme is homomorphic if for any two plaintext $x$ and $y$:
 		\begin{displayquote}
 		
 		 $Enc_{pk}(x) \bigotimes Enc_{pk}(y) = Enc_{pk} (x \bigoplus y)$  where 
@@ -872,7 +880,7 @@ Qed.
 	     and multiplying them, we could simply multiply all the ciphertext together and decrypt the final result.  
 	     The advantage of this scheme is that it does not leak the individual values which, sometimes, is a very crucial property in many 
 	     application, specifically in electronic voting.
-	     In electronic voting protocols, we do not want to reveal the choices of a individual voter, but it is acceptable to reveal the final tally. 
+	     In electronic voting protocols, we do not want to reveal the choices of an individual voter, but it is acceptable to reveal the final tally. 
 	     However, this scheme is not suitable for electronic voting schemes because it is multiplicative. Almost, to the best of 
 	     my knowledge, all the electronic voting scheme calculate the finally tally by adding the individual choices of all
 	     voters, so the requirement is achieve the addition on plaintext. 
@@ -949,7 +957,7 @@ Qed.
      not only learned that the statement is true, but she also learned the content of proof (gained some knowledge).
      
      In contrast, zero-knowledge-proof, first introduced by Goldwasser, Micali, and Rackoff \citep{Goldwasser:1985:STOC} , 
-     is probabilistic proof that involves the explicit notion of a interaction between 
+     is a probabilistic proof system that involves an explicit notion of  interaction between 
      a prover and a verifier. In addition, 
      the goal of the prover is to convince the verifier about the validity of some statement without revealing any information, i.e. 
      the only thing the verifier would learn is that if statement is true or false without any other information. 
@@ -964,7 +972,7 @@ Qed.
      \textbf{Soundness:} If $x\text{  } \notin L$ then dishonest prover $P^{*}$ can not convince the honest verifier $V$ 
      to accept the claim (with some small probability error known as soundness error)
      
-     \textbf{Zero-Knowledge:} A malicious verifier $V^{*}$ would gain no additional information by interacting with a honest prover $P$ 
+     \textbf{Zero-Knowledge:} A malicious verifier $V^{*}$ would gain no additional information by interacting with an honest prover $P$ 
       other than $x \text{  } \in L$. More formally, for every (polynomial time) program $V^{*}$ there exists a (polynomial time)
       program $S$, also known as simulator, which can produce the transcript of protocol by itself without interacting with anyone. 
       Moreover, the transcript 
@@ -1003,7 +1011,7 @@ Qed.
           verifier accepts the proof
           
       \textbf{Special Soundness:} For a given public input $x$, if prover can produce two accepting transcript $(a, e, z)$ 
-      and $(a, e', z')$ ($e$ and $e'$ are disjoint),  there exists a efficient program, extractor, which can extract the 
+      and $(a, e', z')$ ($e$ and $e'$ are disjoint),  there exists an efficient program, extractor, which can extract the 
       witness w.
       
       \textbf{Honest Verifier Zero-Knowledge:} For a given public input $x$ and random input $e$, there is a simulator 
@@ -1012,7 +1020,7 @@ Qed.
      
      A concrete example of sigma protocol \citep{10.1007/3-540-48658-5_19} is Schnorr protocol \citep{10.1007/0-387-34805-0_22}.  In this example, 
      the goal of a prover $P$ is
-     to prove the knowledge of discrete logarithm in a Group of order $q$ (q is prime) to a verifier $V$.
+     to prove the knowledge of discrete logarithm in a group of order $q$ (q is prime) to a verifier $V$.
      Furthermore, $g$ is the generator of 
      group $G$, $x$ is the public input and $w$ is private input with relation $x = g^w$. The protocol follows:
      
@@ -1062,7 +1070,7 @@ Qed.
       protocol honestly, even they would have a huge gain from deviating 
       from the protocol. For example, in order to save some time before a match, Indian cricket team captain (the coin tossing captain), living in Delhi, and Australian cricket 
       team captain (the calling captain), living in Canberra, decide 
-      to toss a coin in advance over the Internet, using a mobile application  called toss-app, for a  upcoming series of one-day matches
+      to toss a coin in advance over the Internet, using a mobile application  called toss-app, for an  upcoming series of one-day matches
       \footnote{
       In a cricket match, which is very popular sport in India and Australia, both captains meet in the ground and toss a coin to 
       decide who would have the first call.}.  Assuming the workings of toss-app is naive and all the messages posted in 
