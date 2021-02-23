@@ -919,6 +919,17 @@ correctness of the execution of the count.
 \begin{minted}{coq}
   Theorem schulze_winners: forall (bs : list ballot),
     existsT (w: cand -> bool) (p : Count bs (winners w)), True.
+    refine (
+    let (i, t) := all_ballots_counted bs in
+    let (m, p) := t in
+    let l := listify m in
+    let g := fun c d => linear_search c d m l in _).
+    pose proof (ext m (equivalent_m_w m)) as H.
+    rewrite <- H in p. 
+    refine (existT _ (c_wins g) (existT _ (fin _ _ _ _ 
+    	(wins_loses_type_dec g) p
+    	(c_wins_true_type g) (c_wins_false_type g)) I)).
+    Defined.
 \end{minted}}
 
 
