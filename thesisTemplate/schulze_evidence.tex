@@ -914,7 +914,7 @@ correctness of the execution of the count.
 \begin{minted}{coq}
   Theorem schulze_winners: forall (bs : list ballot),
     existsT (w: cand -> bool) (p : Count bs (winners w)), True.
-\end{minted}
+\end{minted}}
 
 
 \noindent
@@ -976,52 +976,12 @@ election outcomes by electronic voting research community \citep{Chaum:2004:SBR}
  \citep{5958051}, \citep{Benaloh:1994:RSE:195058.195407},  
  \citep{Delaune:2010:VPT}, \citep{Bernhard:2017:PES}.
  
-%and is the only answer to
-%key questions such as the possibility of hardware malfunctions, or
-%indeed running the very software that has been claimed to count
-%votes correctly.
-%
-%The certificate that is produced by each run of our extracted Schulze vote
-%tallying algorithm  consists of two parts. The first part details
-%the individual steps of constructing the margin function, based on
-%the set of all ballots cast. The second part presents evidence for
-%the determination of winners, based on generalised margins. For the
-%construction of the margin function, every ballot is processed
-%in turn, with the margin between each pair of votes updated
-%accordingly.  The heart of our work lies in this second part of the
-%certificate. To demonstrate that candidate $c$ is an election
-%winner, we have to demonstrate that the generalised margin between
-%$c$ and every other candidate $d$ is at least as large than the
-%generalised margin  between $d$ and $c$. 
-%
-%Given that the generalised margin
-%between two candidates $c$ and $d$ is determined in terms of
-%paths $c, c_1, \dots, c_n, d$ that join $c$
-%and $d$, we need to exhibit
-%\begin{itemize}
-%\item evidence for the existence of a path $p$ from $c$ to $d$
-%\item evidence for the fact that \emph{no} path $q$ from $d$ to $c$
-%is stronger than $p$
-%\end{itemize}
-%where the strength of a path $p = (c_0, \dots, c_{n+1})$ is the
-%minimum $\min \lbrace m(c_i, c_{i+1}) \mid 0 \leq i \leq n \rbrace$
-%of the margins between adjacent nodes. 
-
-%While evidently a path
-%itself is evidence for its existence, the \emph{non-existence} of
-%paths with certain properties is more difficult to establish. For this,
-%we uses a coinductive approach. As existence of a path with a given
-%strength between two candidates can be easily phrased as an
-%inductive definition, the \emph{complement} of this predicate arises
-%as a greatest fixpoint, or equivalently as a coinductively defined
-%predicate (see e.g. \citep{Kozen:2016:PC}). This allows us to witness
-%the non-existence of paths by exhibiting coclosed sets.
   
 
 
 Coq's extraction mechanism then allows us to turn our main theorem, 
 %\linebreak
-\texttt{schulze\_winners} \ref{winner-sch},  into a
+\texttt{schulze\_winners} \ref{sec:all_winners},  into a
 provably correct program. 
 When extracting, all purely propositional
 information is erased and given a set of incoming ballots, the ensuing program produces an inhabitant
@@ -1246,7 +1206,7 @@ compute a universally verifiable certificate that attests  to the
 correctness of the count. This is consistent with complexity of Schulze 
 counting i.e. linear in number of ballots and cubic in number of candidates. 
 The experiments were carried out on system 
-equipped with intel core i7 processor and 16 GB of ram. We notice that the
+equipped with intel core i7 processor and 16 GB of RAM. We notice that the
 computation of the certiciate adds comparatively little in
 computational cost. 
 

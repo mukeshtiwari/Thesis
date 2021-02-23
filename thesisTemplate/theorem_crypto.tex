@@ -449,28 +449,47 @@ let rec reify p = function
   set of  logical errors to eliminate at compile time. 
   
  
- Using the expressiveness of dependent type, we construct a type-safe version of 
- printf \citep{Pierce:2004:ATT:1076265}.  
 The printf in the C programming language is vararg (variable length argument) function, 
 and it simply trusts the format string to accurately describe the arguments.  However, 
 sometimes this trust can be exploited during the execution of a program by deliberately 
-making sure that  the formal string does not describe the arguments accurately.  Therefore,
- our goal is to generate compiler error when the given format string does not describe the 
- arguments accurately,  e.g. printf "\%d \%s" "hello Coq" 42 should be compiler error because
- \%d is a directive for integer value,  but the type of argument, "hello Coq", is string.  In addition, 
- type-safe printf should print the arguments when the format string describes the 
- arguments accurately, e.g.
- printf "\%s \%d" "hello Coq" 42 should print the string "hello Coq  42" because the first directive 
- of format string, \%s, and type of argument, "hello Coq", are aligned. Similarly, the second directive 
+making sure that  the format string does not describe the arguments accurately.  
+The type system of C programming language is not strong enough to forbid 
+it during the compile time,  but if a language, Coq in our case, has  dependent 
+type,  this exploit can be averted during compile time.  Therefore, 
+using the expressiveness of dependent type, we can construct a type-safe version of 
+printf \citep{Pierce:2004:ATT:1076265}, which is not amenable to format string exploit.
+
+
+ Our goal is to define a type safe printf  function which generates compiler error 
+ when the given format string does not describe the 
+ arguments accurately.  For example,  \textit{type-safe-printf "\%d \%s" "hello Coq" 42} should be a 
+ compiler error because
+ \%d is a directive for integer value,  but the type of argument, "hello Coq", is string.  
+ In addition, 
+ type-safe-printf should print the arguments when the format string describes the 
+ arguments accurately. For example, 
+ \textit{type-safe-printf printf "\%s \%d" "hello Coq" 42} should print the string "hello Coq  42" because the first directive 
+ of format string, \%s, and type of argument, "hello Coq", are aligned.  Similarly, the second directive 
  of format string, \%d, is also aligned with the type of argument, 42. 
  
- The high level idea is to split the printf arguments into two parts: i) format string, 
- and ii) arguments (values to be printed). For example, printf "\%s \%d" "hello Coq" 42 would be split into "\%s \%d", and 
+The high level idea is that \textit{type-safe-printf} should return a 
+type which is solely constructed based on the \emph{format-string}, and 
+this return type should unify with the arguments given to the type-safe-printf.  
+For example,  the return type of  \textit{type-safe-printf "\%s \%d"} should be 
+\textit{String -> Integer -> String} because \%s is directive for string and 
+\%d is directive for integer.  Assuming that our type-safe-printf behaves in 
+this way,  then \textit{type-safe-printf "\%s \%d" 42 "hello Coq"} would be 
+a complier error because the type of the first argument, 42, is integer, while 
+\textit{type-safe-printf "\%s \%d"} expects a string. 
+
+
+ Now getting into the details,  the idea is to split the type-safe-printf arguments into two parts: i) format string, 
+ and ii) arguments (values to be printed).  For example, printf "\%s \%d" "hello Coq" 42 would be split into "\%s \%d",  and 
  "hello Coq" 42.  Based on the format string, we design two functions: i) a type level function, 
- and ii) a value level function. The type level function would 
+ and ii) a value level function.  The type level function would 
  take a format string and returns a variadic function type, e.g. 
  on  a format string "\%s \%d", it would return a function with type 
- signature \texttt{string -> Z  -> string}.
+ signature \textit{string -> Integer  -> string}.
  The value level function, whose type signature 
  is constructed by the type level function, would take the arguments, values to be printed, as input. If the 
  type of arguments is aligned with the type constructed by the type level function on the format string,
@@ -478,10 +497,10 @@ making sure that  the formal string does not describe the arguments accurately. 
  
 
 
-First, we defined an abstract syntax tree,  $format$, to make explicit the characters we 
-are interested in format string. Additionally, the $format\_string$ function takes a string, which represents format string, 
-and returns a $format$ data type, and the  $interp\_format$ function takes a $format$ data type
-and returns a type level function, corresponding to the $format$ data type.
+To accomplish the functionality of type-safe-function,  we defined an abstract syntax tree,  $format$, to make explicit the characters we 
+are interested in format string.  In our case, it is integer (Fint), string (Fstring), or any other character (Fother) (Fend represents an empty string
+and is there to hint the end of a format string).
+
 
 \begin{minted}{coq}
 (* abstract syntax tree *)
@@ -490,7 +509,14 @@ Inductive format :=
 | Fint : format -> format
 | Fstring : format -> format
 | Fother : ascii -> format -> format.
+\end{minted}
 
+\noindent
+Now we define a function,  $format\_string$, that takes a string, which represents a format string, 
+and returns a $format$ data type.  For example,  $format\_string$ on the input  "\%s \%d" would return 
+Fstring (Fother ' ' (* space character *) (Fint Fend)). 
+
+\begin{minted}{coq}
 (* turn the format string into abstract syntax tree *)
 Fixpoint format_string (inp : string) : format :=
   match inp with
@@ -501,8 +527,28 @@ Fixpoint format_string (inp : string) : format :=
        Fstring (format_string rest)
   | String c rest => Fother c (format_string rest)
   end.
+  
+Eval compute in format_string "%s %d".
+  = Fstring (Fother " " (Fint Fend))
+     : format  
+\end{minted}
+
+\noindent
+We will use the $format$ data type as a hinge to construct a 
+function, $interp\_format$, that returns variadic function in type scope (type level)
+and a function, $interp\_value$,  that returns  variadic function in value scope (value level).
+Moreover, the type of value level function   
+exactly matches or unifies with the type returned by $interp\_format$ 
+(in fact, the return type of $interp\_value$ is constructed by $interp\_format$).
+This 
+is key step where we hook a value level function with a type level function to 
+make sure that format string and arguments align with each other.  One of 
+the striking feature of this example is to use a value (format string) to 
+construct two things,  a type level function and a value level function, 
+and glue them together to get a better security.
 
 
+\begin{minted}{coq}
 (* construct the type level function from abstract syntax tree *)
 Fixpoint interp_format (f : format) : Type :=
   match f with
@@ -511,27 +557,13 @@ Fixpoint interp_format (f : format) : Type :=
   | Fother c f => interp_format f
   | Fend => string
   end.
+  
+
+Eval compute in interp_format (Fstring (Fother " " (Fint Fend))). 
+  = string -> Z -> string
+     : Type 
 \end{minted}
 
-
-\noindent
-The \textit{interp\_format} function returns a function type 
-(\texttt{Z -> string -> string -> string})  on the (abstract syntax tree of) 
-format string "\%d \%s \%s" 
-
-\begin{minted}{coq}
-Eval compute in interp_format (format_string "%d %s %s").
-(* = Z -> string -> string -> string
-     : Type *)
-\end{minted}
-
-Now, we construct a value level function, \textit{interp\_value}, whose return 
-type is constructed by the interp\_format function. 
-What it means is that for every input value $f$ of type $format$,  the 
-interp\_format  constructs a return type and 
-the  interp\_value constructs a value level function in 
-such a way that both of these values, return type  and  input values,  are
-aligned with each other.   
 
 \begin{minted}{coq}
 (* value level function whose type is constructed 
@@ -547,24 +579,21 @@ Fixpoint interp_value (f : format) (acc : string) :
 \end{minted}
 
 \noindent
-Finally, we define the printf function, and evaluate it on two inputs: 
-i)  printf "\%d \%s" "hello Coq" 42, and ii)  printf "\%d \%s" 42 "hello Coq".
+Finally, we glue all these functions together to define the type-safe-printf function.  In addition,  we evaluate it on two inputs: 
+i)  type-safe-printf "\%d \%s" "hello Coq" 42, and ii)  type-safe-printf "\%d \%s" 42 "hello Coq".
 
 \begin{minted}{coq}
-Definition printf s := interp_value (format_string s) "".           
+Definition type-safe-printf s := interp_value (format_string s) "".           
 
-Eval compute in  printf "\%d \%s" "hello Coq"%string 42.
+Eval compute in  type-safe-printf "\%d \%s" "hello Coq"%string 42.
 (* Error: The term ""hello Coq"%string" has type "string" 
 while it is expected to have type "Z". *)
 
-Eval compute in  printf "\%d \%s" 42 "hello Coq"%string. 
+Eval compute in  type-safe-printf "\%d \%s" 42 "hello Coq"%string. 
 (*  "\0b101010 \hello Coq"%string. The number 
 42 is printed in binary *)                            
 \end{minted}
-The first input, printf "\%d \%s" "hello Coq" 42, is type error because 
-printf "\%d \%s" returns a value level function whose  type is Z -> string -> string, but 
-the type of first argument, "hello Coq", is string which does not unify with Z,
-while second one is successfully printed as string. 
+
 
   
   
