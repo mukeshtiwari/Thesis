@@ -27,6 +27,18 @@ scenarios.
 
 
 
+\textbf{Contribution:} In this chapter,  we develop a formally verified 
+Schulze method in Coq theorem prover for encrypted ballots, assuming 
+the existence (axiomatic) of many cryptographic primitives.  To make the 
+election verifiable, we generate a scrutiny sheet which is augmented with 
+every step of election.  It includes all the ballots, proof for their validity, 
+proof for their invalidity,  step by step computation of tally homomorphically, 
+and proof for  correct decryption of final tally.  Finally, we prove that 
+if the cryptographic primitives are correct,  the winner produced 
+by encrypted ballots are same as the winner produced by 
+plaintext ballot,  decryption of the encrypted ballots,  formalised in 
+the previous chapter. 
+
 
 \textbf{Chapter Outline:} In section \ref{sec:verifiable_homomorphic}, 
 we discuss the technique to achieve verifiable homomorphic tally. In order to do so, 
