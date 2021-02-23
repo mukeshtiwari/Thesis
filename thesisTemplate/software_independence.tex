@@ -8,11 +8,13 @@
 \section{Introduction}
 
 
-One of the major disadvantages of using cryptography 
-to achieve privacy (using encryption to make the 
-content of ballot private)  and verifiability (using zero-knowledge proof for verification of claims) makes the verification 
-process cumbersome. As a consequence, the verification process (checking the scrutiny sheet) is only viable for
-tiny fraction of general population, cryptographers,  and results into a sharp decrease in number of scrutineers. 
+A major disadvantage of using cryptography 
+to achieve privacy,  using encryption to make the 
+content of ballot private, and verifiability, using zero-knowledge proof for verification of claims,
+is that the verification process  is quite cumbersome. As a consequence, the verification process 
+(checking the scrutiny sheet) is only viable for
+cryptographers,  a tiny fraction of general population,  and results into 
+a sharp decrease in number of scrutineers. 
 While it is not very difficult to find cryptographers to verify the election, 
 they are, off course, not the representative population in any democracy. 
 In order to increase the number of scrutineers and subsequently confidence in electronic voting, we follow the 
@@ -249,7 +251,7 @@ holds a private input $x$ for some public input $w$ such that a binary relation 
 in general, is a three step protocol:
 \begin{enumerate}
 \item Initialisation: $P$ generates a random challenge $r$, commits it, and sends the committed message to $V$
-\item Challenge: $V$ generates a random challenge$e$, and sends it to $V$
+\item Challenge: $V$ generates a random challenge $e$ and sends it to $V$
 \item Response: $P$ sends a response $z$ to $V$
 \end{enumerate} 
 

@@ -31,8 +31,8 @@ mathematical logic route.  Rather than implementing the Schulze method,
 we gave a logical specification of the Schulze winning condition and losing 
 condition with respect to an already computed margin function. 
 These specifications were simple enough that 
-one can inspect them, and 
-make sure that the intent is captured correctly in these specifications. 
+one can inspect them and 
+make sure that the intent is captured correctly. 
 Moreover, we proved the correctness properties about our specification.
 Also, we put forward the idea of formalizing the properties 
 of voting protocol, in our case Schulze method, in the framework developed by Kenneth Arrow 
@@ -49,21 +49,21 @@ it contained the step by step computation of margin,
 winners and loser with the proof why they win or 
 lose the election. This scrutiny 
 sheet can be used any independent third party to verify the 
-outcome of election. In case of plain-text ballots, 
+outcome of election. In case of plaintext ballot, 
 achieving verifiability was trivial, but the encrypted 
 ballot case was very complex. The reason 
 for complexity was the inherent nature of cryptography, 
 so to keep the encrypted ballot election verifiable 
-we augmented the scrutiny sheet with zero-knowledge-proofs. 
+we augmented the scrutiny sheet with zero-knowledge proofs. 
 Finally, we developed a formally verified certificate checker to ease the 
 auditing of election (although, we ended up developing 
-checker of different election). 
+checker for a  different election). 
 
 \subsection{Privacy and Coercion Resistance}
 Our approach to privacy and coercion problem was homomorphic encryption. 
 To keep the content of ballot private, we did not decrypt
 any individual ballot and computed the final tally homomorphically 
-by multiplying the cipher-texts. In the final step, we decrypted 
+by multiplying the ciphertexts. In the final step, we decrypted 
 the fully computed tally, which 
 in turn did not reveal any individual ballots.  Since there 
 was no decryption of any individual ballot, there was 
@@ -74,7 +74,7 @@ choices.
 \section{Future Work}
 \label{sec:future}
 \subsection{Formalizing Cryptographic Entities}
-During the formalization, we assume the cryptographic primitives 
+During the formalization, we assumed the cryptographic primitives 
 for various construction, e.g. encryption primitive, decryption primitive,
 zero-knowledge-proof primitive, etc. Moreover,  
 we assumed axioms about their correctness property. 
@@ -94,7 +94,7 @@ and see how far it can go.
 \subsection{Formally Verified Checker}
 Another interesting avenue would be to explore
 the formally verified certificate checker.  In our formally verified 
-certificate checker, we extracted OCaml code for certificate checking. 
+certificate checker, we extracted an OCaml code for certificate checking. 
 However, we wrote a substantial amount of unverified OCaml code 
 for parsing the scrutiny sheet. To alleviate this kind of concerns, 
 it would be worth exploring a verified parser, and, probably, 
@@ -106,7 +106,7 @@ it does not seem a far fetched concept.
 
 \subsection{Risk Limiting Audit for Preferential Voting Scheme}
 One challenging potential opportunity would be developing 
-a risk limiting audit system for Schulze method. In nutshell, 
+a risk limiting audit system for the Schulze method. In nutshell, 
 risk limiting audit is a method to audit the election by 
 randomly sampling the ballots. Risk limiting is very well 
 understood in the first-past-the-post voting system, 

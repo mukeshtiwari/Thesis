@@ -7,7 +7,7 @@
 
  Since the beginning of democracy, social scientists are constantly looking for methods  which would 
  aggregate the individual choices  to arrive at acceptable group decisions. 
- In general, these acceptable group decisions were based on intuition of the society at that time,
+ In general, these acceptable group decisions are based on intuition of the society at that time,
  but not backed by mathematical theory. The first mathematical 
  treatment to combine the individual choices (social mathematics)  can be 
  attributed to French philosopher and mathematician Marquis de Condorcet (Condorcet method, 1785) and his contemporary
@@ -95,7 +95,7 @@ candidate $c$ to candidate $d$ is a sequence $p \equiv c_0, \dots, c_{n+1}$
 of candidates with $c_0 = c$ and $c_{n+1} = d$ ($n \geq 0$), and the
 \emph{strength}, st, of path, p, is the minimum margin of adjacent
 nodes, i.e.
-\[ st(c_0, \dots, c_{n+1}) = \min \lbrace m (c_i, c_{i+1}) \mid 0
+\[ st(c_0, \dots, c_{n+1}) = \min \lbrace marg (c_i, c_{i+1}) \mid 0
 \leq i \leq n \rbrace. \]
 \item For candidates $c$ and $d$, let $M(c, d)$ denote the maximum strength, or generalised margin of a path
 	from $c$ to $d$ i.e. 
@@ -142,9 +142,9 @@ Proof.
 Qed.
 \end{minted}   
  
- Using these two key facts, we concluded that for any Condorcet winner candidate $c$, 
+ Using these two key facts, we conclude that for any Condorcet winner candidate $c$, 
  the generalised margin between her and every other opponent is greater than or equal 
- to reverse generalised margin between every other candidate and her.  Formally, 
+ to generalised margin between every other candidate and her.  Formally, 
  in Coq we prove the following theorem, \textit{condorcet\_winner\_genmarg}, on which  the proof of 
  \textit{condorcet\_winner\_implies\_winner} hinges. 
  
@@ -272,7 +272,7 @@ Proof.
     
 \end{minted}
 
-Using the lemma $path\_with\_rev\_marg$, we can conclude that if the strength of 
+Using the lemma $path\_with\_rev\_marg$, we conclude that if the strength of 
 a path going from $c$ to $d$ with respect to $marg$ is greater than or equal to $k$ 
 (by definition of $Path$ inductive type), then the strength of a reverse path from $d$ to 
 $c$ would also be greater than or equal to $k$ with respect $rev\_marg$. 
