@@ -25,6 +25,11 @@ co-operation of all on board it can be safely brought to part.}
   \end{figure} 
  
  
+\textbf{Contribution:} In this chapter,  we formally specify the Schulze method in the Coq theorem prover and 
+prove the correctness properties.  One of key ingredient of our formalisation is that we have augmented    
+ the Schulze method to produce data (scrutiny sheet) for various steps, including for winning condition and losing condition. 
+ This scrutiny sheet can be used to audit the election by any third party,  a key step in achieving 
+ the verifiability.   
  
  \textbf{Chapter overview:} In this chapter, we explain the Schulze method in section \ref{sec:schulze_algorithm}, 
  and its formal specification in section \ref{sec:spec}. The  corner stone of our formalisation is 
@@ -40,9 +45,9 @@ co-operation of all on board it can be safely brought to part.}
    Finally, we conclude the chapter in section \ref{sec:discussion} with 
    the achievements and drawbacks of our work on the scale of \textit{Correctness},
    \textit{Privacy}, and \textit{Verifiability}.
+   
+
  
-
-
 
 \section{Schulze Method}
 \label{sec:schulze_algorithm}
