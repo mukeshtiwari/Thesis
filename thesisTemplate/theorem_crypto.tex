@@ -479,8 +479,9 @@ For example,  the return type of  \textit{type-safe-printf "\%s \%d"} should be
 \textit{String -> Integer -> String} because \%s is directive for string and 
 \%d is directive for integer.  Assuming that our type-safe-printf behaves in 
 this way,  then \textit{type-safe-printf "\%s \%d" 42 "hello Coq"} would be 
-a complier error because the type of the first argument, 42, is integer, while 
-\textit{type-safe-printf "\%s \%d"} expects a string. 
+a complier error because the type of the first argument, 42, is integer and 
+integer does not unifies with string (the first argument that  
+\textit{type-safe-printf "\%s \%d"} expects is a string). 
 
 
  Now getting into the details,  the idea is to split the type-safe-printf arguments into two parts: i) format string, 
@@ -985,7 +986,7 @@ Qed.
      there would not be any interaction between prover and verifier if verifier wants to verify the proof.  In addition, the verifier 
      not only learned that the statement is true, but she also learned the content of proof (gained some knowledge).
      
-     In contrast, zero-knowledge-proof, first introduced by Goldwasser, Micali, and Rackoff \citep{Goldwasser:1985:STOC} , 
+     In contrast, zero-knowledge-proof, first introduced by Goldwasser, Micali, and Rackoff \citep{Goldwasser:1985:STOC}, 
      is a probabilistic proof system that involves an explicit notion of  interaction between 
      a prover and a verifier. In addition, 
      the goal of the prover is to convince the verifier about the validity of some statement without revealing any information, i.e. 
@@ -1104,7 +1105,7 @@ Qed.
       In a cricket match, which is very popular sport in India and Australia, both captains meet in the ground and toss a coin to 
       decide who would have the first call.}.  Assuming the workings of toss-app is naive and all the messages posted in 
       the chat box of toss-app are in plaintext.   Using the toss-app,  both captains, the coin tossing captain and the calling captain,  post their 
-      outcome in the chat box,  and the toss winner is decided based on the messages posted by the two captains.  
+      outcome in the chat box,  and the toss winner is decided based on the (plaintext) messages posted by the two captains.  
 	 How likely would be the case where both captains are honest, if the toss plays a major role in winning the series? 
 	 We can not expect them to be honest because they both have incentive (winning the series) to cheat during the 
 	 protocol (coin toss).      
